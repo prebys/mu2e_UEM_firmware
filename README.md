@@ -4,6 +4,6 @@ Below is the contents of the original .README file that was in this folder.
 
 --------------------------
 
-To regenerate this project:
-$ git clone ssh://p-mu2eextmontestdaq@cdcvs.fnal.gov/cvs/projects/mu2eextmontestdaq-firmware/firmware
-$ vivado -mode tcl -source recreate_project.tcl 
+To regenerate this project:  
+`$ git clone ssh://p-mu2eextmontestdaq@cdcvs.fnal.gov/cvs/projects/mu2eextmontestdaq-firmware/firmware`  
+`$ vivado -mode tcl -source recreate_project.tcl`
