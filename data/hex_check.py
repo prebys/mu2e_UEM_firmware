@@ -9,6 +9,10 @@ import re
 # 00000000 2804ac00 fdfdfdfd f4f3f2f1
 # 2804ac00 fafa03fa ffff9c10 00000000 ...
 
+# if this contains entries, then the code will ignore the "show" attribute of the event_to_hex dictionary
+# and only show the events in this list
+only_show = ["begin_event", "end_of_event"]
+
 event_to_hex = {
     "begin_event": {"re": r"ffffffff", "next": ["begin_sub_event"], "show": True, "data_chars": [0, 0]},
     # ↓　(sub event)
@@ -23,7 +27,7 @@ event_to_hex = {
     "event_number2": {"re": r"........", "next": ["channel_header"], "show": False, "data_chars": [0, 8]},
     # ↓ ↓ ↓　(data of one channel)
     "channel_header": {"re": r"fafa....", "next": ["waveform"], "show": False, "data_chars": [4, 8]},
-    "waveform": {"re": r"ffff....", "next": ["fragment_trig_mask"], "show": False, "data_chars": [4, 8]},
+    "waveform": {"re": r"ffff....", "next": ["fragment_trig_mask"], "show": True, "data_chars": [4, 8]},
     "fragment_trig_mask": {"re": r"0000....", "next": ["stat"], "show": False, "data_chars": [4, 8]},
     "stat": {"re": r"........", "next": ["status_word"], "show": False, "data_chars": [0, 8]},
     "status_word": {"re": r"........", "next": ["bco_low"], "show": False, "data_chars": [0, 8]},
@@ -127,7 +131,7 @@ def main():
     print("\n\nStart printing of data")
     matched = False
     number_of_printed_logs = 0
-    for i in range(0, len(hex_data), 8):
+    for i in range(8, len(hex_data), 8):
         if number_of_printed_logs > 10000:
             break
         previous_event_type = current_event_type
@@ -194,15 +198,23 @@ def main():
             else:
                 event_type_text = f"{current_event_type}"
 
-            if event_to_hex[current_event_type]["show"]:
-                number_of_printed_logs += 1
-                print(f"[{i//8}]: {current_event_hex} ({event_type_text})")
+            if only_show:
+                if current_event_type in only_show:
+                    number_of_printed_logs += 1
+                    print(f"[{i//8}]: {current_event_hex} ({event_type_text})")
+            else:
+                if event_to_hex[current_event_type]["show"]:
+                    number_of_printed_logs += 1
+                    print(f"[{i//8}]: {current_event_hex} ({event_type_text})")
 
         else:
-            print("**** ERROR ****")
-            print(f"[{i//8}] previous_event_type: {previous_event_type}, current_event_type: {current_event_type}, "
-                  f"{current_event_hex} (unknown event)")
-            return
+            if current_event_type:
+                print(f"**** ERROR ****"
+                      f"\n[{i//8}] previous_event_type: {previous_event_type}, current_event_type: {current_event_type}, "
+                      f"{current_event_hex} (unknown event)")
+                return
+            else:  # the first event was not "begin_event" and it's searching for that
+                print(f"First event ({current_event_hex}) not 'begin_event', searching for begin_event")
 
 
 if __name__ == "__main__":
