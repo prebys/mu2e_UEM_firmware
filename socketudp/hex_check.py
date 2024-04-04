@@ -133,7 +133,7 @@ def main():
     print("\n\nStart printing of data")
     matched = False
     number_of_printed_logs = 0
-    for i in range(0, len(hex_data), 8):
+    for i in range(8, len(hex_data), 8):
         if number_of_printed_logs > 10000:
             break
         previous_event_type = current_event_type
