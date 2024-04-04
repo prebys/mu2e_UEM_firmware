@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<ProcessHandle Version="1" Minor="0">
-    <Process Command="vivado" Owner="tmnguyen" Host="mu2etest.fnal.gov" Pid="20742">
-    </Process>
-</ProcessHandle>

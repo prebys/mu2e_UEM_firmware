@@ -1,6 +1,18 @@
 # stuff about webtalk
 # **/*webtalk*
 
+# include ONLY ".cc", ".sh", and ".txt" files from ./code, don't include compiled programs
+code*/*
+!code*/*.*
+#!code/*.cc
+#!code/*.txt
+#!code/*.sh
+#!code/Makefile*
+#!code/*.hh
+
+# ignore weird ~ file (backup of .hh files? example, .hh~)
+**/*~
+
 # ignore data files
 *.dat
 

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="synth_1" LaunchPart="xc7k420tffg1156-2" LaunchTime="1699935021">
-  <File Type="RDS-PROPCONSTRS" Name="top_fmc228_pcie_drc_synth.rpt"/>
-  <File Type="PA-TCL" Name="top_fmc228_pcie.tcl"/>
-  <File Type="RDS-RDS" Name="top_fmc228_pcie.vds"/>
-  <File Type="RDS-UTIL" Name="top_fmc228_pcie_utilization_synth.rpt"/>
-  <File Type="RDS-UTIL-PB" Name="top_fmc228_pcie_utilization_synth.pb"/>
-  <File Type="RDS-DCP" Name="top_fmc228_pcie.dcp"/>
-  <File Type="VDS-TIMINGSUMMARY" Name="top_fmc228_pcie_timing_summary_synth.rpt"/>
+<GenRun Id="synth_1" LaunchPart="xc7k420tffg1156-2" LaunchTime="1711144386">
   <File Type="VDS-TIMING-PB" Name="top_fmc228_pcie_timing_summary_synth.pb"/>
+  <File Type="VDS-TIMINGSUMMARY" Name="top_fmc228_pcie_timing_summary_synth.rpt"/>
+  <File Type="RDS-DCP" Name="top_fmc228_pcie.dcp"/>
+  <File Type="RDS-UTIL-PB" Name="top_fmc228_pcie_utilization_synth.pb"/>
+  <File Type="RDS-UTIL" Name="top_fmc228_pcie_utilization_synth.rpt"/>
+  <File Type="RDS-PROPCONSTRS" Name="top_fmc228_pcie_drc_synth.rpt"/>
+  <File Type="RDS-RDS" Name="top_fmc228_pcie.vds"/>
+  <File Type="PA-TCL" Name="top_fmc228_pcie.tcl"/>
   <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
     <Filter Type="Srcs"/>
     <File Path="$PSRCDIR/sources_1/add8.vhd">
@@ -1037,31 +1037,31 @@
   <Strategy Version="1" Minor="2">
     <StratHandle Name="Flow_PerfOptimized_high" Flow="Vivado Synthesis 2016"/>
     <Step Id="synth_design">
-      <Option Id="NoCombineLuts">1</Option>
-      <Option Id="ResourceSharing">2</Option>
-      <Option Id="FsmExtraction">1</Option>
-      <Option Id="RepFanoutThreshold">400</Option>
       <Option Id="ShregMinSize">5</Option>
       <Option Id="KeepEquivalentRegisters">1</Option>
+      <Option Id="RepFanoutThreshold">400</Option>
+      <Option Id="NoCombineLuts">1</Option>
+      <Option Id="FsmExtraction">1</Option>
+      <Option Id="ResourceSharing">2</Option>
     </Step>
   </Strategy>
-  <BlockFileSet Type="BlockSrcs" Name="gig_ethernet_pcs_pma_0"/>
-  <BlockFileSet Type="BlockSrcs" Name="jesd204_phy_1"/>
-  <BlockFileSet Type="BlockSrcs" Name="bd_fc5c_rst_0_0"/>
-  <BlockFileSet Type="BlockSrcs" Name="xaui_0"/>
-  <BlockFileSet Type="BlockSrcs" Name="decoder_10b8b_rom"/>
-  <BlockFileSet Type="BlockSrcs" Name="fei4_pixel_fifo"/>
-  <BlockFileSet Type="BlockSrcs" Name="fei4_spy_fifo"/>
-  <BlockFileSet Type="BlockSrcs" Name="microblaze_mcs_0"/>
-  <BlockFileSet Type="BlockSrcs" Name="gtwizard_0"/>
-  <BlockFileSet Type="BlockSrcs" Name="bd_fc5c_iomodule_0_0"/>
-  <BlockFileSet Type="BlockSrcs" Name="bd_fc5c_lmb_bram_I_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="fifo_generator_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="bd_fc5c_dlmb_0"/>
   <BlockFileSet Type="BlockSrcs" Name="bd_fc5c_microblaze_I_0"/>
   <BlockFileSet Type="BlockSrcs" Name="bd_fc5c_ilmb_cntlr_0"/>
-  <BlockFileSet Type="BlockSrcs" Name="bd_fc5c_ilmb_0"/>
   <BlockFileSet Type="BlockSrcs" Name="bd_fc5c_dlmb_cntlr_0"/>
-  <BlockFileSet Type="BlockSrcs" Name="bd_fc5c_dlmb_0"/>
-  <BlockFileSet Type="BlockSrcs" Name="fifo_generator_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="bd_fc5c_ilmb_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="bd_fc5c_lmb_bram_I_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="bd_fc5c_iomodule_0_0"/>
   <BlockFileSet Type="BlockSrcs" Name="sumarea_fifo"/>
+  <BlockFileSet Type="BlockSrcs" Name="bd_fc5c_rst_0_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="jesd204_phy_1"/>
+  <BlockFileSet Type="BlockSrcs" Name="gtwizard_0"/>
   <BlockFileSet Type="BlockSrcs" Name="peakhigh_fifo"/>
+  <BlockFileSet Type="BlockSrcs" Name="microblaze_mcs_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="fei4_spy_fifo"/>
+  <BlockFileSet Type="BlockSrcs" Name="fei4_pixel_fifo"/>
+  <BlockFileSet Type="BlockSrcs" Name="decoder_10b8b_rom"/>
+  <BlockFileSet Type="BlockSrcs" Name="xaui_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="gig_ethernet_pcs_pma_0"/>
 </GenRun>

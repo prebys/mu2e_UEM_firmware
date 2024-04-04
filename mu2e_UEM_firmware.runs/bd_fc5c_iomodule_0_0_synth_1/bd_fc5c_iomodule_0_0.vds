@@ -2,25 +2,24 @@
 # Vivado v2016.2 (64-bit)
 # SW Build 1577090 on Thu Jun  2 16:32:35 MDT 2016
 # IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
-# Start of session at: Thu May  2 16:17:09 2019
-# Process ID: 5370
-# Current directory: /home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.runs/bd_fc5c_iomodule_0_0_synth_1
+# Start of session at: Fri Mar 22 16:54:06 2024
+# Process ID: 10002
+# Current directory: /root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/bd_fc5c_iomodule_0_0_synth_1
 # Command line: vivado -log bd_fc5c_iomodule_0_0.vds -mode batch -messageDb vivado.pb -notrace -source bd_fc5c_iomodule_0_0.tcl
-# Log file: /home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.runs/bd_fc5c_iomodule_0_0_synth_1/bd_fc5c_iomodule_0_0.vds
-# Journal file: /home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.runs/bd_fc5c_iomodule_0_0_synth_1/vivado.jou
+# Log file: /root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/bd_fc5c_iomodule_0_0_synth_1/bd_fc5c_iomodule_0_0.vds
+# Journal file: /root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/bd_fc5c_iomodule_0_0_synth_1/vivado.jou
 #-----------------------------------------------------------
 source bd_fc5c_iomodule_0_0.tcl -notrace
 Command: synth_design -top bd_fc5c_iomodule_0_0 -part xc7k420tffg1156-2 -mode out_of_context
 Starting synth_design
 Attempting to get a license for feature 'Synthesis' and/or device 'xc7k420t'
 INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7k420t'
-INFO: [Common 17-1223] The version limit for your license is '2018.05' and will expire in -336 days. A version limit expiration means that, although you may be able to continue to use the current version of tools or IP with this license, you will not be eligible for any updates or new releases.
 INFO: Launching helper process for spawning children vivado processes
-INFO: Helper process launched with PID 5378 
+INFO: Helper process launched with PID 10200 
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:10 ; elapsed = 00:00:10 . Memory (MB): peak = 1161.000 ; gain = 191.172 ; free physical = 2863 ; free virtual = 11729
+Starting RTL Elaboration : Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 1190.730 ; gain = 215.398 ; free physical = 1547 ; free virtual = 10146
 ---------------------------------------------------------------------------------
-INFO: [Synth 8-638] synthesizing module 'bd_fc5c_iomodule_0_0' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/synth/bd_fc5c_iomodule_0_0.vhd:94]
+INFO: [Synth 8-638] synthesizing module 'bd_fc5c_iomodule_0_0' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/synth/bd_fc5c_iomodule_0_0.vhd:94]
 	Parameter C_FAMILY bound to: kintex7 - type: string 
 	Parameter C_FREQ bound to: 100000000 - type: integer 
 	Parameter C_INSTANCE bound to: iomodule - type: string 
@@ -110,8 +109,8 @@ INFO: [Synth 8-638] synthesizing module 'bd_fc5c_iomodule_0_0' [/home/tmnguyen/m
 	Parameter C_INTC_BASE_VECTORS bound to: 32'b00000000000000000000000000000000 
 	Parameter C_INTC_ASYNC_INTR bound to: 16'b1111111111111111 
 	Parameter C_INTC_NUM_SYNC_FF bound to: 2 - type: integer 
-INFO: [Synth 8-3491] module 'iomodule' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule.vhd:95' bound to instance 'U0' of component 'iomodule' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/synth/bd_fc5c_iomodule_0_0.vhd:294]
-INFO: [Synth 8-638] synthesizing module 'iomodule' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule.vhd:286]
+INFO: [Synth 8-3491] module 'iomodule' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule.vhd:95' bound to instance 'U0' of component 'iomodule' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/synth/bd_fc5c_iomodule_0_0.vhd:294]
+INFO: [Synth 8-638] synthesizing module 'iomodule' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule.vhd:286]
 	Parameter C_FAMILY bound to: kintex7 - type: string 
 	Parameter C_FREQ bound to: 100000000 - type: integer 
 	Parameter C_INSTANCE bound to: iomodule - type: string 
@@ -201,26 +200,26 @@ INFO: [Synth 8-638] synthesizing module 'iomodule' [/home/tmnguyen/mu2e_monitor_
 	Parameter C_INTC_BASE_VECTORS bound to: 0 - type: integer 
 	Parameter C_INTC_ASYNC_INTR bound to: 16'b1111111111111111 
 	Parameter C_INTC_NUM_SYNC_FF bound to: 2 - type: integer 
-INFO: [Synth 8-5534] Detected attribute (* keep = "SOFT" *) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule.vhd:555]
-INFO: [Synth 8-5534] Detected attribute (* keep = "SOFT" *) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule.vhd:569]
+INFO: [Synth 8-5534] Detected attribute (* keep = "SOFT" *) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule.vhd:555]
+INFO: [Synth 8-5534] Detected attribute (* keep = "SOFT" *) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule.vhd:569]
 	Parameter C_AW bound to: 32 - type: integer 
 	Parameter C_BAR bound to: 64'b0000000000000000000000000000000010000000000000000000000000000000 
 	Parameter C_MASK bound to: 64'b0000000000000000000000000000000011000000000000000000000000000000 
-INFO: [Synth 8-3491] module 'pselect_mask' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pselect_mask.vhd:87' bound to instance 'pselect_mask_reg' of component 'pselect_mask' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule.vhd:597]
-INFO: [Synth 8-638] synthesizing module 'pselect_mask' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pselect_mask.vhd:102]
+INFO: [Synth 8-3491] module 'pselect_mask' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pselect_mask.vhd:87' bound to instance 'pselect_mask_reg' of component 'pselect_mask' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule.vhd:597]
+INFO: [Synth 8-638] synthesizing module 'pselect_mask' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pselect_mask.vhd:102]
 	Parameter C_AW bound to: 32 - type: integer 
 	Parameter C_BAR bound to: 64'b0000000000000000000000000000000010000000000000000000000000000000 
 	Parameter C_MASK bound to: 64'b0000000000000000000000000000000011000000000000000000000000000000 
-INFO: [Synth 8-256] done synthesizing module 'pselect_mask' (1#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pselect_mask.vhd:102]
+INFO: [Synth 8-256] done synthesizing module 'pselect_mask' (1#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pselect_mask.vhd:102]
 	Parameter C_AW bound to: 32 - type: integer 
 	Parameter C_BAR bound to: 64'b0000000000000000000000000000000011000000000000000000000000000000 
 	Parameter C_MASK bound to: 64'b0000000000000000000000000000000011000000000000000000000000000000 
-INFO: [Synth 8-3491] module 'pselect_mask' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pselect_mask.vhd:87' bound to instance 'pselect_mask_io' of component 'pselect_mask' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule.vhd:628]
-INFO: [Synth 8-638] synthesizing module 'pselect_mask__parameterized1' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pselect_mask.vhd:102]
+INFO: [Synth 8-3491] module 'pselect_mask' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pselect_mask.vhd:87' bound to instance 'pselect_mask_io' of component 'pselect_mask' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule.vhd:628]
+INFO: [Synth 8-638] synthesizing module 'pselect_mask__parameterized1' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pselect_mask.vhd:102]
 	Parameter C_AW bound to: 32 - type: integer 
 	Parameter C_BAR bound to: 64'b0000000000000000000000000000000011000000000000000000000000000000 
 	Parameter C_MASK bound to: 64'b0000000000000000000000000000000011000000000000000000000000000000 
-INFO: [Synth 8-256] done synthesizing module 'pselect_mask__parameterized1' (1#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pselect_mask.vhd:102]
+INFO: [Synth 8-256] done synthesizing module 'pselect_mask__parameterized1' (1#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pselect_mask.vhd:102]
 	Parameter C_FREQ bound to: 100000000 - type: integer 
 	Parameter C_USE_CONFIG_RESET bound to: 0 - type: integer 
 	Parameter C_AVOID_PRIMITIVES bound to: 0 - type: integer 
@@ -299,8 +298,8 @@ INFO: [Synth 8-256] done synthesizing module 'pselect_mask__parameterized1' (1#1
 	Parameter C_INTC_BASE_VECTORS bound to: 0 - type: integer 
 	Parameter C_INTC_ASYNC_INTR bound to: 16'b1111111111111111 
 	Parameter C_INTC_NUM_SYNC_FF bound to: 2 - type: integer 
-INFO: [Synth 8-3491] module 'Iomodule_core' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:92' bound to instance 'IOModule_Core_I1' of component 'iomodule_core' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule.vhd:760]
-INFO: [Synth 8-638] synthesizing module 'Iomodule_core' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:284]
+INFO: [Synth 8-3491] module 'Iomodule_core' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:92' bound to instance 'IOModule_Core_I1' of component 'iomodule_core' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule.vhd:760]
+INFO: [Synth 8-638] synthesizing module 'Iomodule_core' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:284]
 	Parameter C_FREQ bound to: 100000000 - type: integer 
 	Parameter C_USE_CONFIG_RESET bound to: 0 - type: integer 
 	Parameter C_AVOID_PRIMITIVES bound to: 0 - type: integer 
@@ -383,125 +382,125 @@ INFO: [Synth 8-638] synthesizing module 'Iomodule_core' [/home/tmnguyen/mu2e_mon
 	Parameter C_DATA_BITS bound to: 8 - type: integer 
 	Parameter C_USE_PARITY bound to: 0 - type: integer 
 	Parameter C_ODD_PARITY bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'UART_Transmit' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:89' bound to instance 'UART_TX_I1' of component 'UART_Transmit' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:586]
-INFO: [Synth 8-638] synthesizing module 'UART_Transmit' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:116]
+INFO: [Synth 8-3491] module 'UART_Transmit' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:89' bound to instance 'UART_TX_I1' of component 'UART_Transmit' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:586]
+INFO: [Synth 8-638] synthesizing module 'UART_Transmit' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:116]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_DATA_BITS bound to: 8 - type: integer 
 	Parameter C_USE_PARITY bound to: 0 - type: integer 
 	Parameter C_ODD_PARITY bound to: 0 - type: integer 
-INFO: [Synth 8-5534] Detected attribute (* keep = "SOFT" *) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:102]
-INFO: [Synth 8-5534] Detected attribute (* keep = "SOFT" *) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:167]
+INFO: [Synth 8-5534] Detected attribute (* keep = "SOFT" *) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:102]
+INFO: [Synth 8-5534] Detected attribute (* keep = "SOFT" *) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:167]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_STATIC bound to: 0 - type: bool 
 	Parameter INIT bound to: 16'b0000000000000001 
-INFO: [Synth 8-3491] module 'XIL_SRL16E' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:89' bound to instance 'DIV16_SRL16E' of component 'XIL_SRL16E' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:180]
-INFO: [Synth 8-638] synthesizing module 'XIL_SRL16E' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:112]
+INFO: [Synth 8-3491] module 'XIL_SRL16E' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:89' bound to instance 'DIV16_SRL16E' of component 'XIL_SRL16E' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:180]
+INFO: [Synth 8-638] synthesizing module 'XIL_SRL16E' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_STATIC bound to: 0 - type: bool 
 	Parameter INIT bound to: 16'b0000000000000001 
 	Parameter INIT bound to: 16'b0000000000000001 
 	Parameter IS_CLK_INVERTED bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'XIL_SRL16E_I1' to cell 'SRL16E' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:117]
-INFO: [Synth 8-256] done synthesizing module 'XIL_SRL16E' (2#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:112]
+INFO: [Synth 8-113] binding component instance 'XIL_SRL16E_I1' to cell 'SRL16E' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:117]
+INFO: [Synth 8-256] done synthesizing module 'XIL_SRL16E' (2#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:112]
 	Parameter INIT bound to: 1'b0 
 	Parameter IS_C_INVERTED bound to: 1'b0 
 	Parameter IS_D_INVERTED bound to: 1'b0 
 	Parameter IS_R_INVERTED bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'FDRE_I' to cell 'FDRE' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:195]
-INFO: [Synth 8-113] binding component instance 'MUXCY_L_I' to cell 'MUXCY_L' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:247]
-INFO: [Synth 8-113] binding component instance 'XORCY_I' to cell 'XORCY' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:255]
-INFO: [Synth 8-113] binding component instance 'MUXCY_L_I' to cell 'MUXCY_L' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:247]
-INFO: [Synth 8-113] binding component instance 'XORCY_I' to cell 'XORCY' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:255]
-INFO: [Synth 8-113] binding component instance 'XORCY_I' to cell 'XORCY' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:255]
-INFO: [Synth 8-113] binding component instance 'MUX_F5_1' to cell 'MUXF5' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:329]
-INFO: [Synth 8-113] binding component instance 'MUX_F5_2' to cell 'MUXF5' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:336]
-INFO: [Synth 8-113] binding component instance 'MUXF6_I' to cell 'MUXF6' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:343]
-INFO: [Synth 8-256] done synthesizing module 'UART_Transmit' (3#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:116]
+INFO: [Synth 8-113] binding component instance 'FDRE_I' to cell 'FDRE' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:195]
+INFO: [Synth 8-113] binding component instance 'MUXCY_L_I' to cell 'MUXCY_L' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:247]
+INFO: [Synth 8-113] binding component instance 'XORCY_I' to cell 'XORCY' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:255]
+INFO: [Synth 8-113] binding component instance 'MUXCY_L_I' to cell 'MUXCY_L' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:247]
+INFO: [Synth 8-113] binding component instance 'XORCY_I' to cell 'XORCY' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:255]
+INFO: [Synth 8-113] binding component instance 'XORCY_I' to cell 'XORCY' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:255]
+INFO: [Synth 8-113] binding component instance 'MUX_F5_1' to cell 'MUXF5' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:329]
+INFO: [Synth 8-113] binding component instance 'MUX_F5_2' to cell 'MUXF5' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:336]
+INFO: [Synth 8-113] binding component instance 'MUXF6_I' to cell 'MUXF6' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:343]
+INFO: [Synth 8-256] done synthesizing module 'UART_Transmit' (3#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_transmit.vhd:116]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_DATA_BITS bound to: 8 - type: integer 
 	Parameter C_USE_PARITY bound to: 0 - type: integer 
 	Parameter C_ODD_PARITY bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'UART_Receive' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:89' bound to instance 'UART_RX_I1' of component 'UART_Receive' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:613]
-INFO: [Synth 8-638] synthesizing module 'UART_Receive' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:117]
+INFO: [Synth 8-3491] module 'UART_Receive' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:89' bound to instance 'UART_RX_I1' of component 'UART_Receive' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:613]
+INFO: [Synth 8-638] synthesizing module 'UART_Receive' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:117]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_DATA_BITS bound to: 8 - type: integer 
 	Parameter C_USE_PARITY bound to: 0 - type: integer 
 	Parameter C_ODD_PARITY bound to: 0 - type: integer 
-INFO: [Synth 8-5534] Detected attribute (* keep = "SOFT" *) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:107]
-INFO: [Synth 8-5534] Detected attribute (* keep = "SOFT" *) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:109]
-INFO: [Synth 8-5534] Detected attribute (* keep = "SOFT" *) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:159]
-INFO: [Synth 8-5534] Detected attribute (* keep = "SOFT" *) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:160]
+INFO: [Synth 8-5534] Detected attribute (* keep = "SOFT" *) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:107]
+INFO: [Synth 8-5534] Detected attribute (* keep = "SOFT" *) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:109]
+INFO: [Synth 8-5534] Detected attribute (* keep = "SOFT" *) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:159]
+INFO: [Synth 8-5534] Detected attribute (* keep = "SOFT" *) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:160]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_STATIC bound to: 0 - type: bool 
 	Parameter INIT bound to: 16'b0000000000000000 
-INFO: [Synth 8-3491] module 'XIL_SRL16E' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:89' bound to instance 'Mid_Start_Bit_SRL16' of component 'XIL_SRL16E' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:250]
-INFO: [Synth 8-638] synthesizing module 'XIL_SRL16E__parameterized1' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:112]
+INFO: [Synth 8-3491] module 'XIL_SRL16E' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:89' bound to instance 'Mid_Start_Bit_SRL16' of component 'XIL_SRL16E' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:250]
+INFO: [Synth 8-638] synthesizing module 'XIL_SRL16E__parameterized1' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_STATIC bound to: 0 - type: bool 
 	Parameter INIT bound to: 16'b0000000000000000 
 	Parameter INIT bound to: 16'b0000000000000000 
 	Parameter IS_CLK_INVERTED bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'XIL_SRL16E_I1' to cell 'SRL16E' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:117]
-INFO: [Synth 8-256] done synthesizing module 'XIL_SRL16E__parameterized1' (3#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:112]
+INFO: [Synth 8-113] binding component instance 'XIL_SRL16E_I1' to cell 'SRL16E' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:117]
+INFO: [Synth 8-256] done synthesizing module 'XIL_SRL16E__parameterized1' (3#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_STATIC bound to: 0 - type: bool 
 	Parameter INIT bound to: 16'b0000000000000000 
-INFO: [Synth 8-3491] module 'XIL_SRL16E' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:89' bound to instance 'Delay_16' of component 'XIL_SRL16E' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:270]
-INFO: [Synth 8-638] synthesizing module 'XIL_SRL16E__parameterized3' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:112]
+INFO: [Synth 8-3491] module 'XIL_SRL16E' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:89' bound to instance 'Delay_16' of component 'XIL_SRL16E' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:270]
+INFO: [Synth 8-638] synthesizing module 'XIL_SRL16E__parameterized3' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_STATIC bound to: 0 - type: bool 
 	Parameter INIT bound to: 16'b0000000000000000 
 	Parameter INIT bound to: 16'b0000000000000000 
 	Parameter IS_CLK_INVERTED bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'XIL_SRL16E_I1' to cell 'SRL16E' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:117]
-INFO: [Synth 8-256] done synthesizing module 'XIL_SRL16E__parameterized3' (3#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:112]
+INFO: [Synth 8-113] binding component instance 'XIL_SRL16E_I1' to cell 'SRL16E' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:117]
+INFO: [Synth 8-256] done synthesizing module 'XIL_SRL16E__parameterized3' (3#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:112]
 	Parameter INIT bound to: 1'b0 
 	Parameter IS_C_INVERTED bound to: 1'b0 
 	Parameter IS_D_INVERTED bound to: 1'b0 
 	Parameter IS_S_INVERTED bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'First_Bit_I' to cell 'FDSE' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:369]
+INFO: [Synth 8-113] binding component instance 'First_Bit_I' to cell 'FDSE' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:369]
 	Parameter INIT bound to: 1'b0 
 	Parameter IS_C_INVERTED bound to: 1'b0 
 	Parameter IS_D_INVERTED bound to: 1'b0 
 	Parameter IS_R_INVERTED bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'Others_I' to cell 'FDRE' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:382]
+INFO: [Synth 8-113] binding component instance 'Others_I' to cell 'FDRE' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:382]
 	Parameter INIT bound to: 1'b0 
 	Parameter IS_C_INVERTED bound to: 1'b0 
 	Parameter IS_D_INVERTED bound to: 1'b0 
 	Parameter IS_R_INVERTED bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'Others_I' to cell 'FDRE' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:382]
+INFO: [Synth 8-113] binding component instance 'Others_I' to cell 'FDRE' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:382]
 	Parameter INIT bound to: 1'b0 
 	Parameter IS_C_INVERTED bound to: 1'b0 
 	Parameter IS_D_INVERTED bound to: 1'b0 
 	Parameter IS_R_INVERTED bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'Others_I' to cell 'FDRE' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:382]
+INFO: [Synth 8-113] binding component instance 'Others_I' to cell 'FDRE' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:382]
 	Parameter INIT bound to: 1'b0 
 	Parameter IS_C_INVERTED bound to: 1'b0 
 	Parameter IS_D_INVERTED bound to: 1'b0 
 	Parameter IS_R_INVERTED bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'Others_I' to cell 'FDRE' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:382]
+INFO: [Synth 8-113] binding component instance 'Others_I' to cell 'FDRE' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:382]
 	Parameter INIT bound to: 1'b0 
 	Parameter IS_C_INVERTED bound to: 1'b0 
 	Parameter IS_D_INVERTED bound to: 1'b0 
 	Parameter IS_R_INVERTED bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'Others_I' to cell 'FDRE' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:382]
+INFO: [Synth 8-113] binding component instance 'Others_I' to cell 'FDRE' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:382]
 	Parameter INIT bound to: 1'b0 
 	Parameter IS_C_INVERTED bound to: 1'b0 
 	Parameter IS_D_INVERTED bound to: 1'b0 
 	Parameter IS_R_INVERTED bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'Others_I' to cell 'FDRE' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:382]
+INFO: [Synth 8-113] binding component instance 'Others_I' to cell 'FDRE' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:382]
 	Parameter INIT bound to: 1'b0 
 	Parameter IS_C_INVERTED bound to: 1'b0 
 	Parameter IS_D_INVERTED bound to: 1'b0 
 	Parameter IS_R_INVERTED bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'Others_I' to cell 'FDRE' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:382]
-INFO: [Synth 8-256] done synthesizing module 'UART_Receive' (4#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:117]
+INFO: [Synth 8-113] binding component instance 'Others_I' to cell 'FDRE' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:382]
+INFO: [Synth 8-256] done synthesizing module 'UART_Receive' (4#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_receive.vhd:117]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_USE_FIT bound to: 1 - type: integer 
 	Parameter C_NO_CLOCKS bound to: 54 - type: integer 
 	Parameter C_INACCURACY bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'FIT_Module' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:90' bound to instance 'UART_FIT_I' of component 'FIT_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:650]
-INFO: [Synth 8-638] synthesizing module 'FIT_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
+INFO: [Synth 8-3491] module 'FIT_Module' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:90' bound to instance 'UART_FIT_I' of component 'FIT_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:650]
+INFO: [Synth 8-638] synthesizing module 'FIT_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_USE_FIT bound to: 1 - type: integer 
 	Parameter C_NO_CLOCKS bound to: 54 - type: integer 
@@ -509,49 +508,49 @@ INFO: [Synth 8-638] synthesizing module 'FIT_Module' [/home/tmnguyen/mu2e_monito
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter Ratio bound to: 9 - type: integer 
 	Parameter First bound to: 1 - type: bool 
-INFO: [Synth 8-3491] module 'Divide_part' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:89' bound to instance 'Divide_I' of component 'Divide_Part' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:404]
-INFO: [Synth 8-638] synthesizing module 'Divide_part' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
+INFO: [Synth 8-3491] module 'Divide_part' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:89' bound to instance 'Divide_I' of component 'Divide_Part' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:404]
+INFO: [Synth 8-638] synthesizing module 'Divide_part' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter Ratio bound to: 9 - type: integer 
 	Parameter First bound to: 1 - type: bool 
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_STATIC bound to: 0 - type: bool 
 	Parameter INIT bound to: 16'b0000000000000001 
-INFO: [Synth 8-3491] module 'XIL_SRL16E' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:89' bound to instance 'SRL16E_I' of component 'XIL_SRL16E' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:170]
-INFO: [Synth 8-256] done synthesizing module 'Divide_part' (5#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
+INFO: [Synth 8-3491] module 'XIL_SRL16E' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:89' bound to instance 'SRL16E_I' of component 'XIL_SRL16E' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:170]
+INFO: [Synth 8-256] done synthesizing module 'Divide_part' (5#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter Ratio bound to: 6 - type: integer 
 	Parameter First bound to: 0 - type: bool 
-INFO: [Synth 8-3491] module 'Divide_part' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:89' bound to instance 'Divide_I' of component 'Divide_Part' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:404]
-INFO: [Synth 8-638] synthesizing module 'Divide_part__parameterized0' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
+INFO: [Synth 8-3491] module 'Divide_part' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:89' bound to instance 'Divide_I' of component 'Divide_Part' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:404]
+INFO: [Synth 8-638] synthesizing module 'Divide_part__parameterized0' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter Ratio bound to: 6 - type: integer 
 	Parameter First bound to: 0 - type: bool 
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_STATIC bound to: 0 - type: bool 
 	Parameter INIT bound to: 16'b0000000000000001 
-INFO: [Synth 8-3491] module 'XIL_SRL16E' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:89' bound to instance 'SRL16E_I' of component 'XIL_SRL16E' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:170]
-INFO: [Synth 8-256] done synthesizing module 'Divide_part__parameterized0' (5#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
-INFO: [Synth 8-256] done synthesizing module 'FIT_Module' (6#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
+INFO: [Synth 8-3491] module 'XIL_SRL16E' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:89' bound to instance 'SRL16E_I' of component 'XIL_SRL16E' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:170]
+INFO: [Synth 8-256] done synthesizing module 'Divide_part__parameterized0' (5#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
+INFO: [Synth 8-256] done synthesizing module 'FIT_Module' (6#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
 	Parameter C_USE_UART_RX bound to: 1 - type: integer 
 	Parameter C_USE_UART_TX bound to: 1 - type: integer 
 	Parameter C_UART_DATA_BITS bound to: 8 - type: integer 
 	Parameter C_UART_USE_PARITY bound to: 0 - type: integer 
 	Parameter C_UART_ODD_PARITY bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'Uart_Control_Status' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_control_status.vhd:90' bound to instance 'Uart_Control_Status_I1' of component 'Uart_Control_Status' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:693]
-INFO: [Synth 8-638] synthesizing module 'Uart_Control_Status' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_control_status.vhd:120]
+INFO: [Synth 8-3491] module 'Uart_Control_Status' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_control_status.vhd:90' bound to instance 'Uart_Control_Status_I1' of component 'Uart_Control_Status' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:693]
+INFO: [Synth 8-638] synthesizing module 'Uart_Control_Status' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_control_status.vhd:120]
 	Parameter C_USE_UART_RX bound to: 1 - type: integer 
 	Parameter C_USE_UART_TX bound to: 1 - type: integer 
 	Parameter C_UART_DATA_BITS bound to: 8 - type: integer 
 	Parameter C_UART_USE_PARITY bound to: 0 - type: integer 
 	Parameter C_UART_ODD_PARITY bound to: 0 - type: integer 
-INFO: [Synth 8-256] done synthesizing module 'Uart_Control_Status' (7#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_control_status.vhd:120]
+INFO: [Synth 8-256] done synthesizing module 'Uart_Control_Status' (7#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/uart_control_status.vhd:120]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_USE_FIT bound to: 1 - type: integer 
 	Parameter C_NO_CLOCKS bound to: 6216 - type: integer 
 	Parameter C_INACCURACY bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'FIT_Module' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:90' bound to instance 'FIT_I1' of component 'FIT_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:729]
-INFO: [Synth 8-638] synthesizing module 'FIT_Module__parameterized1' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
+INFO: [Synth 8-3491] module 'FIT_Module' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:90' bound to instance 'FIT_I1' of component 'FIT_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:729]
+INFO: [Synth 8-638] synthesizing module 'FIT_Module__parameterized1' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_USE_FIT bound to: 1 - type: integer 
 	Parameter C_NO_CLOCKS bound to: 6216 - type: integer 
@@ -559,167 +558,167 @@ INFO: [Synth 8-638] synthesizing module 'FIT_Module__parameterized1' [/home/tmng
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter Ratio bound to: 14 - type: integer 
 	Parameter First bound to: 1 - type: bool 
-INFO: [Synth 8-3491] module 'Divide_part' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:89' bound to instance 'Divide_I' of component 'Divide_Part' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:404]
-INFO: [Synth 8-638] synthesizing module 'Divide_part__parameterized1' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
+INFO: [Synth 8-3491] module 'Divide_part' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:89' bound to instance 'Divide_I' of component 'Divide_Part' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:404]
+INFO: [Synth 8-638] synthesizing module 'Divide_part__parameterized1' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter Ratio bound to: 14 - type: integer 
 	Parameter First bound to: 1 - type: bool 
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_STATIC bound to: 0 - type: bool 
 	Parameter INIT bound to: 16'b0000000000000001 
-INFO: [Synth 8-3491] module 'XIL_SRL16E' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:89' bound to instance 'SRL16E_I' of component 'XIL_SRL16E' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:170]
-INFO: [Synth 8-256] done synthesizing module 'Divide_part__parameterized1' (7#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
+INFO: [Synth 8-3491] module 'XIL_SRL16E' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:89' bound to instance 'SRL16E_I' of component 'XIL_SRL16E' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:170]
+INFO: [Synth 8-256] done synthesizing module 'Divide_part__parameterized1' (7#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter Ratio bound to: 12 - type: integer 
 	Parameter First bound to: 0 - type: bool 
-INFO: [Synth 8-3491] module 'Divide_part' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:89' bound to instance 'Divide_I' of component 'Divide_Part' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:404]
-INFO: [Synth 8-638] synthesizing module 'Divide_part__parameterized2' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
+INFO: [Synth 8-3491] module 'Divide_part' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:89' bound to instance 'Divide_I' of component 'Divide_Part' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:404]
+INFO: [Synth 8-638] synthesizing module 'Divide_part__parameterized2' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter Ratio bound to: 12 - type: integer 
 	Parameter First bound to: 0 - type: bool 
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_STATIC bound to: 0 - type: bool 
 	Parameter INIT bound to: 16'b0000000000000001 
-INFO: [Synth 8-3491] module 'XIL_SRL16E' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:89' bound to instance 'SRL16E_I' of component 'XIL_SRL16E' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:170]
-INFO: [Synth 8-256] done synthesizing module 'Divide_part__parameterized2' (7#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
+INFO: [Synth 8-3491] module 'XIL_SRL16E' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:89' bound to instance 'SRL16E_I' of component 'XIL_SRL16E' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:170]
+INFO: [Synth 8-256] done synthesizing module 'Divide_part__parameterized2' (7#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter Ratio bound to: 37 - type: integer 
 	Parameter First bound to: 0 - type: bool 
-INFO: [Synth 8-3491] module 'Divide_part' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:89' bound to instance 'Divide_I' of component 'Divide_Part' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:404]
-INFO: [Synth 8-638] synthesizing module 'Divide_part__parameterized3' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
+INFO: [Synth 8-3491] module 'Divide_part' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:89' bound to instance 'Divide_I' of component 'Divide_Part' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:404]
+INFO: [Synth 8-638] synthesizing module 'Divide_part__parameterized3' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter Ratio bound to: 37 - type: integer 
 	Parameter First bound to: 0 - type: bool 
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter INIT bound to: 16'b0000000000000001 
-INFO: [Synth 8-3491] module 'XIL_SRLC16E' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:167' bound to instance 'SRLC16E_1' of component 'XIL_SRLC16E' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:241]
-INFO: [Synth 8-638] synthesizing module 'XIL_SRLC16E' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:190]
+INFO: [Synth 8-3491] module 'XIL_SRLC16E' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:167' bound to instance 'SRLC16E_1' of component 'XIL_SRLC16E' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:241]
+INFO: [Synth 8-638] synthesizing module 'XIL_SRLC16E' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:190]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter INIT bound to: 16'b0000000000000001 
 	Parameter INIT bound to: 16'b0000000000000001 
 	Parameter IS_CLK_INVERTED bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'XIL_SRL16CE_I1' to cell 'SRLC16E' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:195]
-INFO: [Synth 8-256] done synthesizing module 'XIL_SRLC16E' (8#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:190]
+INFO: [Synth 8-113] binding component instance 'XIL_SRL16CE_I1' to cell 'SRLC16E' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:195]
+INFO: [Synth 8-256] done synthesizing module 'XIL_SRLC16E' (8#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:190]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter INIT bound to: 16'b0000000000000000 
-INFO: [Synth 8-3491] module 'XIL_SRLC16E' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:167' bound to instance 'SRLC16E_I' of component 'XIL_SRLC16E' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:259]
-INFO: [Synth 8-638] synthesizing module 'XIL_SRLC16E__parameterized1' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:190]
+INFO: [Synth 8-3491] module 'XIL_SRLC16E' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:167' bound to instance 'SRLC16E_I' of component 'XIL_SRLC16E' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:259]
+INFO: [Synth 8-638] synthesizing module 'XIL_SRLC16E__parameterized1' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:190]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
-	Parameter INIT bound to: 16'b0000000000000000 
-	Parameter INIT bound to: 16'b0000000000000000 
-	Parameter IS_CLK_INVERTED bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'XIL_SRL16CE_I1' to cell 'SRLC16E' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:195]
-INFO: [Synth 8-256] done synthesizing module 'XIL_SRLC16E__parameterized1' (8#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:190]
-	Parameter C_USE_SRL16 bound to: yes - type: string 
-	Parameter C_STATIC bound to: 0 - type: bool 
-	Parameter INIT bound to: 16'b0000000000000000 
-INFO: [Synth 8-3491] module 'XIL_SRL16E' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:89' bound to instance 'SRL16E_n' of component 'XIL_SRL16E' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:278]
-INFO: [Synth 8-638] synthesizing module 'XIL_SRL16E__parameterized9' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:112]
-	Parameter C_USE_SRL16 bound to: yes - type: string 
-	Parameter C_STATIC bound to: 0 - type: bool 
 	Parameter INIT bound to: 16'b0000000000000000 
 	Parameter INIT bound to: 16'b0000000000000000 
 	Parameter IS_CLK_INVERTED bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'XIL_SRL16E_I1' to cell 'SRL16E' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:117]
-INFO: [Synth 8-256] done synthesizing module 'XIL_SRL16E__parameterized9' (8#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:112]
-INFO: [Synth 8-256] done synthesizing module 'Divide_part__parameterized3' (8#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
-INFO: [Synth 8-256] done synthesizing module 'FIT_Module__parameterized1' (8#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
+INFO: [Synth 8-113] binding component instance 'XIL_SRL16CE_I1' to cell 'SRLC16E' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:195]
+INFO: [Synth 8-256] done synthesizing module 'XIL_SRLC16E__parameterized1' (8#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:190]
+	Parameter C_USE_SRL16 bound to: yes - type: string 
+	Parameter C_STATIC bound to: 0 - type: bool 
+	Parameter INIT bound to: 16'b0000000000000000 
+INFO: [Synth 8-3491] module 'XIL_SRL16E' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:89' bound to instance 'SRL16E_n' of component 'XIL_SRL16E' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:278]
+INFO: [Synth 8-638] synthesizing module 'XIL_SRL16E__parameterized9' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:112]
+	Parameter C_USE_SRL16 bound to: yes - type: string 
+	Parameter C_STATIC bound to: 0 - type: bool 
+	Parameter INIT bound to: 16'b0000000000000000 
+	Parameter INIT bound to: 16'b0000000000000000 
+	Parameter IS_CLK_INVERTED bound to: 1'b0 
+INFO: [Synth 8-113] binding component instance 'XIL_SRL16E_I1' to cell 'SRL16E' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:117]
+INFO: [Synth 8-256] done synthesizing module 'XIL_SRL16E__parameterized9' (8#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/xilinx_primitives.vhd:112]
+INFO: [Synth 8-256] done synthesizing module 'Divide_part__parameterized3' (8#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/divide_part.vhd:112]
+INFO: [Synth 8-256] done synthesizing module 'FIT_Module__parameterized1' (8#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_USE_FIT bound to: 0 - type: integer 
 	Parameter C_NO_CLOCKS bound to: 6216 - type: integer 
 	Parameter C_INACCURACY bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'FIT_Module' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:90' bound to instance 'FIT_I2' of component 'FIT_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:744]
-INFO: [Synth 8-638] synthesizing module 'FIT_Module__parameterized3' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
+INFO: [Synth 8-3491] module 'FIT_Module' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:90' bound to instance 'FIT_I2' of component 'FIT_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:744]
+INFO: [Synth 8-638] synthesizing module 'FIT_Module__parameterized3' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_USE_FIT bound to: 0 - type: integer 
 	Parameter C_NO_CLOCKS bound to: 6216 - type: integer 
 	Parameter C_INACCURACY bound to: 0 - type: integer 
-INFO: [Synth 8-256] done synthesizing module 'FIT_Module__parameterized3' (8#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
+INFO: [Synth 8-256] done synthesizing module 'FIT_Module__parameterized3' (8#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_USE_FIT bound to: 0 - type: integer 
 	Parameter C_NO_CLOCKS bound to: 6216 - type: integer 
 	Parameter C_INACCURACY bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'FIT_Module' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:90' bound to instance 'FIT_I3' of component 'FIT_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:759]
-INFO: [Synth 8-638] synthesizing module 'FIT_Module__parameterized5' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
+INFO: [Synth 8-3491] module 'FIT_Module' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:90' bound to instance 'FIT_I3' of component 'FIT_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:759]
+INFO: [Synth 8-638] synthesizing module 'FIT_Module__parameterized5' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_USE_FIT bound to: 0 - type: integer 
 	Parameter C_NO_CLOCKS bound to: 6216 - type: integer 
 	Parameter C_INACCURACY bound to: 0 - type: integer 
-INFO: [Synth 8-256] done synthesizing module 'FIT_Module__parameterized5' (8#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
+INFO: [Synth 8-256] done synthesizing module 'FIT_Module__parameterized5' (8#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_USE_FIT bound to: 0 - type: integer 
 	Parameter C_NO_CLOCKS bound to: 6216 - type: integer 
 	Parameter C_INACCURACY bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'FIT_Module' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:90' bound to instance 'FIT_I4' of component 'FIT_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:774]
-INFO: [Synth 8-638] synthesizing module 'FIT_Module__parameterized7' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
+INFO: [Synth 8-3491] module 'FIT_Module' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:90' bound to instance 'FIT_I4' of component 'FIT_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:774]
+INFO: [Synth 8-638] synthesizing module 'FIT_Module__parameterized7' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
 	Parameter C_USE_SRL16 bound to: yes - type: string 
 	Parameter C_USE_FIT bound to: 0 - type: integer 
 	Parameter C_NO_CLOCKS bound to: 6216 - type: integer 
 	Parameter C_INACCURACY bound to: 0 - type: integer 
-INFO: [Synth 8-256] done synthesizing module 'FIT_Module__parameterized7' (8#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
+INFO: [Synth 8-256] done synthesizing module 'FIT_Module__parameterized7' (8#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/fit_module.vhd:112]
 	Parameter C_USE_PIT bound to: 0 - type: integer 
 	Parameter C_PIT_SIZE bound to: 32 - type: integer 
 	Parameter C_PIT_READABLE bound to: 1 - type: integer 
-INFO: [Synth 8-3491] module 'PIT_Module' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pit_module.vhd:89' bound to instance 'PIT_I1' of component 'PIT_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:804]
-INFO: [Synth 8-638] synthesizing module 'PIT_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pit_module.vhd:111]
+INFO: [Synth 8-3491] module 'PIT_Module' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pit_module.vhd:89' bound to instance 'PIT_I1' of component 'PIT_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:804]
+INFO: [Synth 8-638] synthesizing module 'PIT_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pit_module.vhd:111]
 	Parameter C_USE_PIT bound to: 0 - type: integer 
 	Parameter C_PIT_SIZE bound to: 32 - type: integer 
 	Parameter C_PIT_READABLE bound to: 1 - type: integer 
-INFO: [Synth 8-256] done synthesizing module 'PIT_Module' (9#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pit_module.vhd:111]
+INFO: [Synth 8-256] done synthesizing module 'PIT_Module' (9#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pit_module.vhd:111]
 	Parameter C_USE_PIT bound to: 0 - type: integer 
 	Parameter C_PIT_SIZE bound to: 32 - type: integer 
 	Parameter C_PIT_READABLE bound to: 1 - type: integer 
-INFO: [Synth 8-3491] module 'PIT_Module' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pit_module.vhd:89' bound to instance 'PIT_I2' of component 'PIT_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:834]
+INFO: [Synth 8-3491] module 'PIT_Module' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pit_module.vhd:89' bound to instance 'PIT_I2' of component 'PIT_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:834]
 	Parameter C_USE_PIT bound to: 0 - type: integer 
 	Parameter C_PIT_SIZE bound to: 32 - type: integer 
 	Parameter C_PIT_READABLE bound to: 1 - type: integer 
-INFO: [Synth 8-3491] module 'PIT_Module' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pit_module.vhd:89' bound to instance 'PIT_I3' of component 'PIT_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:864]
+INFO: [Synth 8-3491] module 'PIT_Module' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pit_module.vhd:89' bound to instance 'PIT_I3' of component 'PIT_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:864]
 	Parameter C_USE_PIT bound to: 0 - type: integer 
 	Parameter C_PIT_SIZE bound to: 32 - type: integer 
 	Parameter C_PIT_READABLE bound to: 1 - type: integer 
-INFO: [Synth 8-3491] module 'PIT_Module' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pit_module.vhd:89' bound to instance 'PIT_I4' of component 'PIT_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:894]
+INFO: [Synth 8-3491] module 'PIT_Module' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/pit_module.vhd:89' bound to instance 'PIT_I4' of component 'PIT_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:894]
 	Parameter C_USE_GPO bound to: 0 - type: integer 
 	Parameter C_GPO_SIZE bound to: 32 - type: integer 
 	Parameter C_GPO_INIT bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'GPO_Module' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpo_module.vhd:89' bound to instance 'GPO_I1' of component 'GPO_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:913]
-INFO: [Synth 8-638] synthesizing module 'GPO_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpo_module.vhd:103]
+INFO: [Synth 8-3491] module 'GPO_Module' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpo_module.vhd:89' bound to instance 'GPO_I1' of component 'GPO_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:913]
+INFO: [Synth 8-638] synthesizing module 'GPO_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpo_module.vhd:103]
 	Parameter C_USE_GPO bound to: 0 - type: integer 
 	Parameter C_GPO_SIZE bound to: 32 - type: integer 
 	Parameter C_GPO_INIT bound to: 0 - type: integer 
-INFO: [Synth 8-256] done synthesizing module 'GPO_Module' (10#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpo_module.vhd:103]
+INFO: [Synth 8-256] done synthesizing module 'GPO_Module' (10#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpo_module.vhd:103]
 	Parameter C_USE_GPO bound to: 0 - type: integer 
 	Parameter C_GPO_SIZE bound to: 32 - type: integer 
 	Parameter C_GPO_INIT bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'GPO_Module' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpo_module.vhd:89' bound to instance 'GPO_I2' of component 'GPO_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:925]
+INFO: [Synth 8-3491] module 'GPO_Module' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpo_module.vhd:89' bound to instance 'GPO_I2' of component 'GPO_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:925]
 	Parameter C_USE_GPO bound to: 0 - type: integer 
 	Parameter C_GPO_SIZE bound to: 32 - type: integer 
 	Parameter C_GPO_INIT bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'GPO_Module' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpo_module.vhd:89' bound to instance 'GPO_I3' of component 'GPO_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:937]
+INFO: [Synth 8-3491] module 'GPO_Module' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpo_module.vhd:89' bound to instance 'GPO_I3' of component 'GPO_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:937]
 	Parameter C_USE_GPO bound to: 0 - type: integer 
 	Parameter C_GPO_SIZE bound to: 32 - type: integer 
 	Parameter C_GPO_INIT bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'GPO_Module' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpo_module.vhd:89' bound to instance 'GPO_I4' of component 'GPO_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:949]
+INFO: [Synth 8-3491] module 'GPO_Module' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpo_module.vhd:89' bound to instance 'GPO_I4' of component 'GPO_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:949]
 	Parameter C_USE_GPI bound to: 0 - type: integer 
 	Parameter C_GPI_SIZE bound to: 32 - type: integer 
 	Parameter C_GPI_INTERRUPT bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'GPI_Module' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpi_module.vhd:90' bound to instance 'GPI_I1' of component 'GPI_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:964]
-INFO: [Synth 8-638] synthesizing module 'GPI_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpi_module.vhd:105]
+INFO: [Synth 8-3491] module 'GPI_Module' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpi_module.vhd:90' bound to instance 'GPI_I1' of component 'GPI_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:964]
+INFO: [Synth 8-638] synthesizing module 'GPI_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpi_module.vhd:105]
 	Parameter C_USE_GPI bound to: 0 - type: integer 
 	Parameter C_GPI_SIZE bound to: 32 - type: integer 
 	Parameter C_GPI_INTERRUPT bound to: 0 - type: integer 
-INFO: [Synth 8-256] done synthesizing module 'GPI_Module' (11#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpi_module.vhd:105]
+INFO: [Synth 8-256] done synthesizing module 'GPI_Module' (11#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpi_module.vhd:105]
 	Parameter C_USE_GPI bound to: 0 - type: integer 
 	Parameter C_GPI_SIZE bound to: 32 - type: integer 
 	Parameter C_GPI_INTERRUPT bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'GPI_Module' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpi_module.vhd:90' bound to instance 'GPI_I2' of component 'GPI_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:979]
+INFO: [Synth 8-3491] module 'GPI_Module' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpi_module.vhd:90' bound to instance 'GPI_I2' of component 'GPI_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:979]
 	Parameter C_USE_GPI bound to: 0 - type: integer 
 	Parameter C_GPI_SIZE bound to: 32 - type: integer 
 	Parameter C_GPI_INTERRUPT bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'GPI_Module' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpi_module.vhd:90' bound to instance 'GPI_I3' of component 'GPI_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:994]
+INFO: [Synth 8-3491] module 'GPI_Module' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpi_module.vhd:90' bound to instance 'GPI_I3' of component 'GPI_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:994]
 	Parameter C_USE_GPI bound to: 0 - type: integer 
 	Parameter C_GPI_SIZE bound to: 32 - type: integer 
 	Parameter C_GPI_INTERRUPT bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'GPI_Module' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpi_module.vhd:90' bound to instance 'GPI_I4' of component 'GPI_Module' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:1009]
+INFO: [Synth 8-3491] module 'GPI_Module' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/gpi_module.vhd:90' bound to instance 'GPI_I4' of component 'GPI_Module' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:1009]
 	Parameter C_INTC_ENABLED bound to: 65542 - type: integer 
 	Parameter C_INTC_LEVEL_EDGE bound to: 32'b00000000000000001111111111111111 
 	Parameter C_INTC_POSITIVE bound to: 32'b11111111111111111111111111111111 
@@ -729,8 +728,8 @@ INFO: [Synth 8-3491] module 'GPI_Module' declared at '/home/tmnguyen/mu2e_monito
 	Parameter C_INTC_NUM_SYNC_FF bound to: 2 - type: integer 
 	Parameter C_INTC_BASE_VECTORS bound to: 0 - type: integer 
 	Parameter C_USE_LUTRAM bound to: yes - type: string 
-INFO: [Synth 8-3491] module 'intr_ctrl' declared at '/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:91' bound to instance 'intr_ctrl_I1' of component 'intr_ctrl' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:1050]
-INFO: [Synth 8-638] synthesizing module 'intr_ctrl' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:126]
+INFO: [Synth 8-3491] module 'intr_ctrl' declared at '/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:91' bound to instance 'intr_ctrl_I1' of component 'intr_ctrl' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:1050]
+INFO: [Synth 8-638] synthesizing module 'intr_ctrl' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:126]
 	Parameter C_USE_COMB_MUX bound to: 0 - type: integer 
 	Parameter C_INTC_ENABLED bound to: 65542 - type: integer 
 	Parameter C_INTC_LEVEL_EDGE bound to: 65535 - type: integer 
@@ -741,82 +740,82 @@ INFO: [Synth 8-638] synthesizing module 'intr_ctrl' [/home/tmnguyen/mu2e_monitor
 	Parameter C_INTC_NUM_SYNC_FF bound to: 2 - type: integer 
 	Parameter C_INTC_BASE_VECTORS bound to: 0 - type: integer 
 	Parameter C_USE_LUTRAM bound to: yes - type: string 
-INFO: [Synth 8-5534] Detected attribute (* async_reg = "TRUE" *) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:161]
-INFO: [Synth 8-5534] Detected attribute (* ram_style = "distributed" *) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:312]
-WARNING: [Synth 8-5827] expecting unsigned expression [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:352]
-WARNING: [Synth 8-5827] expecting unsigned expression [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:352]
-WARNING: [Synth 8-5827] expecting unsigned expression [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:352]
-WARNING: [Synth 8-5827] expecting unsigned expression [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:352]
-INFO: [Synth 8-226] default block is never used [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:365]
+INFO: [Synth 8-5534] Detected attribute (* async_reg = "TRUE" *) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:161]
+INFO: [Synth 8-5534] Detected attribute (* ram_style = "distributed" *) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:312]
+WARNING: [Synth 8-5827] expecting unsigned expression [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:352]
+WARNING: [Synth 8-5827] expecting unsigned expression [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:352]
+WARNING: [Synth 8-5827] expecting unsigned expression [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:352]
+WARNING: [Synth 8-5827] expecting unsigned expression [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:352]
+INFO: [Synth 8-226] default block is never used [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:365]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
-WARNING: [Synth 8-3936] Found unconnected internal register 'Using_Fast.fast_ack_reg' and it is trimmed from '32' to '17' bits. [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:240]
-INFO: [Synth 8-256] done synthesizing module 'intr_ctrl' (12#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:126]
-INFO: [Synth 8-256] done synthesizing module 'Iomodule_core' (13#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:284]
-INFO: [Synth 8-256] done synthesizing module 'iomodule' (14#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule.vhd:286]
-INFO: [Synth 8-256] done synthesizing module 'bd_fc5c_iomodule_0_0' (15#1) [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/synth/bd_fc5c_iomodule_0_0.vhd:94]
+INFO: [Synth 8-113] binding component instance 'fdr_i' to cell 'FDR' [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:481]
+WARNING: [Synth 8-3936] Found unconnected internal register 'Using_Fast.fast_ack_reg' and it is trimmed from '32' to '17' bits. [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:240]
+INFO: [Synth 8-256] done synthesizing module 'intr_ctrl' (12#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/intr_ctrl.vhd:126]
+INFO: [Synth 8-256] done synthesizing module 'Iomodule_core' (13#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule_core.vhd:284]
+INFO: [Synth 8-256] done synthesizing module 'iomodule' (14#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/iomodule_v3_0_5/hdl/vhdl/iomodule.vhd:286]
+INFO: [Synth 8-256] done synthesizing module 'bd_fc5c_iomodule_0_0' (15#1) [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/synth/bd_fc5c_iomodule_0_0.vhd:94]
 WARNING: [Synth 8-3331] design pselect_mask__parameterized1 has unconnected port A[2]
 WARNING: [Synth 8-3331] design pselect_mask__parameterized1 has unconnected port A[3]
 WARNING: [Synth 8-3331] design pselect_mask__parameterized1 has unconnected port A[4]
@@ -919,7 +918,7 @@ WARNING: [Synth 8-3331] design GPI_Module has unconnected port GPI[17]
 WARNING: [Synth 8-3331] design GPI_Module has unconnected port GPI[16]
 INFO: [Common 17-14] Message 'Synth 8-3331' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:12 ; elapsed = 00:00:13 . Memory (MB): peak = 1202.445 ; gain = 232.617 ; free physical = 2820 ; free virtual = 11686
+Finished RTL Elaboration : Time (s): cpu = 00:00:12 ; elapsed = 00:00:13 . Memory (MB): peak = 1233.176 ; gain = 257.844 ; free physical = 1501 ; free virtual = 10101
 ---------------------------------------------------------------------------------
 
 Report Check Netlist: 
@@ -929,7 +928,7 @@ Report Check Netlist:
 |1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
 +------+------------------+-------+---------+-------+------------------+
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:12 ; elapsed = 00:00:13 . Memory (MB): peak = 1202.445 ; gain = 232.617 ; free physical = 2820 ; free virtual = 11686
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:12 ; elapsed = 00:00:13 . Memory (MB): peak = 1233.176 ; gain = 257.844 ; free physical = 1501 ; free virtual = 10101
 ---------------------------------------------------------------------------------
 INFO: [Netlist 29-17] Analyzing 40 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
@@ -938,12 +937,12 @@ INFO: [Project 1-570] Preparing netlist for logic optimization
 
 Processing XDC Constraints
 Initializing timing engine
-Parsing XDC File [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/bd_fc5c_iomodule_0_0_ooc.xdc] for cell 'U0'
-Finished Parsing XDC File [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/bd_fc5c_iomodule_0_0_ooc.xdc] for cell 'U0'
-Parsing XDC File [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/bd_fc5c_iomodule_0_0_board.xdc] for cell 'U0'
-Finished Parsing XDC File [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/bd_fc5c_iomodule_0_0_board.xdc] for cell 'U0'
-Parsing XDC File [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.runs/bd_fc5c_iomodule_0_0_synth_1/dont_touch.xdc]
-Finished Parsing XDC File [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.runs/bd_fc5c_iomodule_0_0_synth_1/dont_touch.xdc]
+Parsing XDC File [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/bd_fc5c_iomodule_0_0_ooc.xdc] for cell 'U0'
+Finished Parsing XDC File [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/bd_fc5c_iomodule_0_0_ooc.xdc] for cell 'U0'
+Parsing XDC File [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/bd_fc5c_iomodule_0_0_board.xdc] for cell 'U0'
+Finished Parsing XDC File [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/bd_fc5c_iomodule_0_0_board.xdc] for cell 'U0'
+Parsing XDC File [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/bd_fc5c_iomodule_0_0_synth_1/dont_touch.xdc]
+Finished Parsing XDC File [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/bd_fc5c_iomodule_0_0_synth_1/dont_touch.xdc]
 Completed Processing XDC Constraints
 
 INFO: [Project 1-111] Unisim Transformation Summary:
@@ -953,23 +952,23 @@ INFO: [Project 1-111] Unisim Transformation Summary:
   MUXF5 => LUT3: 2 instances
   MUXF6 => LUT3: 1 instances
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00.06 ; elapsed = 00:00:00.05 . Memory (MB): peak = 1562.902 ; gain = 0.004 ; free physical = 2575 ; free virtual = 11442
+Constraint Validation Runtime : Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.06 . Memory (MB): peak = 1589.641 ; gain = 0.004 ; free physical = 1267 ; free virtual = 9867
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:30 ; elapsed = 00:00:31 . Memory (MB): peak = 1562.902 ; gain = 593.074 ; free physical = 2575 ; free virtual = 11442
+Finished Constraint Validation : Time (s): cpu = 00:00:30 ; elapsed = 00:00:33 . Memory (MB): peak = 1589.641 ; gain = 614.309 ; free physical = 1256 ; free virtual = 9857
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7k420tffg1156-2
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:30 ; elapsed = 00:00:31 . Memory (MB): peak = 1562.902 ; gain = 593.074 ; free physical = 2575 ; free virtual = 11442
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:30 ; elapsed = 00:00:33 . Memory (MB): peak = 1589.641 ; gain = 614.309 ; free physical = 1256 ; free virtual = 9857
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
 ---------------------------------------------------------------------------------
 Applied set_property DONT_TOUCH = true for U0. (constraint file  auto generated constraint, line ).
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:30 ; elapsed = 00:00:31 . Memory (MB): peak = 1562.902 ; gain = 593.074 ; free physical = 2575 ; free virtual = 11442
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:30 ; elapsed = 00:00:33 . Memory (MB): peak = 1589.641 ; gain = 614.309 ; free physical = 1256 ; free virtual = 9857
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-5544] ROM "fast_state" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "INTC_IRQ" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
@@ -1015,7 +1014,7 @@ INFO: [Synth 8-5546] ROM "civar_reg[0]" won't be mapped to RAM because it is too
 INFO: [Synth 8-5544] ROM "byte_res[2]" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "mux_sel_is_zero" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:31 ; elapsed = 00:00:32 . Memory (MB): peak = 1562.902 ; gain = 593.074 ; free physical = 2563 ; free virtual = 11430
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:32 ; elapsed = 00:00:34 . Memory (MB): peak = 1589.641 ; gain = 614.309 ; free physical = 1250 ; free virtual = 9850
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -1131,16 +1130,16 @@ BRAMs: 1670 (col length: RAMB18 160 RAMB36 80)
 ---------------------------------------------------------------------------------
 Finished Part Resource Summary
 ---------------------------------------------------------------------------------
-Start Parallel Synthesis Optimization  : Time (s): cpu = 00:00:32 ; elapsed = 00:00:32 . Memory (MB): peak = 1562.902 ; gain = 593.074 ; free physical = 2563 ; free virtual = 11430
+Start Parallel Synthesis Optimization  : Time (s): cpu = 00:00:32 ; elapsed = 00:00:34 . Memory (MB): peak = 1589.641 ; gain = 614.309 ; free physical = 1249 ; free virtual = 9850
 ---------------------------------------------------------------------------------
 Start Cross Boundary Optimization
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-5546] ROM "IOModule_Core_I1/intr_ctrl_I1/byte_zeros" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "IOModule_Core_I1/intr_ctrl_I1/byte_zeros" won't be mapped to RAM because it is too sparse
 ---------------------------------------------------------------------------------
-Finished Cross Boundary Optimization : Time (s): cpu = 00:00:32 ; elapsed = 00:00:33 . Memory (MB): peak = 1562.902 ; gain = 593.074 ; free physical = 2563 ; free virtual = 11430
+Finished Cross Boundary Optimization : Time (s): cpu = 00:00:32 ; elapsed = 00:00:35 . Memory (MB): peak = 1589.641 ; gain = 614.309 ; free physical = 1249 ; free virtual = 9850
 ---------------------------------------------------------------------------------
-Finished Parallel Reinference  : Time (s): cpu = 00:00:32 ; elapsed = 00:00:33 . Memory (MB): peak = 1562.902 ; gain = 593.074 ; free physical = 2563 ; free virtual = 11430
+Finished Parallel Reinference  : Time (s): cpu = 00:00:32 ; elapsed = 00:00:35 . Memory (MB): peak = 1589.641 ; gain = 614.309 ; free physical = 1249 ; free virtual = 9850
 
 Report RTL Partitions: 
 +-+--------------+------------+----------+
@@ -1316,9 +1315,9 @@ WARNING: [Synth 8-3332] Sequential element (IOModule_Core_I1/intr_ctrl_I1/Using_
 INFO: [Common 17-14] Message 'Synth 8-3332' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (U0/\IOModule_Core_I1/intr_ctrl_I1/Using_Fast.civr_reg[2] )
 ---------------------------------------------------------------------------------
-Finished Area Optimization : Time (s): cpu = 00:00:33 ; elapsed = 00:00:34 . Memory (MB): peak = 1562.906 ; gain = 593.078 ; free physical = 2548 ; free virtual = 11414
+Finished Area Optimization : Time (s): cpu = 00:00:33 ; elapsed = 00:00:36 . Memory (MB): peak = 1589.645 ; gain = 614.312 ; free physical = 1234 ; free virtual = 9835
 ---------------------------------------------------------------------------------
-Finished Parallel Area Optimization  : Time (s): cpu = 00:00:33 ; elapsed = 00:00:34 . Memory (MB): peak = 1562.906 ; gain = 593.078 ; free physical = 2548 ; free virtual = 11414
+Finished Parallel Area Optimization  : Time (s): cpu = 00:00:33 ; elapsed = 00:00:36 . Memory (MB): peak = 1589.645 ; gain = 614.312 ; free physical = 1234 ; free virtual = 9835
 
 Report RTL Partitions: 
 +-+--------------+------------+----------+
@@ -1332,10 +1331,10 @@ Start Timing Optimization
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:44 ; elapsed = 00:00:45 . Memory (MB): peak = 1562.906 ; gain = 593.078 ; free physical = 2528 ; free virtual = 11395
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:45 ; elapsed = 00:00:48 . Memory (MB): peak = 1589.645 ; gain = 614.312 ; free physical = 1212 ; free virtual = 9814
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:00:45 ; elapsed = 00:00:46 . Memory (MB): peak = 1562.906 ; gain = 593.078 ; free physical = 2519 ; free virtual = 11386
+Finished Timing Optimization : Time (s): cpu = 00:00:45 ; elapsed = 00:00:48 . Memory (MB): peak = 1589.645 ; gain = 614.312 ; free physical = 1203 ; free virtual = 9805
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -1347,16 +1346,16 @@ Report RTL Partitions:
 Start Technology Mapping
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:00:45 ; elapsed = 00:00:46 . Memory (MB): peak = 1562.906 ; gain = 593.078 ; free physical = 2502 ; free virtual = 11369
+Finished Technology Mapping : Time (s): cpu = 00:00:45 ; elapsed = 00:00:48 . Memory (MB): peak = 1589.645 ; gain = 614.312 ; free physical = 1186 ; free virtual = 9788
 ---------------------------------------------------------------------------------
-Finished Parallel Technology Mapping Optimization  : Time (s): cpu = 00:00:45 ; elapsed = 00:00:46 . Memory (MB): peak = 1562.906 ; gain = 593.078 ; free physical = 2502 ; free virtual = 11369
+Finished Parallel Technology Mapping Optimization  : Time (s): cpu = 00:00:45 ; elapsed = 00:00:48 . Memory (MB): peak = 1589.645 ; gain = 614.312 ; free physical = 1186 ; free virtual = 9788
 
 Report RTL Partitions: 
 +-+--------------+------------+----------+
 | |RTL Partition |Replication |Instances |
 +-+--------------+------------+----------+
 +-+--------------+------------+----------+
-Finished Parallel Synthesis Optimization  : Time (s): cpu = 00:00:45 ; elapsed = 00:00:46 . Memory (MB): peak = 1562.906 ; gain = 593.078 ; free physical = 2502 ; free virtual = 11369
+Finished Parallel Synthesis Optimization  : Time (s): cpu = 00:00:45 ; elapsed = 00:00:48 . Memory (MB): peak = 1589.645 ; gain = 614.312 ; free physical = 1186 ; free virtual = 9788
 ---------------------------------------------------------------------------------
 Start IO Insertion
 ---------------------------------------------------------------------------------
@@ -1373,7 +1372,7 @@ Start Final Netlist Cleanup
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:00:45 ; elapsed = 00:00:46 . Memory (MB): peak = 1562.906 ; gain = 593.078 ; free physical = 2502 ; free virtual = 11369
+Finished IO Insertion : Time (s): cpu = 00:00:46 ; elapsed = 00:00:49 . Memory (MB): peak = 1589.645 ; gain = 614.312 ; free physical = 1186 ; free virtual = 9787
 ---------------------------------------------------------------------------------
 
 Report Check Netlist: 
@@ -1386,7 +1385,7 @@ Report Check Netlist:
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:00:45 ; elapsed = 00:00:46 . Memory (MB): peak = 1562.906 ; gain = 593.078 ; free physical = 2502 ; free virtual = 11369
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:46 ; elapsed = 00:00:49 . Memory (MB): peak = 1589.645 ; gain = 614.312 ; free physical = 1186 ; free virtual = 9787
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -1398,25 +1397,25 @@ Report RTL Partitions:
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:46 ; elapsed = 00:00:47 . Memory (MB): peak = 1562.906 ; gain = 593.078 ; free physical = 2502 ; free virtual = 11369
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:46 ; elapsed = 00:00:49 . Memory (MB): peak = 1589.645 ; gain = 614.312 ; free physical = 1186 ; free virtual = 9787
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:00:46 ; elapsed = 00:00:47 . Memory (MB): peak = 1562.906 ; gain = 593.078 ; free physical = 2502 ; free virtual = 11369
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:46 ; elapsed = 00:00:49 . Memory (MB): peak = 1589.645 ; gain = 614.312 ; free physical = 1186 ; free virtual = 9787
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:46 ; elapsed = 00:00:47 . Memory (MB): peak = 1562.906 ; gain = 593.078 ; free physical = 2502 ; free virtual = 11369
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:46 ; elapsed = 00:00:49 . Memory (MB): peak = 1589.645 ; gain = 614.312 ; free physical = 1186 ; free virtual = 9787
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:00:46 ; elapsed = 00:00:47 . Memory (MB): peak = 1562.906 ; gain = 593.078 ; free physical = 2502 ; free virtual = 11369
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:46 ; elapsed = 00:00:49 . Memory (MB): peak = 1589.645 ; gain = 614.312 ; free physical = 1186 ; free virtual = 9787
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -1480,19 +1479,19 @@ Report Instance Areas:
 |24    |      intr_ctrl_I1                                      |intr_ctrl                   |   252|
 +------+--------------------------------------------------------+----------------------------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:00:46 ; elapsed = 00:00:47 . Memory (MB): peak = 1562.906 ; gain = 593.078 ; free physical = 2502 ; free virtual = 11369
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:46 ; elapsed = 00:00:49 . Memory (MB): peak = 1589.645 ; gain = 614.312 ; free physical = 1186 ; free virtual = 9787
 ---------------------------------------------------------------------------------
 Synthesis finished with 0 errors, 0 critical warnings and 557 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:00:30 ; elapsed = 00:00:31 . Memory (MB): peak = 1562.906 ; gain = 112.445 ; free physical = 2502 ; free virtual = 11369
-Synthesis Optimization Complete : Time (s): cpu = 00:00:46 ; elapsed = 00:00:47 . Memory (MB): peak = 1562.906 ; gain = 593.078 ; free physical = 2502 ; free virtual = 11369
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:31 ; elapsed = 00:00:32 . Memory (MB): peak = 1589.645 ; gain = 106.445 ; free physical = 1186 ; free virtual = 9787
+Synthesis Optimization Complete : Time (s): cpu = 00:00:46 ; elapsed = 00:00:49 . Memory (MB): peak = 1589.645 ; gain = 614.312 ; free physical = 1186 ; free virtual = 9787
 INFO: [Project 1-571] Translating synthesized netlist
 INFO: [Netlist 29-17] Analyzing 11 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
-Parsing XDC File [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/bd_fc5c_iomodule_0_0_ooc.xdc] for cell 'U0'
-Finished Parsing XDC File [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/bd_fc5c_iomodule_0_0_ooc.xdc] for cell 'U0'
-Parsing XDC File [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/bd_fc5c_iomodule_0_0_board.xdc] for cell 'U0'
-Finished Parsing XDC File [/home/tmnguyen/mu2e_monitor_firmware_original/firmware_original/mu2e_1.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/bd_fc5c_iomodule_0_0_board.xdc] for cell 'U0'
+Parsing XDC File [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/bd_fc5c_iomodule_0_0_ooc.xdc] for cell 'U0'
+Finished Parsing XDC File [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/bd_fc5c_iomodule_0_0_ooc.xdc] for cell 'U0'
+Parsing XDC File [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/bd_fc5c_iomodule_0_0_board.xdc] for cell 'U0'
+Finished Parsing XDC File [/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/microblaze_mcs_0/bd_0/ip/ip_7/bd_fc5c_iomodule_0_0_board.xdc] for cell 'U0'
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 8 instances were transformed.
@@ -1503,9 +1502,9 @@ INFO: [Project 1-111] Unisim Transformation Summary:
   SRLC32E => SRLC32E: 1 instances
 
 INFO: [Common 17-83] Releasing license: Synthesis
-287 Infos, 205 Warnings, 0 Critical Warnings and 0 Errors encountered.
+286 Infos, 205 Warnings, 0 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:00:45 ; elapsed = 00:00:45 . Memory (MB): peak = 1562.906 ; gain = 515.523 ; free physical = 2496 ; free virtual = 11363
+synth_design: Time (s): cpu = 00:00:46 ; elapsed = 00:00:48 . Memory (MB): peak = 1589.645 ; gain = 539.754 ; free physical = 1181 ; free virtual = 9782
 INFO: [Coretcl 2-1174] Renamed 23 cell refs.
-report_utilization: Time (s): cpu = 00:00:00.05 ; elapsed = 00:00:00.11 . Memory (MB): peak = 1602.914 ; gain = 0.000 ; free physical = 2495 ; free virtual = 11362
-INFO: [Common 17-206] Exiting Vivado at Thu May  2 16:18:09 2019...
+report_utilization: Time (s): cpu = 00:00:00.08 ; elapsed = 00:00:00.11 . Memory (MB): peak = 1621.656 ; gain = 0.000 ; free physical = 1178 ; free virtual = 9779
+INFO: [Common 17-206] Exiting Vivado at Fri Mar 22 16:55:09 2024...

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="gig_ethernet_pcs_pma_0_synth_1" LaunchPart="xc7k420tffg1156-2" LaunchTime="1699934375">
+<GenRun Id="gig_ethernet_pcs_pma_0_synth_1" LaunchPart="xc7k420tffg1156-2" LaunchTime="1711038592">
   <File Type="PA-TCL" Name="gig_ethernet_pcs_pma_0.tcl"/>
-  <File Type="RDS-PROPCONSTRS" Name="gig_ethernet_pcs_pma_0_drc_synth.rpt"/>
   <File Type="RDS-RDS" Name="gig_ethernet_pcs_pma_0.vds"/>
-  <File Type="RDS-UTIL" Name="gig_ethernet_pcs_pma_0_utilization_synth.rpt"/>
-  <File Type="RDS-UTIL-PB" Name="gig_ethernet_pcs_pma_0_utilization_synth.pb"/>
-  <File Type="RDS-DCP" Name="gig_ethernet_pcs_pma_0.dcp"/>
   <File Type="VDS-TIMINGSUMMARY" Name="gig_ethernet_pcs_pma_0_timing_summary_synth.rpt"/>
   <File Type="VDS-TIMING-PB" Name="gig_ethernet_pcs_pma_0_timing_summary_synth.pb"/>
+  <File Type="RDS-DCP" Name="gig_ethernet_pcs_pma_0.dcp"/>
+  <File Type="RDS-UTIL-PB" Name="gig_ethernet_pcs_pma_0_utilization_synth.pb"/>
+  <File Type="RDS-UTIL" Name="gig_ethernet_pcs_pma_0_utilization_synth.rpt"/>
+  <File Type="RDS-PROPCONSTRS" Name="gig_ethernet_pcs_pma_0_drc_synth.rpt"/>
   <FileSet Name="sources" Type="BlockSrcs" RelSrcDir="$PSRCDIR/gig_ethernet_pcs_pma_0">
     <File Path="$PSRCDIR/sources_1/ip/gig_ethernet_pcs_pma_0/gig_ethernet_pcs_pma_0.xci">
       <FileInfo>

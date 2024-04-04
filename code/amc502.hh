@@ -114,6 +114,7 @@ namespace amc502 {
     }
     friend std::ostream& operator <<(std::ostream & os,const GlobalRegisterField &f) {
        os << f.Value();
+       return os;
     }
     void Print() const {
       std::cout << "  " << Name() << " = " << std::dec << Value() << std::endl;
