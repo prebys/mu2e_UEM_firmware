@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenRun Id="impl_1" LaunchPart="xc7k420tffg1156-2" LaunchTime="1613156010">
+  <File Type="OPT-TIMING" Name="amc502_fmc228_fpga_f0_timing_summary_opted.rpt"/>
+  <File Type="PLACE-IO" Name="amc502_fmc228_fpga_f0_io_placed.rpt"/>
+  <File Type="POSTPLACE-PWROPT-TIMING" Name="amc502_fmc228_fpga_f0_timing_summary_postplace_pwropted.rpt"/>
+  <File Type="PLACE-UTIL-PB" Name="amc502_fmc228_fpga_f0_utilization_placed.pb"/>
+  <File Type="OPT-METHODOLOGY-DRC" Name="amc502_fmc228_fpga_f0_methodology_drc_opted.rpt"/>
+  <File Type="PLACE-CTRL" Name="amc502_fmc228_fpga_f0_control_sets_placed.rpt"/>
+  <File Type="PHYSOPT-TIMING" Name="amc502_fmc228_fpga_f0_timing_summary_physopted.rpt"/>
+  <File Type="PLACE-CLK" Name="amc502_fmc228_fpga_f0_clock_utilization_placed.rpt"/>
+  <File Type="PLACE-UTIL" Name="amc502_fmc228_fpga_f0_utilization_placed.rpt"/>
+  <File Type="PWROPT-DRC" Name="amc502_fmc228_fpga_f0_drc_pwropted.rpt"/>
+  <File Type="BITSTR-SYSDEF" Name="amc502_fmc228_fpga_f0.sysdef"/>
+  <File Type="ROUTE-TIMING-RPX" Name="amc502_fmc228_fpga_f0_timing_summary_routed.rpx"/>
+  <File Type="BG-BGN" Name="amc502_fmc228_fpga_f0.bgn"/>
+  <File Type="POSTROUTE-PHYSOPT-TIMING-RPX" Name="amc502_fmc228_fpga_f0_timing_summary_postroute_physopted.rpx"/>
+  <File Type="ROUTE-PWR-RPX" Name="amc502_fmc228_fpga_f0_power_routed.rpx"/>
+  <File Type="PHYSOPT-DRC" Name="amc502_fmc228_fpga_f0_drc_physopted.rpt"/>
+  <File Type="ROUTE-PWR-SUM" Name="amc502_fmc228_fpga_f0_power_summary_routed.pb"/>
+  <File Type="PLACE-TIMING" Name="amc502_fmc228_fpga_f0_timing_summary_placed.rpt"/>
+  <File Type="OPT-HWDEF" Name="amc502_fmc228_fpga_f0.hwdef"/>
+  <File Type="POSTROUTE-PHYSOPT-BLACKBOX-DCP" Name="amc502_fmc228_fpga_f0_postroute_physopt_bb.dcp"/>
+  <File Type="WBT-USG" Name="usage_statistics_webtalk.html"/>
+  <File Type="PLACE-PRE-SIMILARITY" Name="amc502_fmc228_fpga_f0_incremental_reuse_pre_placed.rpt"/>
+  <File Type="ROUTE-METHODOLOGY-DRC-PB" Name="amc502_fmc228_fpga_f0_methodology_drc_routed.pb"/>
+  <File Type="POSTROUTE-PHYSOPT-TIMING-PB" Name="amc502_fmc228_fpga_f0_timing_summary_postroute_physopted.pb"/>
+  <File Type="ROUTE-DCP" Name="amc502_fmc228_fpga_f0_routed.dcp"/>
+  <File Type="OPT-DRC" Name="amc502_fmc228_fpga_f0_drc_opted.rpt"/>
+  <File Type="PWROPT-TIMING" Name="amc502_fmc228_fpga_f0_timing_summary_pwropted.rpt"/>
+  <File Type="RDI-RDI" Name="amc502_fmc228_fpga_f0.vdi"/>
+  <File Type="ROUTE-BLACKBOX-DCP" Name="amc502_fmc228_fpga_f0_routed_bb.dcp"/>
+  <File Type="ROUTE-DRC" Name="amc502_fmc228_fpga_f0_drc_routed.rpt"/>
+  <File Type="PLACE-SIMILARITY" Name="amc502_fmc228_fpga_f0_incremental_reuse_placed.rpt"/>
+  <File Type="ROUTE-METHODOLOGY-DRC" Name="amc502_fmc228_fpga_f0_methodology_drc_routed.rpt"/>
+  <File Type="ROUTE-DRC-PB" Name="amc502_fmc228_fpga_f0_drc_routed.pb"/>
+  <File Type="ROUTE-TIMINGSUMMARY" Name="amc502_fmc228_fpga_f0_timing_summary_routed.rpt"/>
+  <File Type="BG-BIT" Name="amc502_fmc228_fpga_f0.bit"/>
+  <File Type="ROUTE-STATUS" Name="amc502_fmc228_fpga_f0_route_status.rpt"/>
+  <File Type="ROUTE-PWR" Name="amc502_fmc228_fpga_f0_power_routed.rpt"/>
+  <File Type="PHYSOPT-DCP" Name="amc502_fmc228_fpga_f0_physopt.dcp"/>
+  <File Type="ROUTE-STATUS-PB" Name="amc502_fmc228_fpga_f0_route_status.pb"/>
+  <File Type="BG-DRC" Name="amc502_fmc228_fpga_f0.drc"/>
+  <File Type="ROUTE-TIMING-PB" Name="amc502_fmc228_fpga_f0_timing_summary_routed.pb"/>
+  <File Type="POSTPLACE-PWROPT-DCP" Name="amc502_fmc228_fpga_f0_postplace_pwropt.dcp"/>
+  <File Type="BITSTR-MMI" Name="amc502_fmc228_fpga_f0.mmi"/>
+  <File Type="OPT-DCP" Name="amc502_fmc228_fpga_f0_opt.dcp"/>
+  <File Type="BITSTR-RBT" Name="amc502_fmc228_fpga_f0.rbt"/>
+  <File Type="POSTROUTE-PHYSOPT-TIMING" Name="amc502_fmc228_fpga_f0_timing_summary_postroute_physopted.rpt"/>
+  <File Type="INIT-TIMING" Name="amc502_fmc228_fpga_f0_timing_summary_init.rpt"/>
+  <File Type="BG-BIN" Name="amc502_fmc228_fpga_f0.bin"/>
+  <File Type="ROUTE-SIMILARITY" Name="amc502_fmc228_fpga_f0_incremental_reuse_routed.rpt"/>
+  <File Type="BITSTR-MSK" Name="amc502_fmc228_fpga_f0.msk"/>
+  <File Type="ROUTE-CLK" Name="amc502_fmc228_fpga_f0_clock_utilization_routed.rpt"/>
+  <File Type="BITSTR-NKY" Name="amc502_fmc228_fpga_f0.nky"/>
+  <File Type="PLACE-DCP" Name="amc502_fmc228_fpga_f0_placed.dcp"/>
+  <File Type="BITSTR-BMM" Name="amc502_fmc228_fpga_f0_bd.bmm"/>
+  <File Type="PWROPT-DCP" Name="amc502_fmc228_fpga_f0_pwropt.dcp"/>
+  <File Type="PA-TCL" Name="amc502_fmc228_fpga_f0.tcl"/>
+  <File Type="POSTROUTE-PHYSOPT-DCP" Name="amc502_fmc228_fpga_f0_postroute_physopt.dcp"/>
+  <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
+    <Filter Type="Srcs"/>
+    <File Path="$PPRDIR/sources/amc502/amc502_fmc228_f0.vhd">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/sources/common/axi_gpio_32.vhd">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/sources/common/axi_spi_sdio.vhd">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/sources/common/vt_single_sync.vhd">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/sources/common/axi_lite_rd_fifo.vhd">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/sources/amc502/bd/design_1/design_1.bd">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/sources/sdk/fmc228_tool/Debug/fmc228_tool.elf">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="ScopedToRef" Val="design_1"/>
+        <Attr Name="ScopedToCell" Val="microblaze_0"/>
+        <Attr Name="IsVisible" Val="1"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/sources/common/fmc228.vhd">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/sources/common/amc_common_reg.vhd">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/sources/amc502/jesd204_0_support.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="DesignMode" Val="RTL"/>
+      <Option Name="TopModule" Val="amc502_fmc228_fpga_f0"/>
+    </Config>
+  </FileSet>
+  <FileSet Name="constrs_in" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
+    <Filter Type="Constrs"/>
+    <File Path="$PPRDIR/sources/amc502/amc502_pins_f0.xdc">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="implementation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/sources/amc502/amc502_impl_f0.xdc">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="implementation"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="TargetConstrsFile" Val="$PPRDIR/sources/amc502/amc502_impl_f0.xdc"/>
+      <Option Name="ConstrsType" Val="XDC"/>
+    </Config>
+  </FileSet>
+  <Strategy Version="1" Minor="2">
+    <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2015"/>
+    <Step Id="init_design"/>
+    <Step Id="opt_design"/>
+    <Step Id="power_opt_design"/>
+    <Step Id="place_design"/>
+    <Step Id="post_place_power_opt_design"/>
+    <Step Id="phys_opt_design"/>
+    <Step Id="route_design"/>
+    <Step Id="post_route_phys_opt_design"/>
+    <Step Id="write_bitstream">
+      <Option Id="BinFile">1</Option>
+    </Step>
+  </Strategy>
+  <BlockFileSet Type="BlockSrcs" Name="fifo_generator_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="axi_crossbar_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="ila_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="jesd204_0_phy"/>
+  <BlockFileSet Type="BlockSrcs" Name="jesd204_0"/>
+</GenRun>
