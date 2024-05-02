@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -e
+
+BAD=0
+GOOD=0
+for i in `find .`; do
+	if [ -f $i ] &&
+	   [ -f $i.md5sum ]; then
+		NEWSUM=`md5sum $i | cut -b0-30`
+		OLDSUM=`cat $i.md5sum | cut -b0-30`
+
+		if [ $NEWSUM != $OLDSUM ]; then
+			echo -n "(*** ERROR ***)"
+			let BAD=BAD+1
+		else
+			echo -n "(     OK      )"
+			let GOOD=GOOD+1
+		fi
+		echo " $i"
+	fi
+done
+
+echo
+let TOTAL=BAD+GOOD
+echo "$BAD BAD, $GOOD GOOD ($TOTAL total files)"

@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# Load flash driver 
+
+BSP_ETC=/tmp/amc502_bsp_etcfs
+
+echo
+echo "NOTE: This upgrade script DOES upgrade/downgrade"
+echo "the bootloader if needed."
+echo "This is necessary to provide compatiblility"
+echo -n "for booting the new version of the Linux kernel."
+
+sleep 1
+echo -n "."
+sleep 1
+echo -n "."
+sleep 1
+echo -n "."
+sleep 1
+echo -n "."
+sleep 1
+echo "."
+echo
+
+###
+# Check for changes in the /etc directory
+#
+tar zxf amc502_bsp_etcfs.tgz -C /tmp
+for x in `find ${BSP_ETC} | cut -d\/ -f4-`; do
+    if [ -d ${BSP_ETC}/$x ]; then
+        continue
+    fi
+
+    if [ ! -e /etc/$x ] ; then
+        cp -fd ${BSP_ETC}/$x /etc/$x
+        continue
+    fi
+
+    if grep "$x" user_update &>/dev/null ; then
+        continue
+    fi
+
+    if ! diff -q ${BSP_ETC}/$x /etc/$x &>/dev/null ; then
+        echo "File \"$x\" differs from what was expected."
+
+        if grep "$x" required_update &>/dev/null || (( $NOPROMPT )) ; then
+            mv /etc/$x /etc/$x.old
+            cp -fd ${BSP_ETC}/$x /etc/$x
+            echo "File must be updated.  Existing file is saved as $x.old."
+            if !(( $NOPROMPT )); then
+                echo "Press ENTER to continue"
+                read $temp
+            fi
+            continue
+        fi
+
+        echo "Would you like to replace $x?"
+        echo -n "The existing file will be saved as $x.old. "
+        cp -fd ${BSP_ETC}/$x /etc/$x.new
+
+        while true; do
+            echo -n "(y/n)?  "
+            read option
+            case "$option" in
+                "Y" | "y" )
+                    mv -f /etc/$x /etc/$x.old
+                    mv -f /etc/$x.new /etc/$x
+                    echo "Existing file saved as $x.old."
+                    break ;;
+                "N" | "n" )
+                    echo "New file is $x.new.  Files should be compared for differences."
+                    break ;;
+                * ) echo "Invalid option. Valid options are (y/n)" ;;
+            esac
+        done
+    fi
+done
+
+echo
+
+# check if u-boot upgrade is necessary
+UBOOT_SIZE=`cat u-boot.imx | wc -c`
+MD5_NEW=`md5sum u-boot.imx | cut -c1-32`
+MD5_CUR=`dd if=/dev/mtd8 bs=${UBOOT_SIZE} count=1 2>/dev/null | md5sum - | cut -c1-32`
+if [ "${MD5_CUR}" != "${MD5_NEW}" ]; then
+    UBOOT_UPGRADE="-b u-boot.imx"
+else
+    UBOOT_UPGRADE=""
+fi
+./upgrader -k uImage -r rootfs.ubifs.img ${UBOOT_UPGRADE}

@@ -1,0 +1,118 @@
+2014.4:
+ * Version 12.1 (Rev. 4)
+ * Added support for 7-Series Defense-grade, Automotive, and Low Voltage parts
+ * Edited the example design demonstration testbench to monitor the mgt_tx_ready signal before beginning MDIO accesses (previously the testbench waited for a fixed duration which was sometimes overly conservative)
+ * Added a clock domain crossing synchronizer to signal_detect.
+ * Tidied up whitespace in HDL files for better alignment and indent consistency
+ * When the transceiver Rx PRBS functionality is enabled through the optional transceiver control and status ports, periodic transceiver RX resets are inhibited
+ * Encrypted source files are concatenated together to reduce the number of files and to reduce simulator compile time
+ * Reducing the default transceiver DRPCLK frequency in the cores out-of-context XDC file from 200MHz to 125MHz.  This is the default frequency used when the core is synthesised in isolation, and is overridden when the core is implemented in a full design.
+
+2014.3:
+ * Version 12.1 (Rev. 3)
+ * IBUF's have been added to the refclk_p and refclk_n inputs before the IBUFGTE2 primitive for all 7-Series devices.  These were previously inferred by the tools, so there is no change to overall logical functionality.  However, this does enable Vivado commands such as report_clock_networks to work correctly at all applicable Vivado stages
+ * Updated to use the latest GT Ultrascale Wizard
+ * Revised the Ultrascale reset logic to satisfy the minimum reset pulse width requirements for reset inputs of the Ultrascale GT Wizard instantiation
+ * Revised the Ultrascale reset logic to assert the Rx reset to the core when the transceviers are placed in powerdown
+ * For VHDL projects, all core VHDL files are now compiled into a core specific library (xaui_v12_1 for this core version) with the exception of the top level VHDL wrapper file for the core which remains in the default library (named xil_defaultlib unless overridden by the user).  This makes the core consistent with other Xilinx IP.  No changes to core instantiations are required in customer HDL files
+ * Input port default tie-off values for IP Integrator have been added to signal_detect and removed from clock signals (which must be connected)
+ * Fixed the example design to connect the output of the dclk BUFG clock buffer to the core (previously the dclk input was connected directly to the core)
+ * The directory path to the UltraScale FPGAs Transceivers Wizard output products has been shortened
+
+2014.2:
+ * Version 12.1 (Rev. 2)
+ * Updated to use the latest GT Ultrascale Wizard
+ * Fixed an issue on the GUI symbol where the gt_dmonitorout ports did not appear in the transcevier_debug bus interfaces when targeting the GTHE2 and GTXE2 transceivers
+
+2014.1:
+ * Version 12.1 (Rev. 1)
+ * Virtex UltraScale Pre-Production support
+ * Fixed the operation of the mgt_rx_reset_inprocess signal (part of the GTPE2/GTHE2 reset logic)(see Xilinx Answer 59860)
+ * Fixed GTPE2/GTHE2 reliability issues by ensuring that the GTPE2/GTHE2 cannot get permanently stuck in the wrong internal datawidth setting during reset cycles. (see Xilinx Answer 59861)
+ * Fixed powerdown reliability issues by ensuring that the transceiver phase alignment state machine is reset when the powerdown state is removed. (see Xilinx Answer 59292)
+ * Fixed the SIM_RESET_SPEEDUP attribute setting (now set to FALSE) for GTPE2 and GTHE2 transceivers, as per the 7-Series FPGAs Transceivers User Guides.  This is required in order to simulate correctly the transcevier reset/initialization sequence; this leads to longer reset/initialization simulation times.
+ * Increased the clock domain crossing synchronizer flip-flop stages for 20 Gigabits per second operation.
+ * Added missing XDC constraints on the MDIO signal inputs to ease timing closure (see Xilinx Answer 59912)
+ * Added clock frequency metadata to the GT reference clocks for use in IPI only.
+ * Updated the description in the Vivado IP cataglogue to state that the core can support 20 Gigabits per second operation.
+ * Internal device family name change, no functional changes
+
+2013.4:
+ * Version 12.1
+ * Kintex UltraScale Pre-Production support
+ * Increased the number of optional transceiver control and status ports.
+ * The mark_debug attribute was removed from all nets so that the Xilinx lab tools would not be prepopulated with an undesired configuration.
+
+2013.3:
+ * Version 12.0
+ * Artix-7 and Zynq-7000 devices now supported at Production status
+ * FBG packages enabled
+ * Added support for upgrade from previous versions.
+ * Added optional transceiver control and status ports support.
+ * Added support for IP Integrator.
+ * Fixed 7 Series GTP/GTH reset logic (see Xilinx Answer 56312).
+ * Updated synchronizers to improve Mean Time Between Failures (MTBF) for metastability.
+ * clk156 is now always a core output (clk156_out) driven by a BUFG. This clock cannot be shared with other XAUI core instances due to the GT buffer bypass mechanism.
+ * DRP ports are now only present if the additional transceiver control ports are enabled
+ * Added support for the out of context flow.
+ * Added GUI option to include or exclude shareable logic resources in the core. Please refer to the Product Guide for information and port changes.
+ * Updated 7 Series GTH QPLL attributes (see Xilinx Answer 56332)
+
+2013.2:
+ * Version 11.0 (Rev. 1)
+ * Fixed wrong set_false_path in XDC corresponding to AR 55226.
+ * Fixed RX termination attributes for 7 series GTP and GTH (AR 55837).
+
+2013.1:
+ * Version 11.0
+ * Zynq support.
+ * Artix7 20G XAUI support.
+ * The previous 'core block' level is now the top level of the core. This includes transicever instances. The transceiver instances and supporting logic are still delivered as plain HDL.
+ * Hierarchical XDC.
+ * Added support for the out-of-context flow
+
+(c) Copyright 2002 - 2014 Xilinx, Inc. All rights reserved.
+
+This file contains confidential and proprietary information
+of Xilinx, Inc. and is protected under U.S. and
+international copyright and other intellectual property
+laws.
+
+DISCLAIMER
+This disclaimer is not a license and does not grant any
+rights to the materials distributed herewith. Except as
+otherwise provided in a valid license issued to you by
+Xilinx, and to the maximum extent permitted by applicable
+law: (1) THESE MATERIALS ARE MADE AVAILABLE "AS IS" AND
+WITH ALL FAULTS, AND XILINX HEREBY DISCLAIMS ALL WARRANTIES
+AND CONDITIONS, EXPRESS, IMPLIED, OR STATUTORY, INCLUDING
+BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, NON-
+INFRINGEMENT, OR FITNESS FOR ANY PARTICULAR PURPOSE; and
+(2) Xilinx shall not be liable (whether in contract or tort,
+including negligence, or under any other theory of
+liability) for any loss or damage of any kind or nature
+related to, arising under or in connection with these
+materials, including for any direct, or any indirect,
+special, incidental, or consequential loss or damage
+(including loss of data, profits, goodwill, or any type of
+loss or damage suffered as a result of any action brought
+by a third party) even if such damage or loss was
+reasonably foreseeable or Xilinx had been advised of the
+possibility of the same.
+
+CRITICAL APPLICATIONS
+Xilinx products are not designed or intended to be fail-
+safe, or for use in any application requiring fail-safe
+performance, such as life-support or safety devices or
+systems, Class III medical devices, nuclear facilities,
+applications related to the deployment of airbags, or any
+other applications that could lead to death, personal
+injury, or severe property or environmental damage
+(individually and collectively, "Critical
+Applications"). Customer assumes the sole risk and
+liability of any use of Xilinx products in Critical
+Applications, subject only to applicable laws and
+regulations governing limitations on product liability.
+
+THIS COPYRIGHT NOTICE AND DISCLAIMER MUST BE RETAINED AS
+PART OF THIS FILE AT ALL TIMES.

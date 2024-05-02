@@ -1,0 +1,330 @@
+#!/bin/bash
+#
+# AMC502 Firmware Upgrader script
+#
+# Copyright 2014 VadaTech Incorporated.  All rights reserved.
+#
+# This script takes care of performing a fail-safe atomic upgrade
+# of the following components through the use of redundant partitioning:
+#
+#
+# NAND FLASH
+# ----------
+#    Linux Kernel image
+#    Linux root filesystem
+#
+# It is also capable of performing a non-fail-safe upgrade of the following:
+#
+# NOR FLASH
+# ---------
+#    U-Boot
+#    Redundant environment
+#
+# One or more of these upgrade images may be passed on any invocation of this
+# script (see usage below). If there are execution dependencies between two
+# or more of the images, then all of the dependent images should be passed to
+# the same invocation so that an atomic switchover to the new images will 
+# occur or nothing at all in the event of a failure during upgrade.
+
+NOBODY_HERE=NO
+REPORT_STATUS=NO
+WANT_UBOOT=NO
+WANT_ROOTFS=NO
+WANT_KERNEL=NO
+UBOOT=
+ROOTFS=
+KERNEL=
+
+NEW_PART_BASEFS_VER_MIN=3
+NEW_PART_ETCFS_IMG=./etcfs.jffs2
+NEW_PART_TMP_UBOOT=/tmp/mtd8_tmp
+
+MTD_UBOOT=/dev/mtd8
+MTD_ENV_A=/dev/mtd9
+MTD_ENV_B=/dev/mtd10
+MTD_ETC=/dev/mtd11
+MTD_KERNEL_A=/dev/mtd2
+MTD_ROOTFS_A=/dev/mtd3
+MTD_KERNEL_B=/dev/mtd5
+MTD_ROOTFS_B=/dev/mtd6
+
+WORKING_TMP_UBOOT_CFG=/tmp/uboot.cfg
+
+usage_exit()
+{
+	echo
+	echo "USAGE: upgrader <options>"
+	echo
+	echo "OPTIONS:"
+	echo "  [-b <uboot_bin>]      -    Upgrade u-boot bootloader in NOR flash"
+	echo "  [-k <kernel_img>]     -    Upgrade Linux Kernel in NAND flash"
+	echo "  [-r <rootfs_img>]     -    Upgrade Root filesystem in NAND flash"
+	echo "  [-n]                  -    Non-interactive (don't prompt for confirmation)"
+	echo "  [-s]                  -    Report status of the upgrade configuration blocks"
+	echo
+	exit 1
+}
+
+for i in "$@"; do
+	if [ "$WANT_UBOOT" == "YES" ]; then
+		WANT_UBOOT=NO
+		UBOOT="$i"
+
+		if [ ! -r "$UBOOT" ]; then
+			echo "ERROR: Unable to read file '$UBOOT'"
+			exit 1
+		fi
+	elif [ "$WANT_ROOTFS" == "YES" ]; then
+		WANT_ROOTFS=NO
+		ROOTFS="$i"
+
+		if [ ! -r "$ROOTFS" ]; then
+			echo "ERROR: Unable to read file '$ROOTFS'"
+			exit 1
+		fi
+	elif [ "$WANT_KERNEL" == "YES" ]; then
+		WANT_KERNEL=NO
+		KERNEL="$i"
+
+		if [ ! -r "$KERNEL" ]; then
+			echo "ERROR: Unable to read file '$KERNEL'"
+			exit 1
+		fi
+	elif [ "$i" == "-b" ]; then
+		WANT_UBOOT=YES
+	elif [ "$i" == "-r" ]; then
+		WANT_ROOTFS=YES
+	elif [ "$i" == "-k" ]; then
+		WANT_KERNEL=YES
+	elif [ "$i" == "-n" ]; then
+		NOBODY_HERE=YES
+	elif [ "$i" == "-s" ]; then
+		REPORT_STATUS=YES
+	else
+		usage_exit
+	fi
+done
+
+if [ "$WANT_UBOOT" == "YES" ] ||
+   [ "$WANT_ROOTFS" == "YES" ] ||
+   [ "$WANT_KERNEL" == "YES" ]; then
+	# incomplete arguments
+	usage_exit
+fi
+
+if [ "$REPORT_STATUS" == "YES" ]; then
+		TMP=`fw_printenv kernel 2>/dev/null`
+		TMP=${TMP:7}
+		echo -n "  Kernel partition: '$TMP' "
+		if [ "$TMP" == "kernel-a" ]; then
+			echo "($MTD_KERNEL_A)"
+		else
+			echo "($MTD_KERNEL_B)"
+		fi
+		TMP=`fw_printenv ubimtd 2>/dev/null`
+		TMP=${TMP:7}
+		echo -n "  RootFS partition: '$TMP' "
+		if [ "$TMP" == "3" ]; then
+			echo "($MTD_ROOTFS_A)"
+		else
+			echo "($MTD_ROOTFS_B)"
+		fi
+		echo
+fi
+
+if [ -z "$UBOOT" ] &&
+   [ -z "$ROOTFS" ] &&
+   [ -z "$KERNEL" ]; then
+	if [ "$REPORT_STATUS" != "YES" ]; then
+		# no arguments specified
+		usage_exit
+	else
+		exit 0
+	fi
+fi
+
+echo -n "==== AMC502 Upgrader ===="
+if [ "$NOBODY_HERE" == "YES" ]; then
+	echo " (Non-interactive)"
+else
+	echo
+fi
+
+BASEFS_VER=`bsp-version | grep "Base filesystem" | awk '{print $3}'`
+BASEFS_VER=${BASEFS_VER:1}
+
+if [ $BASEFS_VER -lt $NEW_PART_BASEFS_VER_MIN ]; then
+    echo "Version is less than $NEW_PART_BASEFS_VER_MIN :"
+    echo
+    echo "==== MOUNTING UBOOT PARTITION ===="
+    insmod /lib/modules/$(uname -r)/kernel/drivers/mtd/devices/m25p80.ko
+fi
+
+echo
+echo "  UBOOT: $UBOOT"
+echo " ROOTFS: $ROOTFS"
+echo " KERNEL: $KERNEL"
+echo
+
+if [ "$NOBODY_HERE" != "YES" ]; then
+	echo "Please ensure that you have specified the proper images."
+	read -p "Do you wish to continue with the upgrade (y/n)? " CONFIRM
+	echo
+
+	if [ $CONFIRM != "y" ] &&
+	   [ $CONFIRM != "Y" ]; then
+		echo "Quit."
+		rm -f $WORKING_TMP_UBOOT_CFG
+		exit 1
+	fi
+fi
+
+# NOTE: We don't upgrade the configuration block if only the bootloader changed
+if [ -n "$ROOTFS" ] ||
+   [ -n "$KERNEL" ]; then
+    REWRITE_CONF=YES
+else
+    REWRITE_CONF=NO
+fi
+
+   
+echo "==== UPGRADE IN PROGRESS - DO NOT INTERRUPT ===="
+echo
+
+# process root filesystem upgrade if desired
+if [ -n "$ROOTFS" ]; then
+	echo "==== STAGING ROOTFS ===="
+	echo
+
+	CURRENT_ROOTFS=`fw_printenv ubimtd`
+	if [ "$?" != "0" ]; then
+		echo "ERROR: Unable to get current root filesystem partition"
+		exit 1
+	fi
+
+	CURRENT_ROOTFS=${CURRENT_ROOTFS:7}
+	if [ "$CURRENT_ROOTFS" == "3" ]; then
+		NEXT_ROOTFS="6"
+		WORKING_MTD_ROOTFS=$MTD_ROOTFS_B
+
+		MOUNTED=`cat /proc/cmdline | grep ubimtd=6`
+	elif [ "$CURRENT_ROOTFS" == "6" ]; then
+		NEXT_ROOTFS="3"
+		WORKING_MTD_ROOTFS=$MTD_ROOTFS_A
+
+		MOUNTED=`cat /proc/cmdline | grep ubimtd=3`
+	fi
+
+	# Don't upgrade the currently mounted partition!
+	if [ -n "$MOUNTED" ]; then
+		echo "CANNOT CONTINUE: Please reboot to the latest upgraded filesystem"
+		echo "before attempting to upgrade it again.  Upgrading twice without"
+		echo "rebooting would attempt to wipe out the currently mounted root."
+		echo
+		echo "FAILURE - Please re-attempt upgrade after power-cycling the board"
+		exit 1
+	fi
+
+	echo "Current root filesystem is '$CURRENT_ROOTFS', next will be '$NEXT_ROOTFS' ($WORKING_MTD_ROOTFS)"
+
+	echo "Preparing new configuration block..."
+	echo "ubimtd $NEXT_ROOTFS" >> $WORKING_TMP_UBOOT_CFG
+	echo
+
+	# Erase/program the flash partition
+	echo "Erasing $WORKING_MTD_ROOTFS..."
+	flash_erase $WORKING_MTD_ROOTFS 0 0
+	echo "Writing root filesystem to $WORKING_MTD_ROOTFS..."
+	ubiformat $WORKING_MTD_ROOTFS -f $ROOTFS
+	echo
+fi
+
+# process kernel upgrade if desired
+if [ -n "$KERNEL" ]; then
+	echo "==== STAGING KERNEL ===="
+	echo
+
+	CURRENT_KERNEL=`fw_printenv kernel`
+	if [ "$?" != "0" ]; then
+		echo "ERROR: Unable to get current kernel partition"
+		exit 1
+	fi
+
+	CURRENT_KERNEL=${CURRENT_KERNEL:7}
+	if [ "$CURRENT_KERNEL" == "kernel-a" ]; then
+		NEXT_KERNEL="kernel-b"
+		WORKING_MTD_KERNEL=$MTD_KERNEL_B
+	elif [ "$CURRENT_KERNEL" == "kernel-b" ]; then
+		NEXT_KERNEL="kernel-a"
+		WORKING_MTD_KERNEL=$MTD_KERNEL_A
+	fi
+
+	echo "Current kernel is '$CURRENT_KERNEL', next will be '$NEXT_KERNEL' ($WORKING_MTD_KERNEL)"
+
+	echo "Preparing new configuration block..."
+	echo "kernel $NEXT_KERNEL" >> $WORKING_TMP_UBOOT_CFG
+	echo
+
+	# Erase/program the flash partition
+	echo "Erasing $WORKING_MTD_KERNEL..."
+	flash_erase $WORKING_MTD_KERNEL 0 0 || exit 1
+	echo "Writing Kernel to $WORKING_MTD_KERNEL..."
+	nandwrite $WORKING_MTD_KERNEL $KERNEL -p || exit 1
+	echo
+fi
+
+# process UBOOT upgrade if desired
+if [ $BASEFS_VER -ge $NEW_PART_BASEFS_VER_MIN ]; then
+	if [ -n "$UBOOT" ]; then
+		echo "==== UBOOT UPGRADE ===="
+		echo
+	
+		# Erase/program the flash partition
+		echo "Erasing $MTD_UBOOT..."
+		flash_erase $MTD_UBOOT 0 0 || exit 1
+		echo "Writing UBOOT to $MTD_UBOOT..."
+	    cat $UBOOT > $MTD_UBOOT || exit 1
+		echo
+	fi
+fi
+
+# commit the changes now if everything upgraded successfully
+if [ "$REWRITE_CONF" == "YES" ]; then
+	echo "==== CONFIGURATION SWITCHOVER ===="
+	echo
+	echo "Writing new configuration block... (ATOMIC COMMIT)"
+	fw_setenv -s $WORKING_TMP_UBOOT_CFG || exit 1
+	echo
+fi
+
+# cleanup
+rm -f $WORKING_TMP_UBOOT_CFG
+
+if [ $BASEFS_VER -lt $NEW_PART_BASEFS_VER_MIN ]; then
+    echo "==== UBOOT UPGRADE ===="
+    echo
+    mkfs.jffs2 -n -p -U little -e 0x10000 -d /etc -o $NEW_PART_ETCFS_IMG > /dev/null
+
+    # Create u-boot upgrade partition aggregating the u-boot, env-a, env-b and etc
+    dd if=$UBOOT of=$NEW_PART_TMP_UBOOT bs=64K count=8 2> /dev/null
+    dd if=$MTD_ENV_A of=$NEW_PART_TMP_UBOOT bs=64K count=1 seek=8 2> /dev/null
+    dd if=$MTD_ENV_B of=$NEW_PART_TMP_UBOOT bs=64K count=1 seek=9 2> /dev/null
+    dd if=$NEW_PART_ETCFS_IMG of=$NEW_PART_TMP_UBOOT bs=1 seek=655360 2> /dev/null
+
+    # Erase/program the flash partition
+    echo "Erasing $MTD_UBOOT..."
+    flash_erase $MTD_UBOOT 0 0 || exit 1
+    flash_erase $MTD_ENV_A 0 0 || exit 1
+    flash_erase $MTD_ENV_B 0 0 || exit 1
+    flash_erase $MTD_ETC 0 0 || exit 1
+    echo "Writing UBOOT to $MTD_UBOOT..."
+    cat $NEW_PART_TMP_UBOOT > $MTD_UBOOT || exit 1
+    echo
+fi
+
+echo "UPGRADE SUCCESS - Preparing to reboot..."
+echo
+
+echo "REBOOTING..."
+echo
+reboot

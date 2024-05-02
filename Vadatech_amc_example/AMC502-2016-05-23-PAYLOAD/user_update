@@ -1,0 +1,8 @@
+rc.d/rc.conf
+hosts
+hosts.allow
+hosts.deny
+passwd
+resolv.conf
+shadow
+udhcpd.conf

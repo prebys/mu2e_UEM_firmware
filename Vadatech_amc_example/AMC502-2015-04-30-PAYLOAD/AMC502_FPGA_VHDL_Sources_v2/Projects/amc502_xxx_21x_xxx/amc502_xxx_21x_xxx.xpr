@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Product Version: Vivado v2014.4 (64-bit)              -->
+<!--                                                         -->
+<!-- Copyright 1986-2014 Xilinx, Inc. All Rights Reserved.   -->
+
+<Project Version="7" Minor="2" Path="C:/projects/vts0025/amc502/fpga/trunk/amc502_xxx_21x_xxx/amc502_xxx_21x_xxx.xpr">
+  <DefaultLaunch Dir="$PRUNDIR"/>
+  <Configuration>
+    <Option Name="Id" Val="2698605791f54bc8a13979fee91580f5"/>
+    <Option Name="Part" Val="xc7k420tffg1156-1"/>
+    <Option Name="CompiledLibDir" Val="$PCACHEDIR/compile_simlib"/>
+    <Option Name="TargetLanguage" Val="VHDL"/>
+    <Option Name="BoardPart" Val=""/>
+    <Option Name="ActiveSimSet" Val="sim_1"/>
+    <Option Name="DefaultLib" Val="xil_defaultlib"/>
+  </Configuration>
+  <FileSets Version="1" Minor="31">
+    <FileSet Name="sources_1" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
+      <Filter Type="Srcs"/>
+      <File Path="$PSRCDIR/sources_1/bd/mb_cpu/mb_cpu.bd">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="hw_handoff/mb_cpu_bd.tcl"/>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="hw_handoff/mb_cpu.hwh"/>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="mb_cpu_ooc.xdc"/>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="mb_cpu.bmm"/>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="hdl/mb_cpu.vhd"/>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="ip/mb_cpu_axi_uartlite_0_0/mb_cpu_axi_uartlite_0_0.xci"/>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="ip/mb_cpu_axi_iic_0_0/mb_cpu_axi_iic_0_0.xci"/>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="ip/mb_cpu_xbar_0/mb_cpu_xbar_0.xci"/>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="ip/mb_cpu_mdm_1_0/mb_cpu_mdm_1_0.xci"/>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="ip/mb_cpu_microblaze_0_xlconcat_0/mb_cpu_microblaze_0_xlconcat_0.xci"/>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="ip/mb_cpu_microblaze_0_axi_intc_0/mb_cpu_microblaze_0_axi_intc_0.xci"/>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="ip/mb_cpu_rst_Clk_100M_0/mb_cpu_rst_Clk_100M_0.xci"/>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="ip/mb_cpu_microblaze_0_axi_periph_0/mb_cpu_microblaze_0_axi_periph_0.xci"/>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="ip/mb_cpu_lmb_bram_0/mb_cpu_lmb_bram_0.xci"/>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="ip/mb_cpu_dlmb_v10_0/mb_cpu_dlmb_v10_0.xci"/>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="ip/mb_cpu_ilmb_bram_if_cntlr_0/mb_cpu_ilmb_bram_if_cntlr_0.xci"/>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="ip/mb_cpu_dlmb_bram_if_cntlr_0/mb_cpu_dlmb_bram_if_cntlr_0.xci"/>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="ip/mb_cpu_ilmb_v10_0/mb_cpu_ilmb_v10_0.xci"/>
+        <CompFileExtendedInfo CompFileName="mb_cpu.bd" FileRelPathName="ip/mb_cpu_microblaze_0_0/mb_cpu_microblaze_0_0.xci"/>
+      </File>
+      <File Path="$PSRCDIR/sources_1/new/vt_reset_sync.vhd">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/ip/gbe_master/gbe_master.xci">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/ip/gbe_slave/gbe_slave.xci">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/bd/mb_cpu/hdl/mb_cpu_wrapper.vhd">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/new/amc502_fpga.vhd">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSDKDIR/amc502_clocking/Debug/amc502_clocking.elf">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="ScopedToRef" Val="mb_cpu"/>
+          <Attr Name="ScopedToCell" Val="microblaze_0"/>
+          <Attr Name="IsVisible" Val="1"/>
+        </FileInfo>
+      </File>
+      <Config>
+        <Option Name="DesignMode" Val="RTL"/>
+        <Option Name="TopModule" Val="amc502_fpga"/>
+        <Option Name="TopAutoSet" Val="TRUE"/>
+      </Config>
+    </FileSet>
+    <FileSet Name="constrs_1" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
+      <Filter Type="Constrs"/>
+      <File Path="$PSRCDIR/constrs_1/new/amc502_pins.xdc">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="implementation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/constrs_1/new/amc502_impl.xdc">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="implementation"/>
+        </FileInfo>
+      </File>
+      <Config>
+        <Option Name="TargetConstrsFile" Val="$PSRCDIR/constrs_1/new/amc502_impl.xdc"/>
+        <Option Name="ConstrsType" Val="XDC"/>
+      </Config>
+    </FileSet>
+    <FileSet Name="sim_1" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/sim_1">
+      <Filter Type="Srcs"/>
+      <File Path="$PSDKDIR/amc502_clocking/Debug/amc502_clocking.elf">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="simulation"/>
+          <Attr Name="ScopedToRef" Val="mb_cpu"/>
+          <Attr Name="ScopedToCell" Val="microblaze_0"/>
+          <Attr Name="IsVisible" Val="1"/>
+        </FileInfo>
+      </File>
+      <Config>
+        <Option Name="DesignMode" Val="RTL"/>
+        <Option Name="TopModule" Val="amc502_fpga"/>
+        <Option Name="TopLib" Val="xil_defaultlib"/>
+        <Option Name="TopAutoSet" Val="TRUE"/>
+        <Option Name="SrcSet" Val="sources_1"/>
+      </Config>
+    </FileSet>
+    <FileSet Name="clk100mhz1_clocking_wizard" Type="BlockSrcs" RelSrcDir="$PSRCDIR/clk100mhz1_clocking_wizard">
+      <File Path="$PSRCDIR/sources_1/ip/clk100mhz1_clocking_wizard/clk100mhz1_clocking_wizard.xci">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <Config>
+        <Option Name="TopModule" Val="clk100mhz1_clocking_wizard"/>
+        <Option Name="UseBlackboxStub" Val="1"/>
+      </Config>
+    </FileSet>
+  </FileSets>
+  <Simulators>
+    <Simulator Name="XSim">
+      <Option Name="Description" Val="Vivado Simulator"/>
+      <Option Name="CompiledLib" Val="0"/>
+    </Simulator>
+    <Simulator Name="ModelSim">
+      <Option Name="Description" Val="QuestaSim/ModelSim Simulator"/>
+    </Simulator>
+    <Simulator Name="IES">
+      <Option Name="Description" Val="Incisive Enterprise Simulator (IES)"/>
+    </Simulator>
+    <Simulator Name="VCS">
+      <Option Name="Description" Val="Verilog Compiler Simulator (VCS)"/>
+    </Simulator>
+  </Simulators>
+  <Runs Version="1" Minor="9">
+    <Run Id="synth_1" Type="Ft3:Synth" SrcSet="sources_1" Part="xc7k420tffg1156-1" ConstrsSet="constrs_1" Description="Vivado Synthesis Defaults" State="current" Dir="$PRUNDIR/synth_1">
+      <Strategy Version="1" Minor="2">
+        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2014"/>
+        <Step Id="synth_design"/>
+      </Strategy>
+      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
+    </Run>
+    <Run Id="clk100mhz1_clocking_wizard_synth_1" Type="Ft3:Synth" SrcSet="clk100mhz1_clocking_wizard" Part="xc7k420tffg1156-1" ConstrsSet="clk100mhz1_clocking_wizard" Description="Vivado Synthesis Defaults" Dir="$PRUNDIR/clk100mhz1_clocking_wizard_synth_1">
+      <Strategy Version="1" Minor="2">
+        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2014"/>
+        <Step Id="synth_design"/>
+      </Strategy>
+      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
+    </Run>
+    <Run Id="impl_1" Type="Ft2:EntireDesign" Part="xc7k420tffg1156-1" ConstrsSet="constrs_1" Description="Vivado Implementation Defaults" State="current" Dir="$PRUNDIR/impl_1" SynthRun="synth_1">
+      <Strategy Version="1" Minor="2">
+        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2014"/>
+        <Step Id="init_design"/>
+        <Step Id="opt_design"/>
+        <Step Id="power_opt_design"/>
+        <Step Id="place_design"/>
+        <Step Id="post_place_power_opt_design"/>
+        <Step Id="phys_opt_design"/>
+        <Step Id="route_design"/>
+        <Step Id="post_route_phys_opt_design"/>
+        <Step Id="write_bitstream">
+          <Option Id="BinFile">1</Option>
+        </Step>
+      </Strategy>
+      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
+    </Run>
+    <Run Id="clk100mhz1_clocking_wizard_impl_1" Type="Ft2:EntireDesign" Part="xc7k420tffg1156-1" ConstrsSet="clk100mhz1_clocking_wizard" Description="Vivado Implementation Defaults" SynthRun="clk100mhz1_clocking_wizard_synth_1">
+      <Strategy Version="1" Minor="2">
+        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2014"/>
+        <Step Id="init_design"/>
+        <Step Id="opt_design"/>
+        <Step Id="power_opt_design"/>
+        <Step Id="place_design"/>
+        <Step Id="post_place_power_opt_design"/>
+        <Step Id="phys_opt_design"/>
+        <Step Id="route_design"/>
+        <Step Id="post_route_phys_opt_design"/>
+        <Step Id="write_bitstream"/>
+      </Strategy>
+    </Run>
+  </Runs>
+  <HWSession Dir="hw_1" File="hw.xml"/>
+</Project>
