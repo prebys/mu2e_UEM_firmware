@@ -90,6 +90,8 @@ hex_to_event = {
     r"fcfcfcfc": "end_of_event"
 }
 
+event_counts = {}
+
 
 def main():
     # get directory of the script
@@ -197,6 +199,7 @@ def main():
                     current_event_type in ["peak_height_data", "peak_area_data"]:
                 print(f"** {current_event_type} omitted **")
 
+            # some events only have data in certain characters of the hex
             data_start_index = event_to_hex[current_event_type]["data_chars"][0]
             data_end_index = event_to_hex[current_event_type]["data_chars"][1]
             if data_start_index != data_end_index:
@@ -213,6 +216,8 @@ def main():
                     number_of_printed_logs += 1
                     print(f"[{i//8}]: {current_event_hex} ({event_type_text})")
 
+            event_counts[current_event_type] = event_counts.get(current_event_type, 0) + 1
+            
         else:
             if current_event_type:
                 print(f"**** ERROR ****"
@@ -222,6 +227,10 @@ def main():
             else:  # the first event was not "begin_event" and it's searching for that
                 print(f"First event ({current_event_hex}) not 'begin_event', searching for begin_event")
 
+    for event_type in event_to_hex:
+        count = event_counts.get(event_type, 0)
+        print(f"{event_type}: {count}")
+        
 
 if __name__ == "__main__":
     main()
