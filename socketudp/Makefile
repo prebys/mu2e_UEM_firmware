@@ -3,7 +3,7 @@ CFLAGS = -g
 # uncomment this for SunOS
 # LIBS = -lsocket -lnsl
 
-all: clean testudpsocket udp-recv
+all: clean udp-recv
 
 testudpsocket: testudpsocket.o 
 	$(CC) -o testudpsocket testudpsocket.o $(LIBS) 
