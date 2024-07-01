@@ -1,6 +1,6 @@
 //
 // Created by Ryry013 on 5/7/2024.
-//
+// 
 #ifdef _WIN32
 //For Windows
 int betriebssystem = 1;
@@ -20,6 +20,7 @@ int betriebssystem = 1;
 int betriebssystem = 2;
 #endif
 
+#include <signal.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -33,8 +34,21 @@ using namespace std;
 #define BUFSIZE 900000
 #define SERVICE_PORT 48879
 
+ofstream myfile("test.dat");
+bool keepRunning = true;
+
+void handleSigint(int sig) {
+    cout << "\nClosing file and exiting...\n";
+    if (myfile.is_open()) {
+        myfile.close();
+    }
+    exit(0); // Exit the program
+}
+
 int main(int argc, char **argv)
 {
+    signal(SIGINT, handleSigint);  // Register signal handler
+
     struct sockaddr_in myaddr;      /* our address */
     struct sockaddr_in remaddr;     /* remote address */
     socklen_t addrlen = sizeof(remaddr);            /* length of addresses */
@@ -46,7 +60,7 @@ int main(int argc, char **argv)
     int counter = 0;
     string line;
 
-    ofstream myfile("test.dat");
+
 
     /* create a UDP socket */
     if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -67,9 +81,7 @@ int main(int argc, char **argv)
 
     printf("waiting on port %d\n", SERVICE_PORT);
     /* now loop, receiving data and printing what we received */
-    while (true) {
-//        printf("[%d] fd: %d\n", counter, fd);
-        counter++;
+    while (keepRunning) {
         recvlen = recvfrom(fd, reinterpret_cast<char *>(buf), BUFSIZE, 0, (struct sockaddr *)&remaddr, &addrlen);
 //        printf("received %d bytes\n", recvlen);
 
@@ -84,10 +96,12 @@ int main(int argc, char **argv)
         double fileSizeInMB = fileSize / 1048576.0;
 
         if (recvlen > 0) {
+			counter++;
             buf[recvlen] = 0;
 
-            printf("%.2x %.2x %.2x %.2x \t %.2x %.2x %.2x %.2x [ ... ] \n "
-                   "%.2x %.2x %.2x %.2x \t %.2x %.2x %.2x %.2x \n",
+
+            printf("%.2x %.2x %.2x %.2x  %.2x %.2x %.2x %.2x [ ... ] "
+                   "%.2x %.2x %.2x %.2x  %.2x %.2x %.2x %.2x   ",
                    buf[0], buf[1], buf[2], buf[3],
                    buf[4], buf[5], buf[6], buf[7],
                    buf[recvlen-8], buf[recvlen-7], buf[recvlen-6], buf[recvlen-5],
@@ -103,7 +117,7 @@ int main(int argc, char **argv)
                 // printf("File size: %zu", myfile.tellp())
             }
 
-            printf("[%d] event = %d, sub event = %d (file size = %.2f MB)\n", counter, event, subevent,
+            printf("[%d] ev.subev: %d.%d (file: %.2f MB)\n", counter, event, subevent,
                    fileSizeInMB);
         }
     }
