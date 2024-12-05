@@ -1,0 +1,7 @@
+The project requries version 2016.2 of Vivado, and below text assumes an AlmaLinux installation. If you are having trouble installing Vivado 2016.2, try unchecking the boxes in setup for "Create shortcuts on desktop" and "Add this to program group" (not sure if this actually helps, but someone said to do it and I've been doing it along with the next step), and also (specifically for AlmaLinux), try running `dnf install epel-release` and `dnf install -y ncurses-compat-libs` and then reinstalling.
+
+In order to run the code in the "code" folder, you may need to run "make" in the folder to build the programs. If this fails with an error about "TFile.h" or something like that, that means you're missing ROOT, so install ROOT on your computer and source the ROOT install's `source $(ROOTDIR)/bin/thisroot.sh` file.
+
+If it complains about some kind of "patch", do `dnf install patch`.
+
+If there's other problems installing ROOT or making the code directory, try installing [ROOT's required dependencies](https://root.cern/install/dependencies/#fedora-scientific-linux-and-centos). CentOS8 is probably the closest to AlmaLinux so you can follow those ones. It's a good group of programs that are required by many other things. For example, g++ is not installed by default on AlmaLinux, and that'll be needed to make things. There will be a couple things that AlmaLinux can't find, try doing `dnf install ... --skip-broken` ([skip-broken ref](https://dnf.readthedocs.io/en/latest/command_ref.html#skip-broken-option-label)) and it'll skip the ones it can't find. 
