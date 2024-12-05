@@ -4,8 +4,6 @@
 #include <map>
 #include <string>
 
-#include <unistd.h>
-
 #include "amc502.hh"
 
 using namespace std;

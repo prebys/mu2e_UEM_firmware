@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="decoder_10b8b_rom_synth_1" LaunchPart="xc7k420tffg1156-2" LaunchTime="1699934376">
-  <File Type="PA-TCL" Name="decoder_10b8b_rom.tcl"/>
+<GenRun Id="decoder_10b8b_rom_synth_1" LaunchPart="xc7k420tffg1156-2" LaunchTime="1720649745">
   <File Type="RDS-PROPCONSTRS" Name="decoder_10b8b_rom_drc_synth.rpt"/>
-  <File Type="RDS-RDS" Name="decoder_10b8b_rom.vds"/>
   <File Type="RDS-UTIL" Name="decoder_10b8b_rom_utilization_synth.rpt"/>
-  <File Type="RDS-UTIL-PB" Name="decoder_10b8b_rom_utilization_synth.pb"/>
-  <File Type="RDS-DCP" Name="decoder_10b8b_rom.dcp"/>
-  <File Type="VDS-TIMINGSUMMARY" Name="decoder_10b8b_rom_timing_summary_synth.rpt"/>
+  <File Type="RDS-RDS" Name="decoder_10b8b_rom.vds"/>
   <File Type="VDS-TIMING-PB" Name="decoder_10b8b_rom_timing_summary_synth.pb"/>
+  <File Type="PA-TCL" Name="decoder_10b8b_rom.tcl"/>
+  <File Type="VDS-TIMINGSUMMARY" Name="decoder_10b8b_rom_timing_summary_synth.rpt"/>
+  <File Type="RDS-DCP" Name="decoder_10b8b_rom.dcp"/>
+  <File Type="RDS-UTIL-PB" Name="decoder_10b8b_rom_utilization_synth.pb"/>
   <FileSet Name="sources" Type="BlockSrcs" RelSrcDir="$PSRCDIR/decoder_10b8b_rom">
     <File Path="$PSRCDIR/sources_1/ip/decoder_10b8b_rom/decoder_10b8b_rom.xci">
       <FileInfo>

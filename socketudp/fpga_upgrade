@@ -1,0 +1,95 @@
+#!/bin/bash
+
+# Configuration
+IP1="192.168.40.252"
+IP2="192.168.40.253"
+BASE_DIR="/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs"
+DEFAULT_FILE_PATH="${DEFAULT_FILE_PATH:-$BASE_DIR/impl_1/top_fmc228_pcie.bit}"
+ORIGINAL_FILE_PATH="${ORIGINAL_FILE_PATH:-$BASE_DIR/impl_1_old/top_fmc228_pcie_default.bit}"
+REMOTE_PATH="${REMOTE_PATH:-/upgrade}"
+SOCKET_DIR="/tmp/ssh_mux_$USER"
+
+# Functions
+check_ip() { ping -c 1 -W 1 "$1" > /dev/null 2>&1; return $?; }
+
+remount_rw() { ssh -o StrictHostKeyChecking=no -o ControlPath="$SOCKET_DIR/%r@%h:%p" -o ForwardX11=no root@$ACTIVE_IP "mount -o remount,rw /"; }
+
+remount_ro() { ssh -o StrictHostKeyChecking=no -o ControlPath="$SOCKET_DIR/%r@%h:%p" -o ForwardX11=no root@$ACTIVE_IP "mount -o remount,ro /"; }
+
+cleanup() {
+    echo "Cleaning up. Ensuring remote filesystem is read-only..."
+    remount_ro && echo "Remote filesystem is now read-only."
+    ssh -O exit -o ControlPath="$SOCKET_DIR/%r@%h:%p" -o ForwardX11=no root@$ACTIVE_IP && echo "SSH connection closed."
+    rm -rf "$SOCKET_DIR" && echo "Removed socket directory."
+}
+
+# Set trap to call cleanup on EXIT
+trap cleanup EXIT
+
+# Start Script
+echo "Starting the upgrade process..."
+
+# Determine active IP
+if check_ip "$IP1"; then
+    ACTIVE_IP="$IP1"
+elif check_ip "$IP2"; then
+    ACTIVE_IP="$IP2"
+else
+    echo "Neither IP is reachable. Exiting."
+    exit 1
+fi
+echo "Using active IP: $ACTIVE_IP"
+
+# Establish persistent SSH connection
+mkdir -p "$SOCKET_DIR"
+ssh -o StrictHostKeyChecking=no -o ForwardX11=no -o ControlMaster=auto -o ControlPath="$SOCKET_DIR/%r@%h:%p" -o ControlPersist=600 root@$ACTIVE_IP "echo 'SSH connection established and persisted.'" || exit 1
+
+# Validate file path
+file_path=${1:-$DEFAULT_FILE_PATH}
+if [ "$1" == "original" ]; then file_path=$ORIGINAL_FILE_PATH; fi
+
+if [ ! -f "$file_path" ]; then
+    echo "File '$file_path' does not exist. Exiting."
+    exit 1
+fi
+
+# echo "File '$file_path' validated successfully."
+
+# Remount remote filesystem as writable
+if remount_rw; then
+    echo "Remote filesystem successfully remounted as writable."
+else
+    echo "Failed to remount filesystem as writable. Exiting."
+    exit 1
+fi
+
+# Copy file to remote
+if scp -o ControlPath="$SOCKET_DIR/%r@%h:%p" -o ForwardX11=no "$file_path" root@$ACTIVE_IP:$REMOTE_PATH; then
+    echo "File '$file_path' successfully copied to $REMOTE_PATH on $ACTIVE_IP."
+else
+    echo "Failed to copy file. Exiting."
+    exit 1
+fi
+
+# Remount filesystem as read-only
+if remount_ro; then
+    echo "Remote filesystem successfully remounted as read-only."
+else
+    echo "Failed to remount filesystem as read-only. Please verify manually and fix the filesystem state."
+fi
+
+# Run upgrade command
+file_name=$(basename "$file_path")
+if ssh -o ControlPath="$SOCKET_DIR/%r@%h:%p" -o ForwardX11=no root@$ACTIVE_IP "export PATH=\$PATH:/sbin:/usr/sbin; cd $REMOTE_PATH; echo 'Y' | fpga_upgrade \"$file_name\""; then    
+    echo "Upgrade command executed successfully for file: $file_name."
+else
+    echo "Upgrade command failed. Exiting."
+    exit 1
+fi
+
+read -n 1 -p "Press any key once you see the 'Purdue debug monitor 1.00' confirmation in minicom..."
+./newsetup.sh
+
+echo "Completed upgrade. Now starting UDP receiver."
+./udp-recv
+

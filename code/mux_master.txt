@@ -15,3 +15,4 @@ MUX1
   FMCEXPB output PLLCLKA_out
   PLLCLKA_out input Z
   FMC1_CLK2_BIDIR output PLLCLKA_out
+  FMC0_CLK2_BIDIR output PLLCLKA_out

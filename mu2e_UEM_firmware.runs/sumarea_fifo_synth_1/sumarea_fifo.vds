@@ -2,24 +2,29 @@
 # Vivado v2016.2 (64-bit)
 # SW Build 1577090 on Thu Jun  2 16:32:35 MDT 2016
 # IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
-# Start of session at: Wed Jan 29 14:01:08 2020
-# Process ID: 20771
-# Current directory: /disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.runs/sumarea_fifo_synth_1
+# Start of session at: Mon May  6 19:42:59 2024
+# Process ID: 29880
+# Current directory: /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/sumarea_fifo_synth_1
 # Command line: vivado -log sumarea_fifo.vds -mode batch -messageDb vivado.pb -notrace -source sumarea_fifo.tcl
-# Log file: /disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.runs/sumarea_fifo_synth_1/sumarea_fifo.vds
-# Journal file: /disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.runs/sumarea_fifo_synth_1/vivado.jou
+# Log file: /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/sumarea_fifo_synth_1/sumarea_fifo.vds
+# Journal file: /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/sumarea_fifo_synth_1/vivado.jou
 #-----------------------------------------------------------
 source sumarea_fifo.tcl -notrace
 Command: synth_design -top sumarea_fifo -part xc7k420tffg1156-2 -mode out_of_context
 Starting synth_design
+INFO: [IP_Flow 19-2162] IP 'sumarea_fifo' is locked:
+* IP 'sumarea_fifo' has a read-only file:
+   '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo.xcix'
+IP is write protected.
+Please select 'Report IP Status' from the 'Tools/Report' menu or run Tcl command 'report_ip_status' for more information.
 Attempting to get a license for feature 'Synthesis' and/or device 'xc7k420t'
 INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7k420t'
 INFO: Launching helper process for spawning children vivado processes
-INFO: Helper process launched with PID 20794 
+INFO: Helper process launched with PID 30079 
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:12 ; elapsed = 00:00:15 . Memory (MB): peak = 1175.152 ; gain = 205.328 ; free physical = 3890 ; free virtual = 12200
+Starting RTL Elaboration : Time (s): cpu = 00:00:12 ; elapsed = 00:00:14 . Memory (MB): peak = 1206.895 ; gain = 231.555 ; free physical = 504 ; free virtual = 8342
 ---------------------------------------------------------------------------------
-INFO: [Synth 8-638] synthesizing module 'sumarea_fifo' [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip/sumarea_fifo/synth/sumarea_fifo.vhd:74]
+INFO: [Synth 8-638] synthesizing module 'sumarea_fifo' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo/synth/sumarea_fifo.vhd:74]
 	Parameter C_COMMON_CLOCK bound to: 0 - type: integer 
 	Parameter C_SELECT_XPM bound to: 0 - type: integer 
 	Parameter C_COUNT_TYPE bound to: 0 - type: integer 
@@ -222,7 +227,7 @@ INFO: [Synth 8-638] synthesizing module 'sumarea_fifo' [/disk2/data/tmnguyen/mu2
 	Parameter C_REG_SLICE_MODE_RACH bound to: 0 - type: integer 
 	Parameter C_REG_SLICE_MODE_RDCH bound to: 0 - type: integer 
 	Parameter C_REG_SLICE_MODE_AXIS bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'fifo_generator_v13_1_1' declared at '/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip/sumarea_fifo/fifo_generator_v13_1_1/hdl/fifo_generator_v13_1.vhd:75' bound to instance 'U0' of component 'fifo_generator_v13_1_1' [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip/sumarea_fifo/synth/sumarea_fifo.vhd:541]
+INFO: [Synth 8-3491] module 'fifo_generator_v13_1_1' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo/fifo_generator_v13_1_1/hdl/fifo_generator_v13_1.vhd:75' bound to instance 'U0' of component 'fifo_generator_v13_1_1' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo/synth/sumarea_fifo.vhd:541]
 	Parameter C_COMMON_CLOCK bound to: 0 - type: integer 
 	Parameter C_SELECT_XPM bound to: 0 - type: integer 
 	Parameter C_COUNT_TYPE bound to: 0 - type: integer 
@@ -3595,7 +3600,7 @@ INFO: [Synth 8-3491] module 'fifo_generator_v13_1_1' declared at '/disk2/data/tm
 	Parameter C_USE_ECC bound to: 0 - type: integer 
 	Parameter C_FIFO_TYPE bound to: 0 - type: integer 
 	Parameter C_BYTE_STRB_WIDTH bound to: 8 - type: integer 
-INFO: [Synth 8-256] done synthesizing module 'sumarea_fifo' (29#1) [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip/sumarea_fifo/synth/sumarea_fifo.vhd:74]
+INFO: [Synth 8-256] done synthesizing module 'sumarea_fifo' (29#1) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo/synth/sumarea_fifo.vhd:74]
 WARNING: [Synth 8-3331] design wr_status_flags_as has unconnected port WR_RST
 WARNING: [Synth 8-3331] design wr_status_flags_as has unconnected port WR_PNTR_PLUS3[12]
 WARNING: [Synth 8-3331] design wr_status_flags_as has unconnected port WR_PNTR_PLUS3[11]
@@ -3698,7 +3703,7 @@ WARNING: [Synth 8-3331] design rd_logic has unconnected port PROG_EMPTY_THRESH[6
 WARNING: [Synth 8-3331] design rd_logic has unconnected port PROG_EMPTY_THRESH[5]
 INFO: [Common 17-14] Message 'Synth 8-3331' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:01:26 ; elapsed = 00:01:31 . Memory (MB): peak = 1373.855 ; gain = 404.031 ; free physical = 3677 ; free virtual = 11989
+Finished RTL Elaboration : Time (s): cpu = 00:01:29 ; elapsed = 00:01:35 . Memory (MB): peak = 1404.371 ; gain = 429.031 ; free physical = 288 ; free virtual = 8128
 ---------------------------------------------------------------------------------
 
 Report Check Netlist: 
@@ -3708,7 +3713,7 @@ Report Check Netlist:
 |1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
 +------+------------------+-------+---------+-------+------------------+
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:01:26 ; elapsed = 00:01:32 . Memory (MB): peak = 1373.855 ; gain = 404.031 ; free physical = 3677 ; free virtual = 11989
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:01:30 ; elapsed = 00:01:36 . Memory (MB): peak = 1404.371 ; gain = 429.031 ; free physical = 282 ; free virtual = 8122
 ---------------------------------------------------------------------------------
 INFO: [Netlist 29-17] Analyzing 36 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
@@ -3717,41 +3722,41 @@ INFO: [Project 1-570] Preparing netlist for logic optimization
 
 Processing XDC Constraints
 Initializing timing engine
-Parsing XDC File [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo_ooc.xdc] for cell 'U0'
-Finished Parsing XDC File [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo_ooc.xdc] for cell 'U0'
-Parsing XDC File [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo.xdc] for cell 'U0'
-Finished Parsing XDC File [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo.xdc] for cell 'U0'
-Parsing XDC File [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.runs/sumarea_fifo_synth_1/dont_touch.xdc]
-Finished Parsing XDC File [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.runs/sumarea_fifo_synth_1/dont_touch.xdc]
-Parsing XDC File [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo_clocks.xdc] for cell 'U0'
-Finished Parsing XDC File [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo_clocks.xdc] for cell 'U0'
-INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo_clocks.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/sumarea_fifo_propImpl.xdc].
+Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo_ooc.xdc] for cell 'U0'
+Finished Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo_ooc.xdc] for cell 'U0'
+Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo.xdc] for cell 'U0'
+Finished Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo.xdc] for cell 'U0'
+Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/sumarea_fifo_synth_1/dont_touch.xdc]
+Finished Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/sumarea_fifo_synth_1/dont_touch.xdc]
+Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo_clocks.xdc] for cell 'U0'
+Finished Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo_clocks.xdc] for cell 'U0'
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo_clocks.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/sumarea_fifo_propImpl.xdc].
 Resolution: To avoid this warning, move constraints listed in [.Xil/sumarea_fifo_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
 Completed Processing XDC Constraints
 
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00.03 ; elapsed = 00:00:00.02 . Memory (MB): peak = 1537.105 ; gain = 0.000 ; free physical = 3533 ; free virtual = 11846
+Constraint Validation Runtime : Time (s): cpu = 00:00:00.02 ; elapsed = 00:00:00.03 . Memory (MB): peak = 1563.621 ; gain = 0.000 ; free physical = 217 ; free virtual = 8057
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:01:44 ; elapsed = 00:01:50 . Memory (MB): peak = 1537.105 ; gain = 567.281 ; free physical = 3592 ; free virtual = 11904
+Finished Constraint Validation : Time (s): cpu = 00:01:49 ; elapsed = 00:01:56 . Memory (MB): peak = 1563.621 ; gain = 588.281 ; free physical = 210 ; free virtual = 8050
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7k420tffg1156-2
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:01:44 ; elapsed = 00:01:50 . Memory (MB): peak = 1537.105 ; gain = 567.281 ; free physical = 3592 ; free virtual = 11904
+Finished Loading Part and Timing Information : Time (s): cpu = 00:01:49 ; elapsed = 00:01:56 . Memory (MB): peak = 1563.621 ; gain = 588.281 ; free physical = 210 ; free virtual = 8050
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
 ---------------------------------------------------------------------------------
 Applied set_property DONT_TOUCH = true for U0. (constraint file  auto generated constraint, line ).
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:01:44 ; elapsed = 00:01:51 . Memory (MB): peak = 1537.105 ; gain = 567.281 ; free physical = 3592 ; free virtual = 11904
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:01:49 ; elapsed = 00:01:56 . Memory (MB): peak = 1563.621 ; gain = 588.281 ; free physical = 210 ; free virtual = 8050
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:01:46 ; elapsed = 00:01:52 . Memory (MB): peak = 1537.105 ; gain = 567.281 ; free physical = 3584 ; free virtual = 11896
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:01:50 ; elapsed = 00:01:58 . Memory (MB): peak = 1563.621 ; gain = 588.281 ; free physical = 210 ; free virtual = 8050
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -3872,14 +3877,14 @@ BRAMs: 1670 (col length: RAMB18 160 RAMB36 80)
 ---------------------------------------------------------------------------------
 Finished Part Resource Summary
 ---------------------------------------------------------------------------------
-Start Parallel Synthesis Optimization  : Time (s): cpu = 00:01:46 ; elapsed = 00:01:52 . Memory (MB): peak = 1537.105 ; gain = 567.281 ; free physical = 3579 ; free virtual = 11891
+Start Parallel Synthesis Optimization  : Time (s): cpu = 00:01:51 ; elapsed = 00:01:58 . Memory (MB): peak = 1563.621 ; gain = 588.281 ; free physical = 210 ; free virtual = 8050
 ---------------------------------------------------------------------------------
 Start Cross Boundary Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Cross Boundary Optimization : Time (s): cpu = 00:01:46 ; elapsed = 00:01:52 . Memory (MB): peak = 1537.105 ; gain = 567.281 ; free physical = 3575 ; free virtual = 11888
+Finished Cross Boundary Optimization : Time (s): cpu = 00:01:51 ; elapsed = 00:01:58 . Memory (MB): peak = 1563.621 ; gain = 588.281 ; free physical = 204 ; free virtual = 8044
 ---------------------------------------------------------------------------------
-Finished Parallel Reinference  : Time (s): cpu = 00:01:46 ; elapsed = 00:01:52 . Memory (MB): peak = 1537.105 ; gain = 567.281 ; free physical = 3575 ; free virtual = 11888
+Finished Parallel Reinference  : Time (s): cpu = 00:01:51 ; elapsed = 00:01:58 . Memory (MB): peak = 1563.621 ; gain = 588.281 ; free physical = 204 ; free virtual = 8044
 
 Report RTL Partitions: 
 +-+--------------+------------+----------+
@@ -3891,9 +3896,9 @@ Start Area Optimization
 ---------------------------------------------------------------------------------
 WARNING: [Synth 8-3332] Sequential element (inst_fifo_gen/gconvfifo.rf/grf.rf/rstblk/ngwrdrst.grst.g7serrst.wr_rst_reg_reg[1]) is unused and will be removed from module fifo_generator_v13_1_1.
 ---------------------------------------------------------------------------------
-Finished Area Optimization : Time (s): cpu = 00:01:47 ; elapsed = 00:01:53 . Memory (MB): peak = 1537.105 ; gain = 567.281 ; free physical = 3567 ; free virtual = 11879
+Finished Area Optimization : Time (s): cpu = 00:01:51 ; elapsed = 00:01:59 . Memory (MB): peak = 1563.621 ; gain = 588.281 ; free physical = 196 ; free virtual = 8036
 ---------------------------------------------------------------------------------
-Finished Parallel Area Optimization  : Time (s): cpu = 00:01:47 ; elapsed = 00:01:53 . Memory (MB): peak = 1537.105 ; gain = 567.281 ; free physical = 3567 ; free virtual = 11879
+Finished Parallel Area Optimization  : Time (s): cpu = 00:01:51 ; elapsed = 00:01:59 . Memory (MB): peak = 1563.621 ; gain = 588.281 ; free physical = 196 ; free virtual = 8036
 
 Report RTL Partitions: 
 +-+--------------+------------+----------+
@@ -3907,10 +3912,10 @@ Start Timing Optimization
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:01:59 ; elapsed = 00:02:05 . Memory (MB): peak = 1537.105 ; gain = 567.281 ; free physical = 3543 ; free virtual = 11855
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:02:03 ; elapsed = 00:02:11 . Memory (MB): peak = 1563.621 ; gain = 588.281 ; free physical = 171 ; free virtual = 8011
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:01:59 ; elapsed = 00:02:05 . Memory (MB): peak = 1537.105 ; gain = 567.281 ; free physical = 3533 ; free virtual = 11845
+Finished Timing Optimization : Time (s): cpu = 00:02:03 ; elapsed = 00:02:11 . Memory (MB): peak = 1563.621 ; gain = 588.281 ; free physical = 161 ; free virtual = 8001
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -3922,16 +3927,16 @@ Report RTL Partitions:
 Start Technology Mapping
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:01:59 ; elapsed = 00:02:05 . Memory (MB): peak = 1545.105 ; gain = 575.281 ; free physical = 3523 ; free virtual = 11835
+Finished Technology Mapping : Time (s): cpu = 00:02:04 ; elapsed = 00:02:12 . Memory (MB): peak = 1571.621 ; gain = 596.281 ; free physical = 153 ; free virtual = 7993
 ---------------------------------------------------------------------------------
-Finished Parallel Technology Mapping Optimization  : Time (s): cpu = 00:01:59 ; elapsed = 00:02:05 . Memory (MB): peak = 1545.105 ; gain = 575.281 ; free physical = 3523 ; free virtual = 11835
+Finished Parallel Technology Mapping Optimization  : Time (s): cpu = 00:02:04 ; elapsed = 00:02:12 . Memory (MB): peak = 1571.621 ; gain = 596.281 ; free physical = 153 ; free virtual = 7993
 
 Report RTL Partitions: 
 +-+--------------+------------+----------+
 | |RTL Partition |Replication |Instances |
 +-+--------------+------------+----------+
 +-+--------------+------------+----------+
-Finished Parallel Synthesis Optimization  : Time (s): cpu = 00:01:59 ; elapsed = 00:02:05 . Memory (MB): peak = 1545.105 ; gain = 575.281 ; free physical = 3523 ; free virtual = 11835
+Finished Parallel Synthesis Optimization  : Time (s): cpu = 00:02:04 ; elapsed = 00:02:12 . Memory (MB): peak = 1571.621 ; gain = 596.281 ; free physical = 153 ; free virtual = 7993
 ---------------------------------------------------------------------------------
 Start IO Insertion
 ---------------------------------------------------------------------------------
@@ -3948,7 +3953,7 @@ Start Final Netlist Cleanup
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:02:00 ; elapsed = 00:02:06 . Memory (MB): peak = 1545.105 ; gain = 575.281 ; free physical = 3523 ; free virtual = 11836
+Finished IO Insertion : Time (s): cpu = 00:02:04 ; elapsed = 00:02:12 . Memory (MB): peak = 1571.621 ; gain = 596.281 ; free physical = 153 ; free virtual = 7993
 ---------------------------------------------------------------------------------
 
 Report Check Netlist: 
@@ -3961,7 +3966,7 @@ Report Check Netlist:
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:02:00 ; elapsed = 00:02:06 . Memory (MB): peak = 1545.105 ; gain = 575.281 ; free physical = 3523 ; free virtual = 11836
+Finished Renaming Generated Instances : Time (s): cpu = 00:02:04 ; elapsed = 00:02:12 . Memory (MB): peak = 1571.621 ; gain = 596.281 ; free physical = 153 ; free virtual = 7993
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -3973,25 +3978,25 @@ Report RTL Partitions:
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:02:00 ; elapsed = 00:02:06 . Memory (MB): peak = 1545.105 ; gain = 575.281 ; free physical = 3523 ; free virtual = 11835
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:02:04 ; elapsed = 00:02:13 . Memory (MB): peak = 1571.621 ; gain = 596.281 ; free physical = 153 ; free virtual = 7993
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:02:00 ; elapsed = 00:02:06 . Memory (MB): peak = 1545.105 ; gain = 575.281 ; free physical = 3523 ; free virtual = 11835
+Finished Renaming Generated Ports : Time (s): cpu = 00:02:05 ; elapsed = 00:02:13 . Memory (MB): peak = 1571.621 ; gain = 596.281 ; free physical = 153 ; free virtual = 7993
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:02:00 ; elapsed = 00:02:06 . Memory (MB): peak = 1545.105 ; gain = 575.281 ; free physical = 3523 ; free virtual = 11835
+Finished Handling Custom Attributes : Time (s): cpu = 00:02:05 ; elapsed = 00:02:13 . Memory (MB): peak = 1571.621 ; gain = 596.281 ; free physical = 152 ; free virtual = 7992
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:02:00 ; elapsed = 00:02:06 . Memory (MB): peak = 1545.105 ; gain = 575.281 ; free physical = 3523 ; free virtual = 11835
+Finished Renaming Generated Nets : Time (s): cpu = 00:02:05 ; elapsed = 00:02:13 . Memory (MB): peak = 1571.621 ; gain = 596.281 ; free physical = 152 ; free virtual = 7992
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -4073,31 +4078,31 @@ Report Instance Areas:
 |44    |          rstblk                                       |reset_blk_ramfifo                        |    23|
 +------+-------------------------------------------------------+-----------------------------------------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:02:00 ; elapsed = 00:02:06 . Memory (MB): peak = 1545.105 ; gain = 575.281 ; free physical = 3523 ; free virtual = 11835
+Finished Writing Synthesis Report : Time (s): cpu = 00:02:05 ; elapsed = 00:02:13 . Memory (MB): peak = 1571.621 ; gain = 596.281 ; free physical = 152 ; free virtual = 7992
 ---------------------------------------------------------------------------------
 Synthesis finished with 0 errors, 0 critical warnings and 493 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:01:44 ; elapsed = 00:01:48 . Memory (MB): peak = 1545.105 ; gain = 292.855 ; free physical = 3522 ; free virtual = 11835
-Synthesis Optimization Complete : Time (s): cpu = 00:02:00 ; elapsed = 00:02:06 . Memory (MB): peak = 1545.113 ; gain = 575.289 ; free physical = 3523 ; free virtual = 11836
+Synthesis Optimization Runtime : Time (s): cpu = 00:01:48 ; elapsed = 00:01:54 . Memory (MB): peak = 1571.621 ; gain = 285.629 ; free physical = 151 ; free virtual = 7991
+Synthesis Optimization Complete : Time (s): cpu = 00:02:05 ; elapsed = 00:02:13 . Memory (MB): peak = 1571.629 ; gain = 596.289 ; free physical = 151 ; free virtual = 7991
 INFO: [Project 1-571] Translating synthesized netlist
 INFO: [Netlist 29-17] Analyzing 44 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
-Parsing XDC File [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo_ooc.xdc] for cell 'U0'
-Finished Parsing XDC File [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo_ooc.xdc] for cell 'U0'
-Parsing XDC File [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo.xdc] for cell 'U0'
-Finished Parsing XDC File [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo.xdc] for cell 'U0'
-Parsing XDC File [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo_clocks.xdc] for cell 'U0'
-INFO: [Timing 38-35] Done setting XDC timing constraints. [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo_clocks.xdc:53]
-Finished Parsing XDC File [/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo_clocks.xdc] for cell 'U0'
+Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo_ooc.xdc] for cell 'U0'
+Finished Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo_ooc.xdc] for cell 'U0'
+Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo.xdc] for cell 'U0'
+Finished Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo.xdc] for cell 'U0'
+Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo_clocks.xdc] for cell 'U0'
+INFO: [Timing 38-35] Done setting XDC timing constraints. [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo_clocks.xdc:53]
+Finished Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/sumarea_fifo/sumarea_fifo/sumarea_fifo_clocks.xdc] for cell 'U0'
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 8 instances were transformed.
   (MUXCY,XORCY) => CARRY4: 8 instances
 
 INFO: [Common 17-83] Releasing license: Synthesis
-19 Infos, 101 Warnings, 0 Critical Warnings and 0 Errors encountered.
+20 Infos, 101 Warnings, 0 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:02:03 ; elapsed = 00:02:08 . Memory (MB): peak = 1937.309 ; gain = 890.930 ; free physical = 3153 ; free virtual = 11466
+synth_design: Time (s): cpu = 00:02:09 ; elapsed = 00:02:17 . Memory (MB): peak = 1960.824 ; gain = 910.926 ; free physical = 124 ; free virtual = 7706
 INFO: [Coretcl 2-1174] Renamed 43 cell refs.
-report_utilization: Time (s): cpu = 00:00:00.05 ; elapsed = 00:00:00.12 . Memory (MB): peak = 1977.324 ; gain = 0.000 ; free physical = 3153 ; free virtual = 11465
-INFO: [Common 17-206] Exiting Vivado at Wed Jan 29 14:03:33 2020...
+report_utilization: Time (s): cpu = 00:00:00.06 ; elapsed = 00:00:00.16 . Memory (MB): peak = 1992.844 ; gain = 0.000 ; free physical = 120 ; free virtual = 7702
+INFO: [Common 17-206] Exiting Vivado at Mon May  6 19:45:33 2024...

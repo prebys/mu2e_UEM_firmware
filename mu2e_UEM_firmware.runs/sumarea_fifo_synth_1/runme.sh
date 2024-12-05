@@ -20,7 +20,7 @@ else
 fi
 export LD_LIBRARY_PATH
 
-HD_PWD='/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.runs/sumarea_fifo_synth_1'
+HD_PWD='/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/sumarea_fifo_synth_1'
 cd "$HD_PWD"
 
 HD_LOG=runme.log

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="fei4_pixel_fifo_synth_1" LaunchPart="xc7k420tffg1156-2" LaunchTime="1699934376">
-  <File Type="PA-TCL" Name="fei4_pixel_fifo.tcl"/>
+<GenRun Id="fei4_pixel_fifo_synth_1" LaunchPart="xc7k420tffg1156-2" LaunchTime="1715041909">
   <File Type="RDS-PROPCONSTRS" Name="fei4_pixel_fifo_drc_synth.rpt"/>
-  <File Type="RDS-RDS" Name="fei4_pixel_fifo.vds"/>
   <File Type="RDS-UTIL" Name="fei4_pixel_fifo_utilization_synth.rpt"/>
-  <File Type="RDS-UTIL-PB" Name="fei4_pixel_fifo_utilization_synth.pb"/>
-  <File Type="RDS-DCP" Name="fei4_pixel_fifo.dcp"/>
-  <File Type="VDS-TIMINGSUMMARY" Name="fei4_pixel_fifo_timing_summary_synth.rpt"/>
+  <File Type="RDS-RDS" Name="fei4_pixel_fifo.vds"/>
   <File Type="VDS-TIMING-PB" Name="fei4_pixel_fifo_timing_summary_synth.pb"/>
+  <File Type="PA-TCL" Name="fei4_pixel_fifo.tcl"/>
+  <File Type="VDS-TIMINGSUMMARY" Name="fei4_pixel_fifo_timing_summary_synth.rpt"/>
+  <File Type="RDS-DCP" Name="fei4_pixel_fifo.dcp"/>
+  <File Type="RDS-UTIL-PB" Name="fei4_pixel_fifo_utilization_synth.pb"/>
   <FileSet Name="sources" Type="BlockSrcs" RelSrcDir="$PSRCDIR/fei4_pixel_fifo">
     <File Path="$PSRCDIR/sources_1/ip/fei4_pixel_fifo/fei4_pixel_fifo.xci">
       <FileInfo>

@@ -1,0 +1,86 @@
+#!/bin/bash
+
+# Define the two IP addresses
+IP1="192.168.40.252"
+IP2="192.168.40.253"
+
+# Function to check if an IP is reachable
+check_ip() {
+    ping -c 1 -W 1 "$1" > /dev/null 2>&1
+    return $?
+}
+
+# Check which IP is active
+if check_ip "$IP1"; then
+    ACTIVE_IP="$IP1"
+    echo "Using active IP: $ACTIVE_IP"
+elif check_ip "$IP2"; then
+    ACTIVE_IP="$IP2"
+    echo "Using active IP: $ACTIVE_IP"
+else
+    echo "Neither IP is reachable. Exiting."
+    exit 1
+fi
+
+# Get default value
+default_file_path="/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/impl_1/top_fmc228_pcie.bit"
+original_file_path="/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/impl_1_old/top_fmc228_pcie_default.bit"
+
+# Check if an argument is passed
+if [ -n "$1" ]; then
+    if [ "$1" == "original" ]; then
+	file_path=$original_file_path
+    else
+        file_path=$1
+    fi
+else
+    file_path=$default_file_path
+fi
+
+file_name=$(basename "$file_path")
+
+# remount remote file system as writable
+if ssh root@$ACTIVE_IP "mount -o remount,rw /"; then
+    echo "Remounted file system as writable. Manually undo this if the script fails!!"
+else
+    if ssh root@$ACTIVE_IP "mount -o remount,ro /"; then
+        "Remounting file system to be writable failed. I've checked it's now read-only again."
+        exit 1
+    else
+        echo "FAILED TO REMOUNT DRIVE TO BE READ-ONLY, YOU NEED TO FIX THIS"
+        exit 1
+    fi
+fi
+
+# Copy file to crate
+if scp "$file_path" root@$ACTIVE_IP:/upgrade/; then
+    echo "File copied successfully."
+else
+    echo "Failed to copy file."
+    exit 1
+fi
+
+# sync and set file system back to be read-only
+if ssh root@$ACTIVE_IP "sync;mount -o remount,ro /"; then
+    echo "Successfully synced changes and remounted filesystem as read-only."
+else
+    echo "Failed to sync changes or remount the file system as read-only. Please manually verify it is read-only now."
+fi
+
+# Run upgrade command on remote server
+if ssh root@$ACTIVE_IP "export PATH=$PATH:/sbin:/bin;cd /upgrade/; echo "Y" | fpga_upgrade \"$file_name\""; then
+    echo "Upgrade command executed successfully."
+else
+    echo "Failed to execute upgrade command."
+    exit 1
+fi
+
+read -n 1 -p "Please push any key once the minicom window has shown the FPGA as registered"
+
+./newsetup.sh
+
+echo "Successfully completed all commands. Upgraded FPGA to $file_name"
+
+./udp-recv
+
+

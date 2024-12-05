@@ -1,0 +1,5 @@
+top_fmc228_pcie_v1.bit: 
+	Should be default file with no modifications
+
+top_fmc228_pcie_v2.bit:
+	Only has modification in ignoring fifo_ready signal when tm_r = "0001" to send ADC data

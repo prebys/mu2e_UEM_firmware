@@ -715,10 +715,14 @@ begin
 --  Instantiate PCIe interface here
 --
 
+  -- Primitive: Advanced Mixed Mode Clock Manager
+  
   mmcm_imp : mmcme2_base
   generic map (
+    -- Specifies the amount to multiply all CLKOUT clock outputs if a different frequency is desired. 
+    -- This number, in combination with the associated CLKOUT#_DIVIDE value and DIVCLK_DIVIDE value, will determine the output frequency.
     clkfbout_mult_f => 8.000,
-    clkin1_period => 10.000,
+    clkin1_period => 10.000,  -- Specifies the input period in ns to the MMCM CLKIN inputs
     clkout0_divide_f => 4.000,
     clkout1_divide => 40,
     clkout2_divide => 20,
@@ -727,11 +731,11 @@ begin
     clkout6_divide => 80
   )
   port map (
-    clkfbin => clkfb,
-    clkin1 => clk100mhz,
+    clkfbin => clkfb,  -- Feedback clock pin to the MMCM.
+    clkin1 => clk100mhz,  -- Primary clock input.
     pwrdwn => '0',
     rst => '0',
-    clkfbout => clkfb,
+    clkfbout => clkfb,  -- Dedicated MMCM Feedback clock output.
     clkfboutb => open,
     clkout0 => clk200mhz_out,
     clkout0b => open,
