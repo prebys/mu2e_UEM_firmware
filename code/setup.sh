@@ -1,5 +1,5 @@
 #!/bin/bash
-cd "$(dirname "$0")"
+cd "$(dirname "$(readlink -f "$0")")"
 make clean
 make
 ./amc502_mux 192.168.40.02 < mux_master.txt

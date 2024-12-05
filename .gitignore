@@ -52,7 +52,7 @@ code*/*
 
 # [dir]
 *.cache
-.metadata
+**/.metadata*
 *.data
 *.ipdefs
 .Xil
@@ -126,3 +126,9 @@ code*/*
 */*/*/bd/*/ip/*/*.tcl
 hw_handoff
 ipshared
+
+ila*
+Vadatech_amc_example/
+socketudp_tmnguyen/
+socketudp/FRU*
+sources/

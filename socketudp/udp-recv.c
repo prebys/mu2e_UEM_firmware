@@ -63,10 +63,13 @@ int main(int argc, char **argv)
 
 
     /* create a UDP socket */
-    if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-        perror("cannot create socket\n");
+    
+    fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (fd < 0) {
+        perror("socket creation failed");
         return 0;
     }
+
 
     /* bind the socket to any valid IP address and a specific port */
     memset((char *)&myaddr, 0, sizeof(myaddr));
