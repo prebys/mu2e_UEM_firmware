@@ -1,18 +1,46 @@
 This repository documents the Xilinx Vivado project required to run the FPGA in the Vadatech microTCA crate. Main instructions are found here: https://eprebys.faculty.ucdavis.edu/mu2e-uem-microtca-firmware-notes/
 
-A couple comments:
+For help installing ROOT and Vivado on AlmaLinux, see [this page](documentation_texts/software_installation_tips.md).
 
-- The above software is built to compile on Vivado version 2016.2. If you are having trouble installing Vivado 2016.2, try unchecking the boxes in setup for "Create shortcuts on desktop" and "Add this to program group" (not sure if this actually helps, but someone said to do it and I've been doing it along with the next step), and also (specifically for AlmaLinux), try running `dnf install epel-release` and `dnf install -y ncurses-compat-libs` and then reinstalling.
-- In order to run the code in the "code" folder, you may need to run "make" in the folder to build the programs. If this fails with an error about "TFile.h" or something like that, that means you're missing ROOT, so install ROOT on your computer and source the ROOT install's `source $(ROOTDIR)/bin/thisroot.sh` file.
-- If it complains about some kind of "patch", do `dnf install patch`.
-- If there's other problems installing ROOT or making the code directory, try installing [ROOT's required dependencies](https://root.cern/install/dependencies/#fedora-scientific-linux-and-centos). CentOS8 is probably the closest to AlmaLinux so you can follow those ones. It's a good group of programs that are required by many other things. For example, g++ is not installed by default on AlmaLinux, and that'll be needed to make things. There will be a couple things that AlmaLinux can't find, try doing `dnf install ... --skip-broken` ([skip-broken ref](https://dnf.readthedocs.io/en/latest/command_ref.html#skip-broken-option-label)) and it'll skip the ones it can't find. 
+The original state of this repository as it was left by Minh on the UEM computer before the recompiling and reformatting can be found in the [original-minh branch](https://github.com/prebys/mu2e_UEM_firmware/tree/original-minh). 
 
-The original state of this repository as it was left by Minh on the UEM computer before the recomiling and reformatting by Ryan can be found in the [original-minh branch](https://github.com/prebys/mu2e_UEM_firmware/tree/original-minh). 
+Minh's original instructions for operation of the Vadatech crate are found in [mu2e-docdb:40514](https://mu2e-docdb.fnal.gov/cgi-bin/sso/ShowDocument?docid=40514).
 
-- Follow Minh's document: doc db: 40514. TODO: Some changes are needed here, to be added later.
-- There are several firmware in the specified directory but one should be used is: top_fmc228_pcie_newAlgPeak_v7.bit
-Mathew (Purdue) says this is designed more towards a "peak-finding tool" unlike that of an oscilloscope for waveform dumping purposes. The setup scripts required for UDP-based data acquisition to be followed. The output data format is described in the note (40514).
-- The read binary code reads the output and produces a ROOT tree with peak finding data. It was written in ROOT5 and have been modified to ROOT6 in this commit. TODO: Change in required variables, and arrays to be done later.
-- make clean and make in the directory: FMC228_v4
-- Inside FMC228_v4/convertFMC228: ./read_binary_FMC228_longpeakfinding_v6 <path to input root file> <path to output> <no. of events>
-- To read this tree and plot several things : ShowProf_rawevent1.C inside macros.
+Main bitfile to be used when programming the FPGA is [bitfiles/top_fmc228_pcie_v1.bit](bitfiles/top_fmc228_pcie_v1.bit)
+
+### Things for Jinglu to try doing (if you're reading this!)
+This section of course won't be in the final real documentation, it's just here while I'm drafting things
+1. Follow the below steps and practice trying to take data
+2. Try changing some of the parameters by doing in the minicomA window `poke cf000048 c8` while stream if off and then turn it back on and take new data. This will set the raw waveform window from 200ns to 400ns. See if it still takes data.
+3. There is some kind of maximum amount of time allowed for the raw waveform window. If you set the setting too high, then all data stops coming, and even if you turn the setting back down, the data won't come until you completely reload the firmware from the original bit file. We need to investigate this.
+4. Channels 1-3 of the data should be PMTs producing pretty much just 0V. Channel 4 should be the DC ramp from -2.3V to +2.3V, but right now it seems to be stuck around 0V. We should investigate this. (I'm assuming the signal generator is properly putting out a signal!)
+
+You can try any of these above things. Even just step one is a good starting point without worrying about any of the other things. 
+
+### How to take data
+
+1. SSH into `mu2euem@mu2euem.dhcp.fnal.gov`. 
+2. Enter the command `minicomA`
+3. If you push enter a few times, new lines should appear prefixed by `$ ` dollar signs. If nothing happens when you push enter, you need to program the FPGA (see [Programming the FPGA](#programming-the-fpga))
+4. In a second SSH window, navigate to `/disk2/mu2e/mu2e_UEM_firmware/socketudp/`
+5. Run `./newsetup.sh`. This compiles all the required setup steps from Minh's original document into one script, along with newer recommended settings. Ask someone on the project for the root password.
+6. In the /socketudp/ directory, run `./udp-recv`.
+7. In the minicomA window, an important configuration is `stream off` or `stream on`. This determines whether the uTCA crate will be sending data over UDP. By default, it is off. Once the `udp-recv` file is open and waiting for data, type `stream on` in the minicomA window.
+8. Once you're done taking data, FIRST type `stream off` then `Ctrl+C` to stop data taking in the /socketudp/ window. It will create images in the /socketudp/img/ directory.
+
+#### Programming the FPGA
+Two methods. First, using Vivado:
+1. In a new terminal window, navigate to `/disk2/mu2e/mu2e_UEM_firmware/`.
+2. Run the command `vivado mu2e_UEM_firmware.xpr`. A Vivado window should open up.
+3. Go to Hardware Manager --> Open Target --> Auto Connect --> Program Device --> Choose a bitfile.
+4. In the `minicomA` window, once the programming is finished, a message should pop saying "Purdue debug monitor 1.00 - AMC502+XAUI+FMC228(1) version.", and you should be able to start typing into the minicom window.
+
+Second method, using SSH to upload the bit file directly
+
+1. Navigate to `/disk2/mu2e/mu2e_UEM_firmware/socketudp/`
+2. Run `./fpga_upgrade`. It should run a bunch of commands. Ask someone on the project for the root password.
+
+#### Using ROOT Files
+- Run `make clean` and `make` in the directory: /FMC228_v4
+- Inside FMC228_v4/convertFMC228: `./read_binary_FMC228_longpeakfinding_v6 <path to input root file> <path to output> <no. of events>`
+- To read this tree and plot several things : `ShowProf_rawevent1.C` inside /macros.
