@@ -8,6 +8,15 @@ Minh's original instructions for operation of the Vadatech crate are found in [m
 
 Main bitfile to be used when programming the FPGA is [bitfiles/top_fmc228_pcie_v1.bit](bitfiles/top_fmc228_pcie_v1.bit)
 
+### Things for Jinglu to try doing (if you're reading this!)
+This section of course won't be in the final real documentation, it's just here while I'm drafting things
+1. Follow the below steps and practice trying to take data
+2. Try changing some of the parameters by doing in the minicomA window `poke cf000048 c8` while stream if off and then turn it back on and take new data. This will set the raw waveform window from 200ns to 400ns. See if it still takes data.
+3. There is some kind of maximum amount of time allowed for the raw waveform window. If you set the setting too high, then all data stops coming, and even if you turn the setting back down, the data won't come until you completely reload the firmware from the original bit file. We need to investigate this.
+4. Channels 1-3 of the data should be PMTs producing pretty much just 0V. Channel 4 should be the DC ramp from -2.3V to +2.3V, but right now it seems to be stuck around 0V. We should investigate this. (I'm assuming the signal generator is properly putting out a signal!)
+
+You can try any of these above things. Even just step one is a good starting point without worrying about any of the other things. 
+
 ### How to take data
 
 1. SSH into `mu2euem@mu2euem.dhcp.fnal.gov`. 
@@ -17,7 +26,7 @@ Main bitfile to be used when programming the FPGA is [bitfiles/top_fmc228_pcie_v
 5. Run `./newsetup.sh`. This compiles all the required setup steps from Minh's original document into one script, along with newer recommended settings. Ask someone on the project for the root password.
 6. In the /socketudp/ directory, run `./udp-recv`.
 7. In the minicomA window, an important configuration is `stream off` or `stream on`. This determines whether the uTCA crate will be sending data over UDP. By default, it is off. Once the `udp-recv` file is open and waiting for data, type `stream on` in the minicomA window.
-8. Once you're done taking data, FIRST type `stream off` then `Ctrl+C` to stop data taking in the /socketudp/ window.
+8. Once you're done taking data, FIRST type `stream off` then `Ctrl+C` to stop data taking in the /socketudp/ window. It will create images in the /socketudp/img/ directory.
 
 #### Programming the FPGA
 Two methods. First, using Vivado:
