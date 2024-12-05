@@ -3,19 +3,19 @@
 <!--                                                         -->
 <!-- Copyright 1986-2016 Xilinx, Inc. All Rights Reserved.   -->
 
-<Project Version="7" Minor="14" Path="/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.xpr">
+<Project Version="7" Minor="14" Path="/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="d1bec1a1b0fd4bbcbac4aa43cf9958bf"/>
     <Option Name="Part" Val="xc7k420tffg1156-2"/>
     <Option Name="CompiledLibDir" Val="$PCACHEDIR/compile_simlib"/>
     <Option Name="CompiledLibDirXSim" Val=""/>
-    <Option Name="CompiledLibDirModelSim" Val="$PPRDIR/../../../disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/AppData/Roaming/Xilinx/AppData/Xilinx/Xilinx/home/rhensley/Documents/mu2e_UEM_firmware/Users/ericp/Xilinx/mu2e_UEM_firmware/mu2e_UEM_firmware.cache/compile_simlib/modelsim"/>
-    <Option Name="CompiledLibDirQuesta" Val="$PPRDIR/../../../disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/AppData/Roaming/Xilinx/AppData/Xilinx/Xilinx/home/rhensley/Documents/mu2e_UEM_firmware/Users/ericp/Xilinx/mu2e_UEM_firmware/mu2e_UEM_firmware.cache/compile_simlib/questa"/>
-    <Option Name="CompiledLibDirIES" Val="$PPRDIR/../../../disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/AppData/Roaming/Xilinx/AppData/Xilinx/Xilinx/home/rhensley/Documents/mu2e_UEM_firmware/Users/ericp/Xilinx/mu2e_UEM_firmware/mu2e_UEM_firmware.cache/compile_simlib/ies"/>
-    <Option Name="CompiledLibDirVCS" Val="$PPRDIR/../../../disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/AppData/Roaming/Xilinx/AppData/Xilinx/Xilinx/home/rhensley/Documents/mu2e_UEM_firmware/Users/ericp/Xilinx/mu2e_UEM_firmware/mu2e_UEM_firmware.cache/compile_simlib/vcs"/>
-    <Option Name="CompiledLibDirRiviera" Val="$PPRDIR/../../../disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/AppData/Roaming/Xilinx/AppData/Xilinx/Xilinx/home/rhensley/Documents/mu2e_UEM_firmware/Users/ericp/Xilinx/mu2e_UEM_firmware/mu2e_UEM_firmware.cache/compile_simlib/riviera"/>
-    <Option Name="CompiledLibDirActivehdl" Val="$PPRDIR/../../../disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/AppData/Roaming/Xilinx/AppData/Xilinx/Xilinx/home/rhensley/Documents/mu2e_UEM_firmware/Users/ericp/Xilinx/mu2e_UEM_firmware/mu2e_UEM_firmware.cache/compile_simlib/activehdl"/>
+    <Option Name="CompiledLibDirModelSim" Val="$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/socketudp/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/AppData/Roaming/Xilinx/AppData/Xilinx/Xilinx/home/rhensley/Documents/mu2e_UEM_firmware/Users/ericp/Xilinx/mu2e_UEM_firmware/mu2e_UEM_firmware.cache/compile_simlib/modelsim"/>
+    <Option Name="CompiledLibDirQuesta" Val="$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/socketudp/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/AppData/Roaming/Xilinx/AppData/Xilinx/Xilinx/home/rhensley/Documents/mu2e_UEM_firmware/Users/ericp/Xilinx/mu2e_UEM_firmware/mu2e_UEM_firmware.cache/compile_simlib/questa"/>
+    <Option Name="CompiledLibDirIES" Val="$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/socketudp/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/AppData/Roaming/Xilinx/AppData/Xilinx/Xilinx/home/rhensley/Documents/mu2e_UEM_firmware/Users/ericp/Xilinx/mu2e_UEM_firmware/mu2e_UEM_firmware.cache/compile_simlib/ies"/>
+    <Option Name="CompiledLibDirVCS" Val="$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/socketudp/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/AppData/Roaming/Xilinx/AppData/Xilinx/Xilinx/home/rhensley/Documents/mu2e_UEM_firmware/Users/ericp/Xilinx/mu2e_UEM_firmware/mu2e_UEM_firmware.cache/compile_simlib/vcs"/>
+    <Option Name="CompiledLibDirRiviera" Val="$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/socketudp/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/AppData/Roaming/Xilinx/AppData/Xilinx/Xilinx/home/rhensley/Documents/mu2e_UEM_firmware/Users/ericp/Xilinx/mu2e_UEM_firmware/mu2e_UEM_firmware.cache/compile_simlib/riviera"/>
+    <Option Name="CompiledLibDirActivehdl" Val="$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/socketudp/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/$PPRDIR/disk2/data/tmnguyen/mu2e_monitor_firmware_original/firmware_New_v2/AppData/Roaming/Xilinx/AppData/Xilinx/Xilinx/home/rhensley/Documents/mu2e_UEM_firmware/Users/ericp/Xilinx/mu2e_UEM_firmware/mu2e_UEM_firmware.cache/compile_simlib/activehdl"/>
     <Option Name="TargetLanguage" Val="VHDL"/>
     <Option Name="BoardPart" Val=""/>
     <Option Name="SourceMgmtMode" Val="DisplayOnly"/>
@@ -34,13 +34,13 @@
     <Option Name="WTVcsLaunchSim" Val="0"/>
     <Option Name="WTRivieraLaunchSim" Val="0"/>
     <Option Name="WTActivehdlLaunchSim" Val="0"/>
-    <Option Name="WTXSimExportSim" Val="104"/>
-    <Option Name="WTModelSimExportSim" Val="104"/>
-    <Option Name="WTQuestaExportSim" Val="104"/>
-    <Option Name="WTIesExportSim" Val="104"/>
-    <Option Name="WTVcsExportSim" Val="104"/>
-    <Option Name="WTRivieraExportSim" Val="104"/>
-    <Option Name="WTActivehdlExportSim" Val="104"/>
+    <Option Name="WTXSimExportSim" Val="105"/>
+    <Option Name="WTModelSimExportSim" Val="105"/>
+    <Option Name="WTQuestaExportSim" Val="105"/>
+    <Option Name="WTIesExportSim" Val="105"/>
+    <Option Name="WTVcsExportSim" Val="105"/>
+    <Option Name="WTRivieraExportSim" Val="105"/>
+    <Option Name="WTActivehdlExportSim" Val="105"/>
   </Configuration>
   <FileSets Version="1" Minor="31">
     <FileSet Name="sources_1" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
@@ -1026,6 +1026,12 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
+      <File Path="$PPRDIR/../Vivado_Reference_R2/sources/sdk/standalone_bsp_0/src/fmc228_tool.elf">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="IsVisible" Val="1"/>
+        </FileInfo>
+      </File>
       <Config>
         <Option Name="DesignMode" Val="RTL"/>
         <Option Name="TopModule" Val="top_fmc228_pcie"/>
@@ -1605,7 +1611,7 @@
     </Simulator>
   </Simulators>
   <Runs Version="1" Minor="10">
-    <Run Id="synth_1" Type="Ft3:Synth" SrcSet="sources_1" Part="xc7k420tffg1156-2" ConstrsSet="constrs_fmc228_pcie" Description="Higher performance designs, resource sharing is turned off, the global fanout guide is set to a lower number, FSM extraction forced to one-hot, LUT combining is disabled, equivalent registers are preserved, SRL are inferred  with a larger threshold" State="current" IncludeInArchive="true">
+    <Run Id="synth_1" Type="Ft3:Synth" SrcSet="sources_1" Part="xc7k420tffg1156-2" ConstrsSet="constrs_fmc228_pcie" Description="Higher performance designs, resource sharing is turned off, the global fanout guide is set to a lower number, FSM extraction forced to one-hot, LUT combining is disabled, equivalent registers are preserved, SRL are inferred  with a larger threshold" State="current" Dir="$PRUNDIR/synth_1" IncludeInArchive="true">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Flow_PerfOptimized_high" Flow="Vivado Synthesis 2016"/>
         <Step Id="synth_design">
@@ -1617,6 +1623,7 @@
           <Option Id="ShregMinSize">5</Option>
         </Step>
       </Strategy>
+      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
     </Run>
     <Run Id="gig_ethernet_pcs_pma_0_synth_1" Type="Ft3:Synth" SrcSet="gig_ethernet_pcs_pma_0" Part="xc7k420tffg1156-2" ConstrsSet="gig_ethernet_pcs_pma_0" Description="Vivado Synthesis Defaults" Dir="$PRUNDIR/gig_ethernet_pcs_pma_0_synth_1" IncludeInArchive="true">
       <Strategy Version="1" Minor="2">
@@ -1737,19 +1744,21 @@
       </Strategy>
       <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
     </Run>
-    <Run Id="sumarea_fifo_synth_1" Type="Ft3:Synth" SrcSet="sumarea_fifo" Part="xc7k420tffg1156-2" ConstrsSet="sumarea_fifo" Description="Vivado Synthesis Defaults" IncludeInArchive="true">
+    <Run Id="sumarea_fifo_synth_1" Type="Ft3:Synth" SrcSet="sumarea_fifo" Part="xc7k420tffg1156-2" ConstrsSet="sumarea_fifo" Description="Vivado Synthesis Defaults" Dir="$PRUNDIR/sumarea_fifo_synth_1" IncludeInArchive="true">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2016"/>
         <Step Id="synth_design"/>
       </Strategy>
+      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
     </Run>
-    <Run Id="peakhigh_fifo_synth_1" Type="Ft3:Synth" SrcSet="peakhigh_fifo" Part="xc7k420tffg1156-2" ConstrsSet="peakhigh_fifo" Description="Vivado Synthesis Defaults" IncludeInArchive="true">
+    <Run Id="peakhigh_fifo_synth_1" Type="Ft3:Synth" SrcSet="peakhigh_fifo" Part="xc7k420tffg1156-2" ConstrsSet="peakhigh_fifo" Description="Vivado Synthesis Defaults" Dir="$PRUNDIR/peakhigh_fifo_synth_1" IncludeInArchive="true">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2016"/>
         <Step Id="synth_design"/>
       </Strategy>
+      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
     </Run>
-    <Run Id="impl_1" Type="Ft2:EntireDesign" Part="xc7k420tffg1156-2" ConstrsSet="constrs_fmc228_pcie" Description="Default settings for Implementation." State="current" SynthRun="synth_1" IncludeInArchive="true">
+    <Run Id="impl_1" Type="Ft2:EntireDesign" Part="xc7k420tffg1156-2" ConstrsSet="constrs_fmc228_pcie" Description="Default settings for Implementation." State="current" Dir="$PRUNDIR/impl_1" SynthRun="synth_1" IncludeInArchive="true">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2016"/>
         <Step Id="init_design"/>
@@ -1762,6 +1771,7 @@
         <Step Id="post_route_phys_opt_design"/>
         <Step Id="write_bitstream"/>
       </Strategy>
+      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
     </Run>
     <Run Id="gig_ethernet_pcs_pma_0_impl_1" Type="Ft2:EntireDesign" Part="xc7k420tffg1156-2" ConstrsSet="gig_ethernet_pcs_pma_0" Description="Default settings for Implementation." SynthRun="gig_ethernet_pcs_pma_0_synth_1" IncludeInArchive="false">
       <Strategy Version="1" Minor="2">

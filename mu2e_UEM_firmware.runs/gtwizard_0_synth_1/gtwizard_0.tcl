@@ -10,13 +10,13 @@ set_param project.singleFileAddWarning.threshold 0
 set_param project.compositeFile.enableAutoGeneration 0
 set_param synth.vivado.isSynthRun true
 set_msg_config -source 4 -id {IP_Flow 19-2162} -severity warning -new_severity info
-set_property webtalk.parent_dir /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.cache/wt [current_project]
-set_property parent.project_path /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.xpr [current_project]
+set_property webtalk.parent_dir /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.cache/wt [current_project]
+set_property parent.project_path /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.xpr [current_project]
 set_property XPM_LIBRARIES XPM_MEMORY [current_project]
 set_property default_lib xil_defaultlib [current_project]
 set_property target_language VHDL [current_project]
-read_ip -quiet /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/gtwizard_0/gtwizard_0.xci
-set_property is_locked true [get_files /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/gtwizard_0/gtwizard_0.xci]
+read_ip -quiet /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/gtwizard_0/gtwizard_0.xci
+set_property is_locked true [get_files /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/gtwizard_0/gtwizard_0.xci]
 
 foreach dcp [get_files -quiet -all *.dcp] {
   set_property used_in_implementation false $dcp
@@ -33,44 +33,44 @@ write_checkpoint -force -noxdef gtwizard_0.dcp
 catch { report_utilization -file gtwizard_0_utilization_synth.rpt -pb gtwizard_0_utilization_synth.pb }
 
 if { [catch {
-  file copy -force /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/gtwizard_0_synth_1/gtwizard_0.dcp /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/gtwizard_0/gtwizard_0.dcp
+  file copy -force /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/gtwizard_0_synth_1/gtwizard_0.dcp /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/gtwizard_0/gtwizard_0.dcp
 } _RESULT ] } { 
   send_msg_id runtcl-3 error "ERROR: Unable to successfully create or copy the sub-design checkpoint file."
   error "ERROR: Unable to successfully create or copy the sub-design checkpoint file."
 }
 
 if { [catch {
-  write_verilog -force -mode synth_stub /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/gtwizard_0/gtwizard_0_stub.v
+  write_verilog -force -mode synth_stub /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/gtwizard_0/gtwizard_0_stub.v
 } _RESULT ] } { 
   puts "CRITICAL WARNING: Unable to successfully create a Verilog synthesis stub for the sub-design. This may lead to errors in top level synthesis of the design. Error reported: $_RESULT"
 }
 
 if { [catch {
-  write_vhdl -force -mode synth_stub /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/gtwizard_0/gtwizard_0_stub.vhdl
+  write_vhdl -force -mode synth_stub /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/gtwizard_0/gtwizard_0_stub.vhdl
 } _RESULT ] } { 
   puts "CRITICAL WARNING: Unable to successfully create a VHDL synthesis stub for the sub-design. This may lead to errors in top level synthesis of the design. Error reported: $_RESULT"
 }
 
 if { [catch {
-  write_verilog -force -mode funcsim /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/gtwizard_0/gtwizard_0_sim_netlist.v
+  write_verilog -force -mode funcsim /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/gtwizard_0/gtwizard_0_sim_netlist.v
 } _RESULT ] } { 
   puts "CRITICAL WARNING: Unable to successfully create the Verilog functional simulation sub-design file. Post-Synthesis Functional Simulation with this file may not be possible or may give incorrect results. Error reported: $_RESULT"
 }
 
 if { [catch {
-  write_vhdl -force -mode funcsim /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/gtwizard_0/gtwizard_0_sim_netlist.vhdl
+  write_vhdl -force -mode funcsim /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/gtwizard_0/gtwizard_0_sim_netlist.vhdl
 } _RESULT ] } { 
   puts "CRITICAL WARNING: Unable to successfully create the VHDL functional simulation sub-design file. Post-Synthesis Functional Simulation with this file may not be possible or may give incorrect results. Error reported: $_RESULT"
 }
 
-if {[file isdir /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.ip_user_files/ip/gtwizard_0]} {
+if {[file isdir /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.ip_user_files/ip/gtwizard_0]} {
   catch { 
-    file copy -force /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/gtwizard_0/gtwizard_0_stub.v /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.ip_user_files/ip/gtwizard_0
+    file copy -force /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/gtwizard_0/gtwizard_0_stub.v /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.ip_user_files/ip/gtwizard_0
   }
 }
 
-if {[file isdir /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.ip_user_files/ip/gtwizard_0]} {
+if {[file isdir /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.ip_user_files/ip/gtwizard_0]} {
   catch { 
-    file copy -force /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/gtwizard_0/gtwizard_0_stub.vhdl /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.ip_user_files/ip/gtwizard_0
+    file copy -force /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/gtwizard_0/gtwizard_0_stub.vhdl /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.ip_user_files/ip/gtwizard_0
   }
 }

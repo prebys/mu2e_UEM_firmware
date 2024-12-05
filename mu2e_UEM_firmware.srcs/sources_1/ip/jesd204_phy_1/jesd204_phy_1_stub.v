@@ -1,10 +1,10 @@
 // Copyright 1986-2016 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2016.2 (lin64) Build 1577090 Thu Jun  2 16:32:35 MDT 2016
-// Date        : Thu Mar 21 11:40:24 2024
+// Date        : Mon May  6 19:42:57 2024
 // Host        : mu2euem.dhcp.fnal.gov running 64-bit Scientific Linux release 7.9 (Nitrogen)
 // Command     : write_verilog -force -mode synth_stub
-//               /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/jesd204_phy_1/jesd204_phy_1_stub.v
+//               /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/jesd204_phy_1/jesd204_phy_1_stub.v
 // Design      : jesd204_phy_1
 // Purpose     : Stub declaration of top-level module interface
 // Device      : xc7k420tffg1156-2

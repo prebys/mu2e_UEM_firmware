@@ -272,7 +272,7 @@ begin
           read_early <= '0';
 --          read_data <= din(to_integer(channel_number));
               wren <= '1';
-              stat := status(to_integer(channel_number));  -- this line is immediately overwritten?
+              stat := status(to_integer(channel_number));
               stat(channel_number'left downto 0) := std_logic_vector(channel_number);
               dout <= stat;
               state <= SendHeader2;
@@ -327,7 +327,7 @@ begin
            rden(3) <='0';
          end if;
 
-          case tm_r is  -- set by testmode[3..0] input of this entity module
+          case tm_r is
           when "0000" =>
             --dout <= din(to_integer(channel_number));
             dout <= din(to_integer(nchannel));

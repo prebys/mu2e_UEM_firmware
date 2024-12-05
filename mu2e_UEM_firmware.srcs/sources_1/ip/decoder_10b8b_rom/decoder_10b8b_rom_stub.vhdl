@@ -1,10 +1,10 @@
 -- Copyright 1986-2016 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2016.2 (lin64) Build 1577090 Thu Jun  2 16:32:35 MDT 2016
--- Date        : Thu Mar 21 11:35:01 2024
+-- Date        : Wed Jul 10 17:18:06 2024
 -- Host        : mu2euem.dhcp.fnal.gov running 64-bit Scientific Linux release 7.9 (Nitrogen)
 -- Command     : write_vhdl -force -mode synth_stub
---               /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/decoder_10b8b_rom/decoder_10b8b_rom_stub.vhdl
+--               /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/decoder_10b8b_rom/decoder_10b8b_rom_stub.vhdl
 -- Design      : decoder_10b8b_rom
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7k420tffg1156-2

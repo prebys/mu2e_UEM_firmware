@@ -2,12 +2,12 @@
 # Vivado v2016.2 (64-bit)
 # SW Build 1577090 on Thu Jun  2 16:32:35 MDT 2016
 # IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
-# Start of session at: Thu Mar 21 11:31:25 2024
-# Process ID: 307
-# Current directory: /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/xaui_0_synth_1
+# Start of session at: Mon May  6 19:33:19 2024
+# Process ID: 26471
+# Current directory: /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/xaui_0_synth_1
 # Command line: vivado -log xaui_0.vds -mode batch -messageDb vivado.pb -notrace -source xaui_0.tcl
-# Log file: /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/xaui_0_synth_1/xaui_0.vds
-# Journal file: /root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/xaui_0_synth_1/vivado.jou
+# Log file: /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/xaui_0_synth_1/xaui_0.vds
+# Journal file: /disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/xaui_0_synth_1/vivado.jou
 #-----------------------------------------------------------
 source xaui_0.tcl -notrace
 Command: synth_design -top xaui_0 -part xc7k420tffg1156-2 -mode out_of_context
@@ -15,50 +15,50 @@ Starting synth_design
 Attempting to get a license for feature 'Synthesis' and/or device 'xc7k420t'
 INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7k420t'
 INFO: Launching helper process for spawning children vivado processes
-INFO: Helper process launched with PID 531 
+INFO: Helper process launched with PID 26674 
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:10 ; elapsed = 00:00:12 . Memory (MB): peak = 1202.738 ; gain = 227.398 ; free physical = 447 ; free virtual = 9871
+Starting RTL Elaboration : Time (s): cpu = 00:00:11 ; elapsed = 00:00:12 . Memory (MB): peak = 1201.738 ; gain = 226.398 ; free physical = 445 ; free virtual = 8403
 ---------------------------------------------------------------------------------
-INFO: [Synth 8-638] synthesizing module 'xaui_0' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0.vhd:98]
-INFO: [Synth 8-3491] module 'xaui_0_block' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:62' bound to instance 'U0' of component 'xaui_0_block' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0.vhd:367]
-INFO: [Synth 8-638] synthesizing module 'xaui_0_block' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:331]
-INFO: [Synth 8-3491] module 'xaui_0_cl_clocking' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_clocking.vhd:63' bound to instance 'xaui_cl_clocking_i' of component 'xaui_0_cl_clocking' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1223]
-INFO: [Synth 8-638] synthesizing module 'xaui_0_cl_clocking' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_clocking.vhd:69]
-INFO: [Synth 8-113] binding component instance 'clk156_bufg_i' to cell 'BUFG' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_clocking.vhd:73]
-INFO: [Synth 8-256] done synthesizing module 'xaui_0_cl_clocking' (1#1) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_clocking.vhd:69]
-INFO: [Synth 8-3491] module 'xaui_0_cl_resets' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_resets.vhd:61' bound to instance 'xaui_cl_resets_i' of component 'xaui_0_cl_resets' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1229]
-INFO: [Synth 8-638] synthesizing module 'xaui_0_cl_resets' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_resets.vhd:70]
-INFO: [Synth 8-5534] Detected attribute (* async_reg = "TRUE" *) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_resets.vhd:74]
-INFO: [Synth 8-5534] Detected attribute (* async_reg = "TRUE" *) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_resets.vhd:75]
-INFO: [Synth 8-5534] Detected attribute (* async_reg = "TRUE" *) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_resets.vhd:76]
-INFO: [Synth 8-256] done synthesizing module 'xaui_0_cl_resets' (2#1) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_resets.vhd:70]
+INFO: [Synth 8-638] synthesizing module 'xaui_0' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0.vhd:98]
+INFO: [Synth 8-3491] module 'xaui_0_block' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:62' bound to instance 'U0' of component 'xaui_0_block' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0.vhd:367]
+INFO: [Synth 8-638] synthesizing module 'xaui_0_block' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:331]
+INFO: [Synth 8-3491] module 'xaui_0_cl_clocking' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_clocking.vhd:63' bound to instance 'xaui_cl_clocking_i' of component 'xaui_0_cl_clocking' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1223]
+INFO: [Synth 8-638] synthesizing module 'xaui_0_cl_clocking' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_clocking.vhd:69]
+INFO: [Synth 8-113] binding component instance 'clk156_bufg_i' to cell 'BUFG' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_clocking.vhd:73]
+INFO: [Synth 8-256] done synthesizing module 'xaui_0_cl_clocking' (1#1) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_clocking.vhd:69]
+INFO: [Synth 8-3491] module 'xaui_0_cl_resets' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_resets.vhd:61' bound to instance 'xaui_cl_resets_i' of component 'xaui_0_cl_resets' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1229]
+INFO: [Synth 8-638] synthesizing module 'xaui_0_cl_resets' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_resets.vhd:70]
+INFO: [Synth 8-5534] Detected attribute (* async_reg = "TRUE" *) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_resets.vhd:74]
+INFO: [Synth 8-5534] Detected attribute (* async_reg = "TRUE" *) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_resets.vhd:75]
+INFO: [Synth 8-5534] Detected attribute (* async_reg = "TRUE" *) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_resets.vhd:76]
+INFO: [Synth 8-256] done synthesizing module 'xaui_0_cl_resets' (2#1) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_cl_resets.vhd:70]
 	Parameter C_NUM_SYNC_REGS bound to: 3 - type: integer 
-INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'reset_sync_i' of component 'xaui_0_ff_synchronizer' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1238]
-INFO: [Synth 8-638] synthesizing module 'xaui_0_ff_synchronizer' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:71]
+INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'reset_sync_i' of component 'xaui_0_ff_synchronizer' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1238]
+INFO: [Synth 8-638] synthesizing module 'xaui_0_ff_synchronizer' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:71]
 	Parameter C_NUM_SYNC_REGS bound to: 3 - type: integer 
-INFO: [Synth 8-5534] Detected attribute (* shreg_extract = "no" *) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:72]
-INFO: [Synth 8-5534] Detected attribute (* async_reg = "TRUE" *) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:72]
-INFO: [Synth 8-256] done synthesizing module 'xaui_0_ff_synchronizer' (3#1) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:71]
+INFO: [Synth 8-5534] Detected attribute (* shreg_extract = "no" *) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:72]
+INFO: [Synth 8-5534] Detected attribute (* async_reg = "TRUE" *) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:72]
+INFO: [Synth 8-256] done synthesizing module 'xaui_0_ff_synchronizer' (3#1) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:71]
 	Parameter C_NUM_SYNC_REGS bound to: 3 - type: integer 
-INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'signal_detect_0_sync_i' of component 'xaui_0_ff_synchronizer' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1248]
+INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'signal_detect_0_sync_i' of component 'xaui_0_ff_synchronizer' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1248]
 	Parameter C_NUM_SYNC_REGS bound to: 3 - type: integer 
-INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'signal_detect_1_sync_i' of component 'xaui_0_ff_synchronizer' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1256]
+INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'signal_detect_1_sync_i' of component 'xaui_0_ff_synchronizer' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1256]
 	Parameter C_NUM_SYNC_REGS bound to: 3 - type: integer 
-INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'signal_detect_2_sync_i' of component 'xaui_0_ff_synchronizer' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1264]
+INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'signal_detect_2_sync_i' of component 'xaui_0_ff_synchronizer' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1264]
 	Parameter C_NUM_SYNC_REGS bound to: 3 - type: integer 
-INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'signal_detect_3_sync_i' of component 'xaui_0_ff_synchronizer' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1272]
+INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'signal_detect_3_sync_i' of component 'xaui_0_ff_synchronizer' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1272]
 	Parameter c_family bound to: kintex7 - type: string 
 	Parameter c_has_mdio bound to: 0 - type: bool 
 	Parameter c_is_dxaui bound to: 0 - type: bool 
-INFO: [Synth 8-3491] module 'xaui_v12_2_5_top' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/xaui_v12_2_5/hdl/xaui_v12_2_rfs.vhd:5257' bound to instance 'xaui_0_core' of component 'xaui_v12_2_5_top' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1281]
+INFO: [Synth 8-3491] module 'xaui_v12_2_5_top' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/xaui_v12_2_5/hdl/xaui_v12_2_rfs.vhd:5257' bound to instance 'xaui_0_core' of component 'xaui_v12_2_5_top' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1281]
 	Parameter c_family bound to: kintex7 - type: string 
 	Parameter c_has_mdio bound to: 0 - type: bool 
 	Parameter c_is_dxaui bound to: 0 - type: bool 
 	Parameter C_FAMILY bound to: kintex7 - type: string 
 	Parameter C_HAS_MDIO bound to: 0 - type: bool 
 	Parameter WRAPPER_SIM_GTRESET_SPEEDUP bound to: TRUE - type: string 
-INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper.vhd:73' bound to instance 'gt_wrapper_i' of component 'xaui_0_gt_wrapper' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1339]
-INFO: [Synth 8-638] synthesizing module 'xaui_0_gt_wrapper' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper.vhd:633]
+INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper.vhd:73' bound to instance 'gt_wrapper_i' of component 'xaui_0_gt_wrapper' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1339]
+INFO: [Synth 8-638] synthesizing module 'xaui_0_gt_wrapper' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper.vhd:633]
 	Parameter QPLL_FBDIV_TOP bound to: 40 - type: integer 
 	Parameter WRAPPER_SIM_GTRESET_SPEEDUP bound to: TRUE - type: string 
 	Parameter RX_DFE_KL_CFG2_IN bound to: 32'b00110000000100010100100010101100 
@@ -68,8 +68,8 @@ INFO: [Synth 8-638] synthesizing module 'xaui_0_gt_wrapper' [/root/mu2e/mu2e_UEM
 	Parameter SIM_CPLLREFCLK_SEL bound to: 3'b001 
 	Parameter PMA_RSV_IN bound to: 99456 - type: integer 
 	Parameter PCS_RSVD_ATTR_IN bound to: 48'b000000000000000000000000000000000000000000000010 
-INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_GT' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_gt.vhd:73' bound to instance 'gt0_xaui_0_gt_wrapper_i' of component 'xaui_0_gt_wrapper_GT' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper.vhd:900]
-INFO: [Synth 8-638] synthesizing module 'xaui_0_gt_wrapper_GT' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_gt.vhd:228]
+INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_GT' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_gt.vhd:73' bound to instance 'gt0_xaui_0_gt_wrapper_i' of component 'xaui_0_gt_wrapper_GT' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper.vhd:900]
+INFO: [Synth 8-638] synthesizing module 'xaui_0_gt_wrapper_GT' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_gt.vhd:228]
 	Parameter GT_SIM_GTRESET_SPEEDUP bound to: TRUE - type: string 
 	Parameter RX_DFE_KL_CFG2_IN bound to: 806439084 - type: integer 
 	Parameter SIM_CPLLREFCLK_SEL bound to: 3'b001 
@@ -282,26 +282,26 @@ INFO: [Synth 8-638] synthesizing module 'xaui_0_gt_wrapper_GT' [/root/mu2e/mu2e_
 	Parameter TX_RXDETECT_REF bound to: 3'b100 
 	Parameter TX_XCLK_SEL bound to: TXUSR - type: string 
 	Parameter UCODEER_CLR bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'gtxe2_i' to cell 'GTXE2_CHANNEL' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_gt.vhd:272]
-INFO: [Synth 8-256] done synthesizing module 'xaui_0_gt_wrapper_GT' (17#1) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_gt.vhd:228]
+INFO: [Synth 8-113] binding component instance 'gtxe2_i' to cell 'GTXE2_CHANNEL' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_gt.vhd:272]
+INFO: [Synth 8-256] done synthesizing module 'xaui_0_gt_wrapper_GT' (17#1) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_gt.vhd:228]
 	Parameter GT_SIM_GTRESET_SPEEDUP bound to: TRUE - type: string 
 	Parameter RX_DFE_KL_CFG2_IN bound to: 806439084 - type: integer 
 	Parameter SIM_CPLLREFCLK_SEL bound to: 3'b001 
 	Parameter PMA_RSV_IN bound to: 99456 - type: integer 
 	Parameter PCS_RSVD_ATTR_IN bound to: 48'b000000000000000000000000000000000000000000000010 
-INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_GT' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_gt.vhd:73' bound to instance 'gt1_xaui_0_gt_wrapper_i' of component 'xaui_0_gt_wrapper_GT' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper.vhd:1052]
+INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_GT' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_gt.vhd:73' bound to instance 'gt1_xaui_0_gt_wrapper_i' of component 'xaui_0_gt_wrapper_GT' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper.vhd:1052]
 	Parameter GT_SIM_GTRESET_SPEEDUP bound to: TRUE - type: string 
 	Parameter RX_DFE_KL_CFG2_IN bound to: 806439084 - type: integer 
 	Parameter SIM_CPLLREFCLK_SEL bound to: 3'b001 
 	Parameter PMA_RSV_IN bound to: 99456 - type: integer 
 	Parameter PCS_RSVD_ATTR_IN bound to: 48'b000000000000000000000000000000000000000000000010 
-INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_GT' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_gt.vhd:73' bound to instance 'gt2_xaui_0_gt_wrapper_i' of component 'xaui_0_gt_wrapper_GT' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper.vhd:1204]
+INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_GT' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_gt.vhd:73' bound to instance 'gt2_xaui_0_gt_wrapper_i' of component 'xaui_0_gt_wrapper_GT' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper.vhd:1204]
 	Parameter GT_SIM_GTRESET_SPEEDUP bound to: TRUE - type: string 
 	Parameter RX_DFE_KL_CFG2_IN bound to: 806439084 - type: integer 
 	Parameter SIM_CPLLREFCLK_SEL bound to: 3'b001 
 	Parameter PMA_RSV_IN bound to: 99456 - type: integer 
 	Parameter PCS_RSVD_ATTR_IN bound to: 48'b000000000000000000000000000000000000000000000010 
-INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_GT' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_gt.vhd:73' bound to instance 'gt3_xaui_0_gt_wrapper_i' of component 'xaui_0_gt_wrapper_GT' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper.vhd:1356]
+INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_GT' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_gt.vhd:73' bound to instance 'gt3_xaui_0_gt_wrapper_i' of component 'xaui_0_gt_wrapper_GT' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper.vhd:1356]
 	Parameter BIAS_CFG bound to: 64'b0000000000000000000001000000000000000000000000000001000000000000 
 	Parameter COMMON_CFG bound to: 32'b00000000000000000000000000000000 
 	Parameter IS_DRPCLK_INVERTED bound to: 1'b0 
@@ -324,83 +324,83 @@ INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_GT' declared at '/root/mu2e/mu2e_
 	Parameter SIM_QPLLREFCLK_SEL bound to: 3'b001 
 	Parameter SIM_RESET_SPEEDUP bound to: TRUE - type: string 
 	Parameter SIM_VERSION bound to: 4.0 - type: string 
-INFO: [Synth 8-113] binding component instance 'gtxe2_common_0_i' to cell 'GTXE2_COMMON' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper.vhd:1508]
-INFO: [Synth 8-256] done synthesizing module 'xaui_0_gt_wrapper' (18#1) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper.vhd:633]
+INFO: [Synth 8-113] binding component instance 'gtxe2_common_0_i' to cell 'GTXE2_COMMON' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper.vhd:1508]
+INFO: [Synth 8-256] done synthesizing module 'xaui_0_gt_wrapper' (18#1) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper.vhd:633]
 	Parameter C_NUM_SYNC_REGS bound to: 3 - type: integer 
-INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'rxpmareset_sync0_i' of component 'xaui_0_ff_synchronizer' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1896]
+INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'rxpmareset_sync0_i' of component 'xaui_0_ff_synchronizer' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1896]
 	Parameter C_NUM_SYNC_REGS bound to: 3 - type: integer 
-INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'rxpmareset_sync1_i' of component 'xaui_0_ff_synchronizer' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1930]
+INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'rxpmareset_sync1_i' of component 'xaui_0_ff_synchronizer' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1930]
 	Parameter C_NUM_SYNC_REGS bound to: 3 - type: integer 
-INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'rxpmareset_sync2_i' of component 'xaui_0_ff_synchronizer' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1964]
+INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'rxpmareset_sync2_i' of component 'xaui_0_ff_synchronizer' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1964]
 	Parameter C_NUM_SYNC_REGS bound to: 3 - type: integer 
-INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'rxpmareset_sync3_i' of component 'xaui_0_ff_synchronizer' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1998]
+INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'rxpmareset_sync3_i' of component 'xaui_0_ff_synchronizer' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:1998]
 	Parameter C_NUM_SYNC_REGS bound to: 3 - type: integer 
-INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'plllocked_sync_i' of component 'xaui_0_ff_synchronizer' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:2013]
+INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'plllocked_sync_i' of component 'xaui_0_ff_synchronizer' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:2013]
 	Parameter C_NUM_SYNC_REGS bound to: 3 - type: integer 
-INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'reset_count_done_sync_i' of component 'xaui_0_ff_synchronizer' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:2030]
-INFO: [Synth 8-3491] module 'xaui_0_reset_counter' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_reset_counter.vhd:62' bound to instance 'reset_counter_i' of component 'xaui_0_reset_counter' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:2080]
-INFO: [Synth 8-638] synthesizing module 'xaui_0_reset_counter' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_reset_counter.vhd:70]
-INFO: [Synth 8-256] done synthesizing module 'xaui_0_reset_counter' (19#1) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_reset_counter.vhd:70]
+INFO: [Synth 8-3491] module 'xaui_0_ff_synchronizer' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ff_synchronizer.vhd:60' bound to instance 'reset_count_done_sync_i' of component 'xaui_0_ff_synchronizer' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:2030]
+INFO: [Synth 8-3491] module 'xaui_0_reset_counter' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_reset_counter.vhd:62' bound to instance 'reset_counter_i' of component 'xaui_0_reset_counter' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:2080]
+INFO: [Synth 8-638] synthesizing module 'xaui_0_reset_counter' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_reset_counter.vhd:70]
+INFO: [Synth 8-256] done synthesizing module 'xaui_0_reset_counter' (19#1) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_reset_counter.vhd:70]
 	Parameter NUMBER_OF_LANES bound to: 4 - type: integer 
 	Parameter MASTER_LANE_ID bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:69' bound to instance 'txsync_i' of component 'xaui_0_gt_wrapper_tx_sync_manual' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:2179]
-INFO: [Synth 8-638] synthesizing module 'xaui_0_gt_wrapper_tx_sync_manual' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:89]
+INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:69' bound to instance 'txsync_i' of component 'xaui_0_gt_wrapper_tx_sync_manual' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:2179]
+INFO: [Synth 8-638] synthesizing module 'xaui_0_gt_wrapper_tx_sync_manual' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:89]
 	Parameter NUMBER_OF_LANES bound to: 4 - type: integer 
 	Parameter MASTER_LANE_ID bound to: 0 - type: integer 
 	Parameter INITIALISE bound to: 6'b000000 
-INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_block' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:75' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXPHALIGNDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_block' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:144]
-INFO: [Synth 8-638] synthesizing module 'xaui_0_gt_wrapper_tx_sync_manual_block' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:86]
+INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_block' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:75' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXPHALIGNDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_block' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:144]
+INFO: [Synth 8-638] synthesizing module 'xaui_0_gt_wrapper_tx_sync_manual_block' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:86]
 	Parameter INITIALISE bound to: 6'b000000 
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'data_sync_reg1' to cell 'FD' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:118]
+INFO: [Synth 8-113] binding component instance 'data_sync_reg1' to cell 'FD' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:118]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'data_sync_reg2' to cell 'FD' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:128]
+INFO: [Synth 8-113] binding component instance 'data_sync_reg2' to cell 'FD' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:128]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'data_sync_reg3' to cell 'FD' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:138]
+INFO: [Synth 8-113] binding component instance 'data_sync_reg3' to cell 'FD' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:138]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'data_sync_reg4' to cell 'FD' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:148]
+INFO: [Synth 8-113] binding component instance 'data_sync_reg4' to cell 'FD' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:148]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'data_sync_reg5' to cell 'FD' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:158]
+INFO: [Synth 8-113] binding component instance 'data_sync_reg5' to cell 'FD' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:158]
 	Parameter INIT bound to: 1'b0 
-INFO: [Synth 8-113] binding component instance 'data_sync_reg6' to cell 'FD' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:168]
-INFO: [Synth 8-256] done synthesizing module 'xaui_0_gt_wrapper_tx_sync_manual_block' (20#1) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:86]
+INFO: [Synth 8-113] binding component instance 'data_sync_reg6' to cell 'FD' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:168]
+INFO: [Synth 8-256] done synthesizing module 'xaui_0_gt_wrapper_tx_sync_manual_block' (20#1) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:86]
 	Parameter INITIALISE bound to: 6'b000000 
-INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_block' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:75' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXDLYSRESETDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_block' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:152]
+INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_block' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:75' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXDLYSRESETDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_block' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:152]
 	Parameter C_NUM_SRETCH_REGS bound to: 3 - type: integer 
 	Parameter C_NUM_SYNC_REGS bound to: 3 - type: integer 
-INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:68' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXPHINITDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:160]
-INFO: [Synth 8-638] synthesizing module 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:84]
+INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:68' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXPHINITDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:160]
+INFO: [Synth 8-638] synthesizing module 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:84]
 	Parameter C_NUM_SRETCH_REGS bound to: 3 - type: integer 
 	Parameter C_NUM_SYNC_REGS bound to: 3 - type: integer 
-INFO: [Synth 8-5534] Detected attribute (* shreg_extract = "no" *) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:87]
-INFO: [Synth 8-5534] Detected attribute (* async_reg = "TRUE" *) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:87]
-INFO: [Synth 8-5534] Detected attribute (* shreg_extract = "no" *) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:88]
-INFO: [Synth 8-5534] Detected attribute (* async_reg = "TRUE" *) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:88]
-INFO: [Synth 8-256] done synthesizing module 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' (21#1) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:84]
+INFO: [Synth 8-5534] Detected attribute (* shreg_extract = "no" *) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:87]
+INFO: [Synth 8-5534] Detected attribute (* async_reg = "TRUE" *) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:87]
+INFO: [Synth 8-5534] Detected attribute (* shreg_extract = "no" *) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:88]
+INFO: [Synth 8-5534] Detected attribute (* async_reg = "TRUE" *) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:88]
+INFO: [Synth 8-256] done synthesizing module 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' (21#1) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:84]
 	Parameter INITIALISE bound to: 6'b000000 
-INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_block' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:75' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXPHALIGNDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_block' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:144]
+INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_block' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:75' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXPHALIGNDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_block' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:144]
 	Parameter INITIALISE bound to: 6'b000000 
-INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_block' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:75' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXDLYSRESETDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_block' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:152]
+INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_block' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:75' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXDLYSRESETDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_block' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:152]
 	Parameter C_NUM_SRETCH_REGS bound to: 3 - type: integer 
 	Parameter C_NUM_SYNC_REGS bound to: 3 - type: integer 
-INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:68' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXPHINITDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:160]
+INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:68' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXPHINITDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:160]
 	Parameter INITIALISE bound to: 6'b000000 
-INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_block' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:75' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXPHALIGNDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_block' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:144]
+INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_block' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:75' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXPHALIGNDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_block' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:144]
 	Parameter INITIALISE bound to: 6'b000000 
-INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_block' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:75' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXDLYSRESETDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_block' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:152]
+INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_block' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:75' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXDLYSRESETDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_block' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:152]
 	Parameter C_NUM_SRETCH_REGS bound to: 3 - type: integer 
 	Parameter C_NUM_SYNC_REGS bound to: 3 - type: integer 
-INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:68' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXPHINITDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:160]
+INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:68' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXPHINITDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:160]
 	Parameter INITIALISE bound to: 6'b000000 
-INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_block' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:75' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXPHALIGNDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_block' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:144]
+INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_block' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:75' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXPHALIGNDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_block' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:144]
 	Parameter INITIALISE bound to: 6'b000000 
-INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_block' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:75' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXDLYSRESETDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_block' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:152]
+INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_block' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_block.vhd:75' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXDLYSRESETDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_block' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:152]
 	Parameter C_NUM_SRETCH_REGS bound to: 3 - type: integer 
 	Parameter C_NUM_SYNC_REGS bound to: 3 - type: integer 
-INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' declared at '/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:68' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXPHINITDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:160]
-INFO: [Synth 8-256] done synthesizing module 'xaui_0_gt_wrapper_tx_sync_manual' (22#1) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:89]
-INFO: [Synth 8-256] done synthesizing module 'xaui_0_block' (23#1) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:331]
-INFO: [Synth 8-256] done synthesizing module 'xaui_0' (24#1) [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0.vhd:98]
+INFO: [Synth 8-3491] module 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' declared at '/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual_sync_pulse.vhd:68' bound to instance 'xaui_0_gt_wrapper_tx_sync_manual_TXPHINITDONE' of component 'xaui_0_gt_wrapper_tx_sync_manual_sync_pulse' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:160]
+INFO: [Synth 8-256] done synthesizing module 'xaui_0_gt_wrapper_tx_sync_manual' (22#1) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:89]
+INFO: [Synth 8-256] done synthesizing module 'xaui_0_block' (23#1) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_block.vhd:331]
+INFO: [Synth 8-256] done synthesizing module 'xaui_0' (24#1) [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0.vhd:98]
 WARNING: [Synth 8-3331] design xaui_gen has unconnected port mdc
 WARNING: [Synth 8-3331] design xaui_gen has unconnected port mdio_in
 WARNING: [Synth 8-3331] design xaui_gen has unconnected port prtad[4]
@@ -418,7 +418,7 @@ WARNING: [Synth 8-3331] design xaui_v12_2_5_top has unconnected port prtad[2]
 WARNING: [Synth 8-3331] design xaui_v12_2_5_top has unconnected port prtad[1]
 WARNING: [Synth 8-3331] design xaui_v12_2_5_top has unconnected port prtad[0]
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:13 ; elapsed = 00:00:15 . Memory (MB): peak = 1251.184 ; gain = 275.844 ; free physical = 393 ; free virtual = 9818
+Finished RTL Elaboration : Time (s): cpu = 00:00:14 ; elapsed = 00:00:16 . Memory (MB): peak = 1251.184 ; gain = 275.844 ; free physical = 392 ; free virtual = 8350
 ---------------------------------------------------------------------------------
 
 Report Check Netlist: 
@@ -428,7 +428,7 @@ Report Check Netlist:
 |1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
 +------+------------------+-------+---------+-------+------------------+
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:14 ; elapsed = 00:00:16 . Memory (MB): peak = 1251.184 ; gain = 275.844 ; free physical = 393 ; free virtual = 9818
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:14 ; elapsed = 00:00:16 . Memory (MB): peak = 1251.184 ; gain = 275.844 ; free physical = 391 ; free virtual = 8350
 ---------------------------------------------------------------------------------
 INFO: [Netlist 29-17] Analyzing 48 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
@@ -437,37 +437,37 @@ INFO: [Project 1-570] Preparing netlist for logic optimization
 
 Processing XDC Constraints
 Initializing timing engine
-Parsing XDC File [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ooc.xdc] for cell 'U0'
-Finished Parsing XDC File [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ooc.xdc] for cell 'U0'
-Parsing XDC File [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0.xdc] for cell 'U0'
-Finished Parsing XDC File [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0.xdc] for cell 'U0'
-INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/xaui_0_propImpl.xdc].
+Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ooc.xdc] for cell 'U0'
+Finished Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ooc.xdc] for cell 'U0'
+Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0.xdc] for cell 'U0'
+Finished Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0.xdc] for cell 'U0'
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/xaui_0_propImpl.xdc].
 Resolution: To avoid this warning, move constraints listed in [.Xil/xaui_0_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
-Parsing XDC File [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/xaui_0_synth_1/dont_touch.xdc]
-Finished Parsing XDC File [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/xaui_0_synth_1/dont_touch.xdc]
+Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/xaui_0_synth_1/dont_touch.xdc]
+Finished Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/xaui_0_synth_1/dont_touch.xdc]
 Completed Processing XDC Constraints
 
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 48 instances were transformed.
   FD => FDRE: 48 instances
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.04 . Memory (MB): peak = 1605.641 ; gain = 0.004 ; free physical = 134 ; free virtual = 9558
+Constraint Validation Runtime : Time (s): cpu = 00:00:00.05 ; elapsed = 00:00:00.06 . Memory (MB): peak = 1605.641 ; gain = 0.004 ; free physical = 127 ; free virtual = 8080
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:32 ; elapsed = 00:00:35 . Memory (MB): peak = 1605.641 ; gain = 630.301 ; free physical = 135 ; free virtual = 9549
+Finished Constraint Validation : Time (s): cpu = 00:00:33 ; elapsed = 00:00:37 . Memory (MB): peak = 1605.641 ; gain = 630.301 ; free physical = 124 ; free virtual = 8077
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7k420tffg1156-2
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:32 ; elapsed = 00:00:35 . Memory (MB): peak = 1605.641 ; gain = 630.301 ; free physical = 135 ; free virtual = 9549
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:33 ; elapsed = 00:00:37 . Memory (MB): peak = 1605.641 ; gain = 630.301 ; free physical = 124 ; free virtual = 8077
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
 ---------------------------------------------------------------------------------
 Applied set_property DONT_TOUCH = true for U0. (constraint file  auto generated constraint, line ).
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:32 ; elapsed = 00:00:35 . Memory (MB): peak = 1605.641 ; gain = 630.301 ; free physical = 135 ; free virtual = 9549
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:33 ; elapsed = 00:00:37 . Memory (MB): peak = 1605.641 ; gain = 630.301 ; free physical = 124 ; free virtual = 8077
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-5544] ROM "extra_a" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "tx_code_r" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
@@ -536,7 +536,7 @@ INFO: [Synth 8-5546] ROM "retval" won't be mapped to RAM because it is too spars
 INFO: [Synth 8-5546] ROM "retval" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "retval" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "retval" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-4471] merging register 'txphinitdone_clear_slave_reg' into 'txdone_clear_reg' [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:207]
+INFO: [Synth 8-4471] merging register 'txphinitdone_clear_slave_reg' into 'txdone_clear_reg' [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_gt_wrapper_tx_sync_manual.vhd:207]
 INFO: [Synth 8-802] inferred FSM for state register 'tx_phalign_manual_state_reg' in module 'xaui_0_gt_wrapper_tx_sync_manual'
 INFO: [Synth 8-5544] ROM "tx_phalign_manual_state" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "tx_phalign_manual_state" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
@@ -585,7 +585,7 @@ INFO: [Synth 8-3354] encoded FSM with state register 'state_reg[1]' using encodi
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'tx_phalign_manual_state_reg' using encoding 'one-hot' in module 'xaui_0_gt_wrapper_tx_sync_manual'
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:35 ; elapsed = 00:00:38 . Memory (MB): peak = 1605.641 ; gain = 630.301 ; free physical = 156 ; free virtual = 9571
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:36 ; elapsed = 00:00:40 . Memory (MB): peak = 1605.641 ; gain = 630.301 ; free physical = 122 ; free virtual = 8075
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -814,7 +814,7 @@ BRAMs: 1670 (col length: RAMB18 160 RAMB36 80)
 ---------------------------------------------------------------------------------
 Finished Part Resource Summary
 ---------------------------------------------------------------------------------
-Start Parallel Synthesis Optimization  : Time (s): cpu = 00:00:35 ; elapsed = 00:00:39 . Memory (MB): peak = 1605.641 ; gain = 630.301 ; free physical = 156 ; free virtual = 9570
+Start Parallel Synthesis Optimization  : Time (s): cpu = 00:00:36 ; elapsed = 00:00:40 . Memory (MB): peak = 1605.641 ; gain = 630.301 ; free physical = 122 ; free virtual = 8075
 ---------------------------------------------------------------------------------
 Start Cross Boundary Optimization
 ---------------------------------------------------------------------------------
@@ -852,9 +852,9 @@ WARNING: [Synth 8-3331] design xaui_v12_2_5_top has unconnected port prtad[2]
 WARNING: [Synth 8-3331] design xaui_v12_2_5_top has unconnected port prtad[1]
 WARNING: [Synth 8-3331] design xaui_v12_2_5_top has unconnected port prtad[0]
 ---------------------------------------------------------------------------------
-Finished Cross Boundary Optimization : Time (s): cpu = 00:00:37 ; elapsed = 00:00:40 . Memory (MB): peak = 1605.641 ; gain = 630.301 ; free physical = 155 ; free virtual = 9570
+Finished Cross Boundary Optimization : Time (s): cpu = 00:00:37 ; elapsed = 00:00:41 . Memory (MB): peak = 1605.641 ; gain = 630.301 ; free physical = 122 ; free virtual = 8075
 ---------------------------------------------------------------------------------
-Finished Parallel Reinference  : Time (s): cpu = 00:00:37 ; elapsed = 00:00:40 . Memory (MB): peak = 1605.641 ; gain = 630.301 ; free physical = 155 ; free virtual = 9570
+Finished Parallel Reinference  : Time (s): cpu = 00:00:37 ; elapsed = 00:00:41 . Memory (MB): peak = 1605.641 ; gain = 630.301 ; free physical = 122 ; free virtual = 8075
 
 Report RTL Partitions: 
 +-+--------------+------------+----------+
@@ -882,9 +882,9 @@ WARNING: [Synth 8-3332] Sequential element (xaui_inst/type_sel_reg_done_reg) is 
 WARNING: [Synth 8-3332] Sequential element (xaui_inst/type_sel_reg_reg[1]) is unused and will be removed from module xaui_v12_2_5_top.
 WARNING: [Synth 8-3332] Sequential element (xaui_inst/type_sel_reg_reg[0]) is unused and will be removed from module xaui_v12_2_5_top.
 ---------------------------------------------------------------------------------
-Finished Area Optimization : Time (s): cpu = 00:00:42 ; elapsed = 00:00:46 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 140 ; free virtual = 9555
+Finished Area Optimization : Time (s): cpu = 00:00:44 ; elapsed = 00:00:48 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 124 ; free virtual = 8061
 ---------------------------------------------------------------------------------
-Finished Parallel Area Optimization  : Time (s): cpu = 00:00:42 ; elapsed = 00:00:46 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 140 ; free virtual = 9555
+Finished Parallel Area Optimization  : Time (s): cpu = 00:00:44 ; elapsed = 00:00:48 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 124 ; free virtual = 8061
 
 Report RTL Partitions: 
 +-+--------------+------------+----------+
@@ -898,10 +898,10 @@ Start Timing Optimization
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:54 ; elapsed = 00:00:58 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 137 ; free virtual = 9530
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:55 ; elapsed = 00:01:02 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 123 ; free virtual = 8042
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:00:55 ; elapsed = 00:00:59 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 130 ; free virtual = 9518
+Finished Timing Optimization : Time (s): cpu = 00:00:56 ; elapsed = 00:01:03 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 118 ; free virtual = 8037
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -913,16 +913,16 @@ Report RTL Partitions:
 Start Technology Mapping
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:00:56 ; elapsed = 00:01:01 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 128 ; free virtual = 9475
+Finished Technology Mapping : Time (s): cpu = 00:00:57 ; elapsed = 00:01:04 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 115 ; free virtual = 8014
 ---------------------------------------------------------------------------------
-Finished Parallel Technology Mapping Optimization  : Time (s): cpu = 00:00:56 ; elapsed = 00:01:01 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 128 ; free virtual = 9475
+Finished Parallel Technology Mapping Optimization  : Time (s): cpu = 00:00:57 ; elapsed = 00:01:04 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 115 ; free virtual = 8014
 
 Report RTL Partitions: 
 +-+--------------+------------+----------+
 | |RTL Partition |Replication |Instances |
 +-+--------------+------------+----------+
 +-+--------------+------------+----------+
-Finished Parallel Synthesis Optimization  : Time (s): cpu = 00:00:56 ; elapsed = 00:01:01 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 128 ; free virtual = 9475
+Finished Parallel Synthesis Optimization  : Time (s): cpu = 00:00:57 ; elapsed = 00:01:04 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 114 ; free virtual = 8013
 ---------------------------------------------------------------------------------
 Start IO Insertion
 ---------------------------------------------------------------------------------
@@ -939,7 +939,7 @@ Start Final Netlist Cleanup
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:00:57 ; elapsed = 00:01:02 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 143 ; free virtual = 9476
+Finished IO Insertion : Time (s): cpu = 00:00:58 ; elapsed = 00:01:05 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 114 ; free virtual = 8013
 ---------------------------------------------------------------------------------
 
 Report Check Netlist: 
@@ -952,7 +952,7 @@ Report Check Netlist:
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:00:57 ; elapsed = 00:01:02 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 143 ; free virtual = 9476
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:58 ; elapsed = 00:01:05 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 114 ; free virtual = 8013
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -964,25 +964,25 @@ Report RTL Partitions:
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:57 ; elapsed = 00:01:02 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 155 ; free virtual = 9488
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:59 ; elapsed = 00:01:05 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 114 ; free virtual = 8013
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:00:57 ; elapsed = 00:01:02 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 154 ; free virtual = 9486
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:59 ; elapsed = 00:01:05 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 114 ; free virtual = 8013
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:57 ; elapsed = 00:01:02 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 154 ; free virtual = 9486
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:59 ; elapsed = 00:01:05 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 114 ; free virtual = 8013
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:00:57 ; elapsed = 00:01:02 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 154 ; free virtual = 9486
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:59 ; elapsed = 00:01:05 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 114 ; free virtual = 8013
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -1078,19 +1078,19 @@ Report Instance Areas:
 |57    |    xaui_cl_resets_i                                            |xaui_0_cl_resets                               |     3|
 +------+----------------------------------------------------------------+-----------------------------------------------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:00:57 ; elapsed = 00:01:03 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 154 ; free virtual = 9486
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:59 ; elapsed = 00:01:05 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 114 ; free virtual = 8013
 ---------------------------------------------------------------------------------
 Synthesis finished with 0 errors, 0 critical warnings and 12 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:00:41 ; elapsed = 00:00:45 . Memory (MB): peak = 1605.645 ; gain = 122.445 ; free physical = 153 ; free virtual = 9486
-Synthesis Optimization Complete : Time (s): cpu = 00:00:57 ; elapsed = 00:01:03 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 153 ; free virtual = 9486
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:42 ; elapsed = 00:00:47 . Memory (MB): peak = 1605.645 ; gain = 122.445 ; free physical = 114 ; free virtual = 8013
+Synthesis Optimization Complete : Time (s): cpu = 00:00:59 ; elapsed = 00:01:05 . Memory (MB): peak = 1605.645 ; gain = 630.305 ; free physical = 114 ; free virtual = 8013
 INFO: [Project 1-571] Translating synthesized netlist
 INFO: [Netlist 29-17] Analyzing 56 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
-Parsing XDC File [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ooc.xdc] for cell 'U0'
-Finished Parsing XDC File [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ooc.xdc] for cell 'U0'
-Parsing XDC File [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0.xdc] for cell 'U0'
-Finished Parsing XDC File [/root/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0.xdc] for cell 'U0'
+Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ooc.xdc] for cell 'U0'
+Finished Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0_ooc.xdc] for cell 'U0'
+Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0.xdc] for cell 'U0'
+Finished Parsing XDC File [/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.srcs/sources_1/ip/xaui_0/synth/xaui_0.xdc] for cell 'U0'
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 48 instances were transformed.
@@ -1099,7 +1099,7 @@ INFO: [Project 1-111] Unisim Transformation Summary:
 INFO: [Common 17-83] Releasing license: Synthesis
 207 Infos, 28 Warnings, 0 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:00:57 ; elapsed = 00:01:02 . Memory (MB): peak = 1608.637 ; gain = 558.738 ; free physical = 149 ; free virtual = 9482
+synth_design: Time (s): cpu = 00:00:58 ; elapsed = 00:01:05 . Memory (MB): peak = 1608.637 ; gain = 558.738 ; free physical = 110 ; free virtual = 8009
 INFO: [Coretcl 2-1174] Renamed 56 cell refs.
-report_utilization: Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.15 . Memory (MB): peak = 1640.656 ; gain = 0.000 ; free physical = 146 ; free virtual = 9479
-INFO: [Common 17-206] Exiting Vivado at Thu Mar 21 11:32:45 2024...
+report_utilization: Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.17 . Memory (MB): peak = 1640.656 ; gain = 0.000 ; free physical = 128 ; free virtual = 8011
+INFO: [Common 17-206] Exiting Vivado at Mon May  6 19:34:43 2024...

@@ -20,7 +20,7 @@ else
 fi
 export LD_LIBRARY_PATH
 
-HD_PWD='/root/Documents/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/microblaze_mcs_0_synth_1'
+HD_PWD='/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs/microblaze_mcs_0_synth_1'
 cd "$HD_PWD"
 
 HD_LOG=runme.log
