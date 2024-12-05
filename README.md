@@ -25,7 +25,9 @@ Two methods. First, using Vivado:
 2. Run the command `vivado mu2e_UEM_firmware.xpr`. A Vivado window should open up.
 3. Go to Hardware Manager --> Open Target --> Auto Connect --> Program Device --> Choose a bitfile.
 4. In the `minicomA` window, once the programming is finished, a message should pop saying "Purdue debug monitor 1.00 - AMC502+XAUI+FMC228(1) version.", and you should be able to start typing into the minicom window.
+
 Second method, using SSH to upload the bit file directly
+
 1. Navigate to `/disk2/mu2e/mu2e_UEM_firmware/socketudp/`
 2. Run `./fpga_upgrade`. It should run a bunch of commands. Ask someone on the project for the root password.
 
