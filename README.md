@@ -32,6 +32,6 @@ Second method, using SSH to upload the bit file directly
 2. Run `./fpga_upgrade`. It should run a bunch of commands. Ask someone on the project for the root password.
 
 #### Using ROOT Files
-- make clean and make in the directory: FMC228_v4
+- Run `make clean` and `make` in the directory: /FMC228_v4
 - Inside FMC228_v4/convertFMC228: `./read_binary_FMC228_longpeakfinding_v6 <path to input root file> <path to output> <no. of events>`
 - To read this tree and plot several things : `ShowProf_rawevent1.C` inside /macros.
