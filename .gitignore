@@ -132,3 +132,9 @@ Vadatech_amc_example/
 socketudp_tmnguyen/
 socketudp/FRU*
 sources/
+
+# ignore folders that start with a period
+.*
+/vivado_files.csv
+/createSigasiProject.py
+/convertVivadoProjectToCsv.tcl
