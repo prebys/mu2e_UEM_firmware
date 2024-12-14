@@ -5,12 +5,11 @@ import os
 import re
 
 from collections import OrderedDict
+from typing import Optional
 
 import numpy as np
-import tkinter
-import matplotlib
 from matplotlib import pyplot as plt
-matplotlib.use("Agg")
+import pandas as pd
 
 from datetime import datetime
 
@@ -25,7 +24,7 @@ desired_file = None
 
 # if True, will print all event types regardless of the "show" attribute of the event_to_hex dictionary
 show_all = False
-show_nothing = True
+show_nothing = False
 
 # set to "-1" to use the newest file in the directory
 # "-2" for example will use the second-newest file
@@ -33,7 +32,7 @@ to_use_file_index = -1
 
 # if this contains entries, then the code will ignore the "show" attribute of the event_to_hex dictionary
 # and only show the events in this list
-only_show = ["channel_header"]  # ["begin_event", "event_number", "channel_header", "begin_sub_event", "sub_event_number"]
+only_show = ["begin_event", "event_number", "channel_header", "sub_event_number"]
 # set to empty list [] to use the "show" attribute of the event_to_hex dictionary
 
 event_to_hex = {
@@ -42,7 +41,7 @@ event_to_hex = {
     "begin_sub_event": {"re": r"00ffffff", "next": ["byte_order"], "show": True, "data_chars": [0, 0]},
     "byte_order": {"re": r"f4f3f2f1", "next": ["fmc228_number"], "show": True, "data_chars": [0, 0]},
     "fmc228_number": {"re": r"00ccccfc", "next": ["sub_event_number"], "show": False, "data_chars": [0, 2]},
-    "sub_event_number": {"re": r"......\d\d", "next": ["event_number"], "show": True, "data_chars": [0, 8]},
+    "sub_event_number": {"re": r"........", "next": ["event_number"], "show": True, "data_chars": [0, 8]},
     "event_number": {"re": r"........", "next": ["begin_raw_data"], "show": True, "data_chars": [0, 8]},
     # ↓ ↓　(raw waveform data)
     "begin_raw_data": {"re": r"fdfdfdfd", "next": ["byte_order2"], "show": False, "data_chars": [0, 0]},
@@ -116,18 +115,33 @@ hex_to_event = {
     r"fcfcfcfc": "end_event"
 }
 
+
+def convert_voltage(v):
+    return v * 2 / 1722
+
+
+def convert_voltage_reverse(v):
+    return v * 1722 / 2
+
+
 event_counts = {}
-raw_data_log = OrderedDict()
+raw_data_per_event = {}
+
 
 def main(plot=True):
-    hex_data, input_file = open_data_file(desired_file)
+    raw_data_log_buffer = []
+    hex_data, input_file, creation_date = open_data_file(desired_file)
     
     # count_events(hex_data)
-
+    
     previous_event_type = ""
     number_of_printed_logs = 0
     event_number = 0
+    internal_event_number = 0
+    sub_event_number = 0
+    last_sub_event_number = 0
     channel_number = 0
+    last_channel = 0
     print("\n\nStart printing of data")
     for i in range(0, len(hex_data), 8):
         # detect current event type
@@ -135,11 +149,18 @@ def main(plot=True):
         matched, current_event_type = detect_current_event_type(previous_event_type, current_event_hex)
         previous_event_type = current_event_type
         
-        
         if current_event_type == "event_number":
             event_number = int(current_event_hex[2:4] + current_event_hex[0:2], 16)
+        if current_event_type == "sub_event_number":
+            # [183442]: 07000000 (sub_event_number, 07000000 --> 7 + 0)
+            sub_event_number = int(current_event_hex[2:4] + current_event_hex[0:2], 16)
+            if sub_event_number <= last_sub_event_number:
+                internal_event_number += 1
+            last_sub_event_number = sub_event_number
         if current_event_type == "channel_header":
             channel_number = int(current_event_hex[4:6]) + 1
+        print(
+            f"Event {event_number}, Internal Event {internal_event_number}, Sub-Event {sub_event_number}, channel {channel_number}")
         
         if matched:
             # if bco_high went straight to end_of_channel, note that there was no raw_data
@@ -172,18 +193,22 @@ def main(plot=True):
                 event_type_text = f"{current_event_type}, {hex_value} --> {int_value}"
             else:
                 event_type_text = f"{current_event_type}"
-                
+            
             # take raw data
             if current_event_type == "raw_data":
                 data_one, data_two = process_hex_raw_data(current_event_hex)
-                raw_data_log[event_number] = raw_data_log.setdefault(event_number, {})
-                raw_data_log[event_number][channel_number] = (raw_data_log[event_number].get(channel_number, []) +
-                                                              [data_one, data_two])
+                # raw_data_log[event_number] = raw_data_log.setdefault(event_number, {})
+                # raw_data_log[event_number][channel_number] = (raw_data_log[event_number].get(channel_number, []) +
+                #                                               [data_one, data_two])
+                raw_data_log_buffer.append([event_number, internal_event_number, sub_event_number, channel_number,
+                                            data_one])
+                raw_data_log_buffer.append([event_number, internal_event_number, sub_event_number, channel_number,
+                                            data_two])
             
             if event_to_hex[current_event_type]["show"]:
                 number_of_printed_logs += 1
-                print(f"[{i//8}]: {current_event_hex} ({event_type_text})")
-                
+                print(f"[{i // 8}]: {current_event_hex} ({event_type_text})")
+            
             # if number_of_printed_logs > 10000:
             #     # end code
             #     # break
@@ -194,28 +219,43 @@ def main(plot=True):
         else:
             if current_event_type:
                 print(f"**** ERROR ****"
-                      f"\n[{i//8}] previous_event_type: {previous_event_type}, current_event_type: {current_event_type}, "
+                      f"\n[{i // 8}] previous_event_type: {previous_event_type}, current_event_type: {current_event_type}, "
                       f"{current_event_hex} (unknown event)")
                 return
             else:  # the first event was not "begin_event" and it's searching for that
                 # print(f"First event ({current_event_hex}) not 'begin_event', searching for begin_event")
                 pass
-
+    
     for event_type in event_to_hex:
         count = event_counts.get(event_type, 0)
         print(f"{event_type}: {count}")
-        
+    
     print(f"Used input file {input_file}")
     
+    # add raw data to the dataframe
+    raw_data_log = pd.DataFrame(raw_data_log_buffer,
+                                columns=["event_number", "internal_event_number", "sub_event_number", "channel_number",
+                                         "data"])
+    # raw_data_log.set_index(["internal_event_number", "sub_event_number", "channel_number"], inplace=True)
+    # raw_data_log.set_index("event_number", inplace=True)
+    
+    group_by_event = raw_data_log.groupby(["internal_event_number", "channel_number"])
+    # show number of data points per event
+    for (_event_number, _channel_number), group in group_by_event:
+        print(f"Event {_event_number} (ch{_channel_number}): {len(group)} data points, "
+              f"mean value: {convert_voltage(group['data'].mean()):.3f} V")
+    
     if plot:
-        date = datetime.now().strftime('%Y.%m.%d_%H.%M.%S')
+        creation_date: datetime
+        # date = datetime.now().strftime('%Y.%m.%d_%H.%M.%S')
+        date = creation_date.strftime('%Y.%m.%d_%H.%M.%S')
         folder_name = f"{date}_{input_file}"
-        plot_data(raw_data_log, folder_name, 15)
+        plot_data(raw_data_log, folder_name, 99, 99)
     
     return event_counts
-    
-    
-def open_data_file(file_path):
+
+
+def open_data_file(file_path) -> Optional[tuple[str, str, datetime]]:
     # get directory of the script
     dir_name = os.path.dirname(os.path.realpath(__file__))
     
@@ -269,21 +309,23 @@ def open_data_file(file_path):
     # open binary file
     with open(os.path.join(dir_name, input_file), "rb") as file:
         binary_data = file.read()  # a "bytes" object
+        # get also the date the file was created as a datetime object
+        file_creation_date = datetime.fromtimestamp(os.path.getctime(file.name))
     
     # convert to hex, should be a string starting with "ffffffffffffff00" etc
     hex_data = binary_data.hex()
     
-    return hex_data, input_file
-    
-    
+    return hex_data, input_file, file_creation_date
+
+
 def count_events(hex_data):
     to_count = ["begin_event", "begin_sub_event", "begin_raw_data", "begin_peak_stream_data", "end_event",
                 "raw_data", "peak_area_data", "peak_height_data"]
     print("__Event counts__")
     for event in to_count:
         print(f"{event}: {hex_data.count(event_to_hex[event]['re'])}")
-        
-        
+
+
 def detect_current_event_type(previous_event_type, current_event_hex):
     # if the current event is one of the data streams, check the rest of the checks and check directly
     # for another data event (avoid regex)
@@ -333,7 +375,7 @@ def detect_current_event_type(previous_event_type, current_event_hex):
                 matched = True
                 current_event_type = potential_event_type
                 break
-                
+    
     return matched, current_event_type
 
 
@@ -358,7 +400,7 @@ def s32(value: int):
     return -(value & 0x80000000) | (value & 0x7fffffff)
 
 
-def plot_data(data_log, folder_name, nevents=5):
+def plot_data(data_log: pd.DataFrame, folder_name, n_events=5, n_subevents=5):
     """Plot nevents number of events from the data_log dictionary.
     Save them in ./img/ folder."""
     if not os.path.exists("img"):
@@ -366,44 +408,85 @@ def plot_data(data_log, folder_name, nevents=5):
     if not os.path.exists(f"img/{folder_name}"):
         os.mkdir(f"img/{folder_name}")
     
-    for event_number in data_log:
-        if nevents == 0:
-            break
-        nevents -= 1
-        for channel_number in data_log[event_number]:
-            try:
-                data = data_log[event_number][channel_number]
-            except IndexError:
-                print(f"Error: Event {event_number} -- Channel {channel_number} has no data.")
-                print(data_log[event_number])
-                print(data_log[event_number][channel_number])
-                raise
-            plt.plot(data, label=f"Channel {channel_number}")
-            plt.title(f"Event {event_number} -- Channel {channel_number}")
-            plt.xlabel("Time (ns)")
-            plt.ylabel("ADC value (V)")
-           
-            def convert_voltage(v):
-                return v * 2 / 1722 
-
-            plt.gca().yaxis.set_major_formatter(plt.FuncFormatter(lambda v, t: f"{convert_voltage(v):.4f}"))
-
-            
-            # on the same plot, put a sine wave with period of 100ns and same amplitude as previous plot
-            x = np.linspace(0, len(data), 1000)
-            y = max(data) * np.sin(2 * np.pi * x / 100)
-            # print(f"Max voltage ({event_number}): {max(data)} ({convert_voltage(max(data)):.2f})")
-            # print(f"Min voltage ({event_number}): {min(data)} ({convert_voltage(min(data)):.2f})")
-            plt.plot(x, y, '--', label="Artificial sine wave")
-            plt.legend()
+    volts_offset = convert_voltage_reverse(0.01)
     
-            plt.savefig(f"img/{folder_name}/c{channel_number}.event_{event_number}.png")
-            if nevents == 1:
-                # plt.show()
-                pass
-            plt.close()
+    # Group by internal_event_number and sub_event_number
+    grouped = data_log.groupby(["internal_event_number", "sub_event_number"])
+    # looks like:
+    # {('internal_event_number', 'sub_event_number'): DataFrame}
+    # so for example, calling grouped[0, 0] will give you the DataFrame for the first internal event and sub-event
+    # doing for (internal_event, sub_event), group in grouped: will iterate over each group
+    # Iterate over each group
+    for (internal_event, sub_event), group in grouped:
+        # print(group.describe())
+        # if sub_event > n_subevents:
+        #     if internal_event < n_events:
+        #         continue
+        #     else:
+        #         break
+        
+        # above loop does:
+        # (0, 0), DataFrame ... (0, 1), DataFrame ... (0, 2), DataFrame ... [ ... ]
+        # (1, 0), DataFrame ... (1, 1), DataFrame ... (1, 2), DataFrame ... [ ... ]
+        # (2, 0), DataFrame ... (2, 1), DataFrame ... (2, 2), DataFrame ... [ ... ]
+        # [ ... ]
+        
+        # Create a 2x2 grid
+        fig, axes = plt.subplots(2, 2, figsize=(10, 8))
+        fig.suptitle(f"Event {internal_event}, Sub-Event {sub_event}", fontsize=14)
+        
+        # Plot each channel in its respective subplot
+        i: int
+        ax: plt.axis
+        channel: int
+        for i, (ax, channel) in enumerate(zip(axes.flatten(), [1, 2, 3, 4])):
+            # above loop does:
+            # 0, (ax_0, 1) ... 1, (ax_1, 2) ... 2, (ax_2, 3) ... 3, (ax_3, 4)
+            # Filter data for the current channel
+            channel_number_bool_array = (group["channel_number"] == channel)  # True or False for each row
+            channel_data = group[channel_number_bool_array]
             
+            if not channel_data.empty:
+                ax.plot(channel_data["data"].values, label=f"Channel {channel}")
+                if channel < 4:
+                    ax.set_title(f"Channel {channel} (PMT {channel})")
+                else:
+                    ax.set_title(f"Channel {channel} (DC Ramp)")
+                ax.legend()
+                
+                ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda v, t: f"{convert_voltage(v):.4f}"))
+                
+                # get max and min values for y-axis
+                max_value = convert_voltage(max(channel_data["data"].values))
+                min_value = convert_voltage(min(channel_data["data"].values))
+                value_range = max_value - min_value
+                if value_range < 0.01:
+                    if abs(max_value) < 0.02:
+                        ax.set_ylim(-volts_offset, volts_offset)
+                    else:
+                        ax.set_ylim(min_value - volts_offset, max_value + volts_offset)
             
+            else:
+                ax.text(0.5, 0.5, "No Data", fontsize=12, ha="center", va="center")
+                ax.set_title(f"Channel {channel}")
+            
+            ax.grid(True)
+            
+            # Add x-labels only for the bottom row
+            if i >= 2:  # Bottom row indices are 2 and 3
+                ax.set_xlabel("Time (ns)")
+            
+            # Add y-labels only for the left column
+            if i % 2 == 0:  # Left column indices are 0 and 2
+                ax.set_ylabel("Voltage (V)")
+        
+        # Adjust layout
+        plt.tight_layout(rect=(0, 0.03, 1, 0.95))
+        plt.savefig(f"img/{folder_name}/event_{internal_event}.{sub_event}.png")
+        
+        plt.show()
+
+
 def count_raw_data_events():
     """Mimic the above flow of code but make it minimal to emphasize speed while only counting raw data events."""
     # get list of .dat files in current directory
@@ -427,7 +510,8 @@ def count_raw_data_events():
                 mismatched_count += 1
         
         print(f"{file}: {raw_data_count} raw data events ({mismatched_count} mismatched events)")
-        
+
+
 def process_hex_raw_data(hex_value: str = "ABCDEF12", debug: bool = False):
     # Input: Hexadecimal string
     
@@ -458,8 +542,9 @@ def process_hex_raw_data(hex_value: str = "ABCDEF12", debug: bool = False):
         print(f"Reconstructed 32-bit word (little-endian): 0x{word:08X}")
         print(f"First ADC value: 0x{adcvalue1:04X}")
         print(f"Second ADC value: 0x{adcvalue2:04X}")
-        
+    
     return [adcvalue1, adcvalue2]
+
 
 def old_process_hex_raw_data(current_event_hex: str):
     # each packet is actually two data points, so split in half 0:4 and 4:8
@@ -491,10 +576,8 @@ def old_process_hex_raw_data(current_event_hex: str):
             # are way overemphasized, and the sign bit was flipping like crazy
             data_one = s16(int(current_event_hex[0:4], 16))
             data_two = s16(int(current_event_hex[4:8], 16))
-        # print(current_event_hex)
-        
+    
     return data_one, data_two
-
 
 
 if __name__ == "__main__":

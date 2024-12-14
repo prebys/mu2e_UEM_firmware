@@ -81,7 +81,7 @@ Following are the configurable setting registers for the FPGA operation. Their a
   - How long to wait after trigger to start taking data; shorter time means more events happen more quickly
 - `cf000048` = `0x64` = 100 (raw waveform length in number of packets)
   - Minh had defaulted this setting to `0x01` which resulted in *zero* raw data sent. 
-  - Each network packet sent contains two raw data events, so a setting of 100 means 100 network packets which means 200 samples (200ns).
+  - Each network packet sent contains two raw data events, so a setting of 100 means 100 network packets which means 200 samples (200ns). Also with a setting of 100, only 198 data points come through, so looks like it's `2(n-1)`.
 - `cf00004c` = `0x13` = 19 (max subevn)
   - How many subevents to record per event
   - Minh's setting of 0x1d (29) had subevents being cut off by new events before they could finish around 24~26 subevents
