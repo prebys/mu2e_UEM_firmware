@@ -2,8 +2,6 @@
 
 This document provides an overview of the available commands in the debug monitor. Commands are executed in the CLI environment, with parameters as specified.
 
----
-
 ## General Commands
 
 - **`help`**  
@@ -11,8 +9,6 @@ This document provides an overview of the available commands in the debug monito
 
 - **`ver`**  
   Prints the current version and build date/time of the firmware.
-
----
 
 ## Time and Date
 
@@ -22,7 +18,7 @@ This document provides an overview of the available commands in the debug monito
 - **`date`**  
   Prints the current system date.
 
----
+
 
 ## Memory Access Commands
 
@@ -35,7 +31,7 @@ This document provides an overview of the available commands in the debug monito
 - **`dump [<addr> [n]]`**  
   Dumps `n` bytes (default is 16) of memory starting from the address `<addr>`. If no parameters are provided, dumps from the last address.
 
----
+
 
 ## Network Configuration and Tools
 
@@ -81,7 +77,7 @@ This document provides an overview of the available commands in the debug monito
 - **`xping <addr>`**  
   Sends a ping request to the specified `<addr>` using the 10GbE interface.
 
----
+
 
 ## Clock and Frequency Commands
 
@@ -123,7 +119,7 @@ This document provides an overview of the available commands in the debug monito
      4f   FiltReg2        1000
      ```
 
----
+
 
 ## Device Setup and Control
 
@@ -161,7 +157,7 @@ This document provides an overview of the available commands in the debug monito
      sync timer : 0
     ```
 
----
+
 
 ## SPI Commands
 
@@ -171,7 +167,7 @@ This document provides an overview of the available commands in the debug monito
 - **`wspi {lmk|adc0|adc1} <addr> <data>`**  
   Writes `<data>` to SPI register `<addr>` for the specified device.
 
----
+
 
 ## Other Commands
 
@@ -183,7 +179,7 @@ This document provides an overview of the available commands in the debug monito
   - `reset`: Resets the counter.  
   - `<value>`: Sets the counter to `<value>`.
 
----
+
 
 ## Command Differences (Standard vs. Extended)
 
@@ -193,7 +189,7 @@ This document provides an overview of the available commands in the debug monito
 - **Extended (`xarp`, `xip`, `xping`, `xsend`, `xbuf`)**:
   - Operates on the **10GbE (XAUI)** interface, providing functionality tailored for high-speed networks.
 
----
+
 
 ## Notes
 
