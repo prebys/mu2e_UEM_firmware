@@ -138,3 +138,4 @@ sources/
 /vivado_files.csv
 /createSigasiProject.py
 /convertVivadoProjectToCsv.tcl
+*notes.txt
