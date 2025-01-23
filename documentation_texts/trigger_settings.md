@@ -55,3 +55,42 @@ The current adc_fd status can be read from register `cf000000`, which contains a
 - `fmc228_csr(31 downto 24) & adc_fd_r & fmc228_csr(19 downto 18) & trig_in & trig_busy & lmk_sysref_req & fmc228_csr(14 downto 12) & hmc_ldo & fmc228_csr(10 downto 5) & lmk_status_ld & fmc228_csr(2 downto 0);`
 
 Our "adc_fd_r" of interest is bits 23 to 20 of the register, and can be read by doing in the `minicomA` window: `peek cf000000`. An example return value of `00030930` (binary `0000_0000_*0000*_0011_0000_1001_0011_0000`) would mean that the adc_fd register is 0b0000, which means currently none of the channels are triggering on the fast detect system.
+
+### FD Setting Registers
+
+There are some FD settings that I have not yet tested changing, but they are as described below:
+
+```
+# spi settings are defined in mu2e_UEM_firmware.sdk/monitor_amc502/src/ad9234.h
+# ↓address   ↓val. ↓power-on-default
+{ 0x0040, 3, 0x3F, 0x3F, "[7:6] PDWN function [5:3] FD_B [2:0] FD_A 0:Fast detect 1:LMFC 2:SYNC~ 3:temp. diode 7:disabled"},
+{ 0x0228, 3, 0x00, 0x00, "Customer offset (+127~-128 2's complement)"},
+{ 0x0245, 3, 0x00, 0x00, "FD ctrl [3] force [2] force value [0] enable"},
+{ 0x0247, 3, 0x00, 0x00, "Fast detect upper threshold [7:0]"},
+{ 0x0248, 3, 0x00, 0x00, "[4:0] Fast detect upper threshold [12:8]"},
+{ 0x0249, 3, 0x00, 0x00, "Fast detect lower threshold [7:0]"},
+{ 0x024A, 3, 0x00, 0x00, "[4:0] Fast detect lower threshold [12:8]"},
+{ 0x024B, 3, 0x00, 0x00, "Fast detect dwell time [7:0]"},
+{ 0x024C, 3, 0x00, 0x00, "Fast detect dwell time [15:8]"},
+{ 0x0550, 3, 0x00, 0x00, "ADC test modes [7] user ptn 0: cont. 1: single [5] reset PN long gen [4] reset PN short gen [3:0] test mode sel"}
+
+# Set in setup script as following:
+wspi adc1 40 0
+wspi adc0 40 0
+wspi adc0 247 00
+wspi adc1 247 00
+wspi adc0 248 08
+wspi adc1 248 08
+wspi adc0 249 40
+wspi adc1 249 40
+wspi adc0 24b 40
+wspi adc1 24b 40
+wspi adc0 245 1
+wspi adc1 245 1
+```
+
+The way to read this is, for example with 0x0040, it's an eight-bit setting register, and the description on the right tells you what settings each of the eight bits control. It defaults to 0x3F (binary 0b0011_1111), and you look at the text description to see what each of those does. [7:6] is PDWN function, and that is set to "00". [5:3] is FD_B, that are set to "0b111=7", [2:0] is FD_A which is also set to "0b111=7", which means "disabled"! The setup script overrides this register to "0", which is "00" for PDWN function, "000=0" for FD_A and FD_B which is "Fast detect".
+
+An interesting test would be to set 245 to 0xF which would "force" value to "1" and enable FD. Currently the ADC is never reading high on any of the FD values.
+
+The setup script sets "fast detect upper threshold" to 0x0800, "fast detect lower threshold" to 0x0040, "fast detect dwell time" to 0x0040, and "FD ctrl" to 0x1 = 0b0001 (enable=1).
