@@ -48,10 +48,10 @@ Here's how you can set the mask:
 | 0x00           | 0b0000,0000 | Anything                           | Allow any trigger condition                             | 
 
 
-Set the trigger mask by doing in the `minicomA` window: `poke cf00003c <mask setting`. The current default is `poke cf00003c 0x7f` to take input from the external trigger only. 
+Set the trigger mask by doing in the `minicomA` window: `poke cf00003c <mask setting>`. The current default is `poke cf00003c 0x7f` to take input from the external trigger only. 
 
 The current adc_fd status can be read from register `cf000000`, which contains a combination of many status registers. The full register returns:
 
 - `fmc228_csr(31 downto 24) & adc_fd_r & fmc228_csr(19 downto 18) & trig_in & trig_busy & lmk_sysref_req & fmc228_csr(14 downto 12) & hmc_ldo & fmc228_csr(10 downto 5) & lmk_status_ld & fmc228_csr(2 downto 0);`
 
-Our "adc_fd_r" of interest is bits 23 to 20 of the register, and can be read by doing in the `minicomA` window: `peek cf000000`. An example return value of `00030930` (binary `0000_0000_0000_0011_0000_1001_0011_0000`) would mean that the adc_fd register is 0b0011, which means either first/second scintillators or third/fourth scintillators have a signal (not sure which actually!)
+Our "adc_fd_r" of interest is bits 23 to 20 of the register, and can be read by doing in the `minicomA` window: `peek cf000000`. An example return value of `00030930` (binary `0000_0000_*0000*_0011_0000_1001_0011_0000`) would mean that the adc_fd register is 0b0000, which means currently none of the channels are triggering on the fast detect system.
