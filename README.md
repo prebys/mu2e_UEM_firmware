@@ -10,18 +10,17 @@ For a list of ways to contribute / a to-do list, see the [to_contribute](documen
 
 
 ## Programming the FPGA
-Two methods. First, using Vivado:
+Two methods. First, using SSH to upload the bit file directly. This can be done in a typical SSH session without VNC:
+1. Navigate to [`/disk2/mu2e/mu2e_UEM_firmware/socketudp/`](socketudp)
+2. Run [`./fpga_upgrade`](socketudp/fpga_upgrade). It should run a bunch of commands. Ask someone on the project for the root password. By default, this command will use the most recently compiled bit file from the Vivado project at [`mu2e_UEM_firmware.runs/impl_1/top_fmc228_pcie.bit`](mu2e_UEM_firmware.runs/impl_1/top_fmc228_pcie.bit). However, if you call `./fpga_upgrade original`, it will use the original bitfile packaged with the project from Minh at [`.../impl_1_old/top_fmc228_pcie_default.bit`](mu2e_UEM_firmware.runs/impl_1_old/top_fmc228_pcie_default.bit)
+
+Second method, the old method, using VNC to open Vivado and program the bit file through the Vivado hardware manager:
 1. Connect to `mu2euem@mu2euem.dhcp.fnal.gov` via [VNC](documentation_texts/vnc_instructions.md) (ask someone for device password).
 2. In one terminal window, type the command `minicomA` to open a minicom terminal window.
 3. In a new terminal window, navigate to `/disk2/mu2e/mu2e_UEM_firmware/` (this is the location of the base directory of this GitHub repository on the mu2euem device).
 4. Run the command `vivado mu2e_UEM_firmware.xpr`. A Vivado window should open up. (Trying to open Vivado through SSH is unusably slow, which is why we need to use VNC).
 5. Go to `Hardware Manager` ⇨ `Open Target` ⇨ `Auto Connect` ⇨ `Program Device` ⇨ Choose a bitfile. Main bitfile to be used when programming the FPGA is [`bitfiles/top_fmc228_pcie_v1.bit`](bitfiles/top_fmc228_pcie_v1.bit)
 6. In the `minicomA` window, once the programming is finished, a message should pop saying "Purdue debug monitor 1.00 - AMC502+XAUI+FMC228(1) version.", and you should be able to start typing into the minicom window.
-
-Second method, using SSH to upload the bit file directly. This can be done in a typical SSH session without VNC.
-
-1. Navigate to [`/disk2/mu2e/mu2e_UEM_firmware/socketudp/`](socketudp)
-2. Run [`./fpga_upgrade`](socketudp/fpga_upgrade). It should run a bunch of commands. Ask someone on the project for the root password. By default, this command will use the most recently compiled bit file from the Vivado project at [`mu2e_UEM_firmware.runs/impl_1/top_fmc228_pcie.bit`](mu2e_UEM_firmware.runs/impl_1/top_fmc228_pcie.bit). However, if you call `./fpga_upgrade original`, it will use the original bitfile packaged with the project from Minh at [`.../impl_1_old/top_fmc228_pcie_default.bit`](mu2e_UEM_firmware.runs/impl_1_old/top_fmc228_pcie_default.bit)
 
 As a potential third method, one can run Vivado in TCL command line mode and program it remotely through that. Here is someone's GitHub project of [them doing this](https://github.com/HackerFoo/nitefury-popr/blob/master/scripts/program.tcl).
 
