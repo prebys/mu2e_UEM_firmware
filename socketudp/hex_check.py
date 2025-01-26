@@ -47,17 +47,22 @@ to_use_file_index = 1
 # s32: 32-bit signed integer (take all 32-bits as one data point)
 _mode = 's12'
 
+# show plots
+# set to True to visually display plots as they are created, or False to just save them and not display them
+# in an SSH client, "False" is recommended
+_show_plots = True
+
 # plotting units
 # volts: standard operation, plot data in volts (convert from raw values)
 # raw: plot data in raw values (no conversion)
-plotting_units = "raw"  # "volts" or "raw"
+plotting_units = "volts"  # "volts" or "raw"
+assert plotting_units in ["volts", "raw"], "Invalid plotting_units. Please choose 'volts' or 'raw'."
 
 # if True, will print all event types regardless of the "only_show" list below
 show_all = False
 
 # if True, will print NO EVENTS regardless of the "only_show" list
 show_nothing = False
-
 
 # if this contains entries, then this code will only print the events in this list
 only_show = ["begin_event"]  # , "event_number_evn"] # , "sub_event_number_evn"]
@@ -503,6 +508,7 @@ class HexCheck:
             print(f"{event_type}: {count}")
         
         print(f"Used input file {self.file_name}")
+        print(f"Starting collection of data")
         
         # add raw data to the dataframe
         panda_entry = []
@@ -531,7 +537,7 @@ class HexCheck:
                   f"mean value: {convert_voltage(group['data'].mean()):.3f} V")
         
         if plot:
-            self.plot_data(3, 3)
+            self.plot_data(3, 3, show_plots=_show_plots)
         
         return self.event_counts
     
@@ -582,9 +588,10 @@ class HexCheck:
         
         return hex_data_list, file_creation_date
     
-    def plot_data(self, n_events=3, n_subevents=3):
+    def plot_data(self, n_events=3, n_subevents=3, show_plots: bool = True):
         """Plot nevents number of events from the data_log dictionary.
         Save them in ./img/ folder."""
+        print("Starting plotting of data")
         if not os.path.exists("img"):
             os.mkdir("img")
         if not os.path.exists(f"img/{self.folder_name}"):
@@ -742,7 +749,8 @@ class HexCheck:
             plt.tight_layout(rect=(0, 0.03, 1, 0.95))
             plt.savefig(f"img/{self.folder_name}/event_{internal_event}.{sub_event}.png")
             
-            plt.show()
+            if show_plots:
+                plt.show()
 
 
 hex_check = HexCheck()
