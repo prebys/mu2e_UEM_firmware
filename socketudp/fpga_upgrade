@@ -1,5 +1,18 @@
 #!/bin/bash
 
+# Define a lock file to ensure two copies of this script cannot be ran at once
+LOCKFILE="$(basename "$0").lock"
+
+# Check if the lock file exists
+if [ -e "$LOCKFILE" ]; then
+    echo "Another instance of the script is already running."
+    exit 1
+fi
+
+# Create the lock file and ensure it's deleted upon exit
+trap "rm -f $LOCKFILE" EXIT
+touch "$LOCKFILE"
+
 # Configuration
 IP1="192.168.40.252"
 IP2="192.168.40.253"
@@ -88,7 +101,7 @@ else
 fi
 
 read -n 1 -p "Press any key once you see the 'Purdue debug monitor 1.00' confirmation in minicom..."
-./setup.sh
+sudo ./setup
 
 echo "Completed upgrade. Now starting UDP receiver."
 ./udp-recv
