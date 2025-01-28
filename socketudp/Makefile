@@ -8,7 +8,7 @@ all: clean udp-recv
 testudpsocket: testudpsocket.o 
 	$(CC) -o testudpsocket testudpsocket.o $(LIBS) 
 udp-recv: udp-recv.o 
-	$(CC) -o udp-recv udp-recv.o $(LIBS)
+	$(CC) -std=c++11 -o udp-recv udp-recv.o $(LIBS) 
 
 
 udp-send.o: udp-send.c port.h

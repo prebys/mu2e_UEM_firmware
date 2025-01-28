@@ -1,5 +1,6 @@
 //
-// Created by Ryry013 on 5/7/2024.
+// v1.0 (2024/05/07) Created by Ryan Hensley from original udp-recv.c
+// v1.1 (2025/01/16) Modify filename to include creation time
 // 
 #ifdef _WIN32
 //For Windows
@@ -28,14 +29,30 @@ int betriebssystem = 2;
 #include <fstream>
 #include <string>
 #include <unistd.h>
+#include <ctime>
+#include <sstream>
 using namespace std;
 
 
 #define BUFSIZE 900000
 #define SERVICE_PORT 48879
 
-ofstream myfile("test.dat");
+ofstream myfile;
 bool keepRunning = true;
+
+string generateFilenameWithDatetime() {
+    // Get the current time
+    time_t now = time(NULL);
+    struct tm *timeinfo = localtime(&now);
+
+    // Format the time as YYYYMMDD_HHMMSS
+    char buffer[30];
+    strftime(buffer, sizeof(buffer), "data/data_%Y%m%d_%H%M%S.dat", timeinfo);
+  
+    return string(buffer);
+}
+
+
 
 void handleSigint(int sig) {
     cout << "\nClosing file and exiting...\n";
@@ -49,6 +66,16 @@ int main(int argc, char **argv)
 {
     signal(SIGINT, handleSigint);  // Register signal handler
 
+    // Generate filename with current datetime
+    string filename = generateFilenameWithDatetime();
+    myfile.open(filename.c_str());
+
+    if (!myfile.is_open()) {
+        cerr << "Failed to open file: " << filename << endl;
+        return 1;
+    }
+    cout << "File created: " << filename << endl;
+
     struct sockaddr_in myaddr;      /* our address */
     struct sockaddr_in remaddr;     /* remote address */
     socklen_t addrlen = sizeof(remaddr);            /* length of addresses */
@@ -59,8 +86,6 @@ int main(int argc, char **argv)
     int subevent = 0;
     int counter = 0;
     string line;
-
-
 
     /* create a UDP socket */
     
