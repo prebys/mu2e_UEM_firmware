@@ -48,7 +48,7 @@ Here's how you can set the mask:
 | 0x00           | 0b0000,0000 | Anything                           | Allow any trigger condition                             | 
 
 
-Set the trigger mask by doing in the `minicomA` window: `poke cf00003c <mask setting>`. The current default is `poke cf00003c 0x7f` to take input from the external trigger only. 
+Set the trigger mask by doing in the `minicomA` window: `poke cf00003c <mask setting>`. The current default is `poke cf00003c 7f` to take input from the external trigger only. 
 
 The current adc_fd status can be read from register `cf000000`, which contains a combination of many status registers. The full register returns:
 
