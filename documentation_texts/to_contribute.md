@@ -10,3 +10,14 @@ You can try any of these above things. Even just step one is a good starting poi
 Other to-do:
 
 1. Simplify GitHub project by expanding the .gitignore file. This will require Google searches + repeatedly cloning the GitHub repo and trying to build the .bit file from what just what the repo gives and see what files are necessary and what can be rebuilt. Obviously for example, not including the project file would break it, as would not including the .vhd source files, but I'm sure there are many files that are being included that aren't necessary. 
+
+
+### How to use new ADC settings
+1. Edit the settings in `/code/adc_trigger_settings.py`, reference [this page](https://github.com/prebys/mu2e_UEM_firmware/blob/main/documentation_texts/trigger_settings.md) and [this section on the main page](https://github.com/prebys/mu2e_UEM_firmware/tree/main?tab=readme-ov-file#configurable-bit-options-and-their-current-settings) for information on the trigger options.
+2. Run with `python3 adc_trigger_settings.py`
+3. Collect data the normal way
+4. Plot the data file with `/socket/hex_check.py`
+
+Things to investigate:
+- The "trigger offset" variable 0x7fcad80, what happens if you increase or decrease it. (If it's too low you encounter an error in the code with infinite counting?)
+- The mysterious events where it triggers off something but nothing shows. Maybe it's related to the external trigger? If you set trigger setting to 7f, it'll only trigger on external trigger. FE = only trigger on self triggers, and "00" = trigger on anything. 
