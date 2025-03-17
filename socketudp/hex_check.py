@@ -18,6 +18,9 @@ import pandas as pd
 
 from datetime import datetime
 
+file_path = os.path.dirname(os.path.realpath(__file__))
+os.chdir(file_path)
+
 # sample of beginning of file:
 # ffffffff 00ffffff f4f3f2f1 00ccccfc
 # 00000000 2804ac00 fdfdfdfd f4f3f2f1
