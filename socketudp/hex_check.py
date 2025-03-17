@@ -73,7 +73,7 @@ assert plotting_units in ["volts", "raw"], "Invalid plotting_units. Please choos
 show_all = False
 
 # if True, will print NO EVENTS regardless of the "only_show" list
-show_nothing = False
+show_nothing = True
 
 # if this contains entries, then this code will only print the events in this list
 only_show = ["begin_event"]  # , "event_number_evn"] # , "sub_event_number_evn"]
@@ -167,6 +167,7 @@ class Event:
         global hex_check
         self.hex_check = hex_check
         self.hex = new_hex
+        
         self._previous_event: PrevEvent = PrevEvent(previous_event) if previous_event else None
         if not current_event_type:
             self.matched, self.type = self.detect_current_event_type()
@@ -174,12 +175,14 @@ class Event:
             self.matched = True
             self.type = current_event_type
         
+        
+        
         # event_number (each event contains multiple sub_events)
         # -- sub_event_number (each sub_event contains four channels worth of data)
         # -- event_number and sub_event_number increment *with each other*, when one goes up so does the other
         # -- but event_number is offset by some internal FPGA amount randomly
         # -- -- channel_number (each channel contains a waveform)
-
+        
         if self.previous_event:
             if self.type == begin_event:
                 self.internal_event_number = self.previous_event.internal_event_number + 1
@@ -289,7 +292,8 @@ class Event:
                             continue  # you got an event in raw data that just happened to look like end_of_channel
                 return matched, current_event_type
             
-        return False, None
+        raise Exception(f"Failed to detect the kind of event for {self.hex} with previous event {self.previous_event} "
+                        f"and expected next events {next_event_candidates}.")
 
     def process_hex_raw_data(self, mode) -> list[int]:
         # FOR HELP UNDERSTANDING ABOUT SIGNED VS UNSIGNED INTEGERS IN PYTHON:
@@ -342,12 +346,14 @@ class Event:
             # word >> 16: 0xf1f2 = 61,938
             # adcvalue1: 0xf1f0 --> 0x0f1f = -225
             newer_adc_value: int = (((word >> 16) & 0xFFF0) >> 4)  # Shift right 16 bits, mask, then shift right 4 again
+            upper_count = word >> 16 & 0xF  # Get upper 4 bits
             newer_adc_value = signed(newer_adc_value, 12)
             
             # Step 4: Extract the older ADC value (lower 16 bits of `word`)
             # word & 0xFFFF: 0xf3f4 = 62,452
             # adcvalue2: 0xf3f0 --> 0x0f3f = -193
             older_adc_value: int = ((word & 0xFFF0) >> 4)  # Get upper 12 bits, shift right by 4 to be lowest 12 bits
+            lower_count = word & 0xF  # Get lower 4 bits
             older_adc_value = signed(older_adc_value, 12)
             
             count = upper_count << 4 | lower_count
@@ -653,8 +659,8 @@ class HexCheck:
         # doing for (internal_event, sub_event), group in grouped: will iterate over each group
         # Iterate over each group
         for (internal_event, sub_event), group in grouped:
-            if sub_event > n_subevents or internal_event > n_events:
-                pass
+            if sub_event + 1 > n_subevents or internal_event > n_events:
+                continue
             if internal_event > 5:
                 pass
             # print(group.describe())
@@ -702,10 +708,7 @@ class HexCheck:
                 
                 if not channel_data.empty:
                     ax.plot(channel_data["data"].values, label=f"Channel {channel}")
-                    if channel < 4:
-                        ax.set_title(f"Channel {channel} (PMT {channel})")
-                    else:
-                        ax.set_title(f"Channel {channel} (DC Ramp)")
+                    ax.set_title(f"Channel {channel}")
                     ax.legend()
                     
                     # get max and min values for y-axis
@@ -716,7 +719,12 @@ class HexCheck:
                     max_voltage = convert_voltage(max_value)
                     min_voltage = convert_voltage(min_value)
                     voltage_range = max_voltage - min_voltage
-                    print(internal_event, sub_event, channel, voltage_range)
+                    value_range = max_value - min_value
+                    if channel != 5:
+                        if plotting_units == "raw":
+                            print(internal_event, sub_event, channel, min_value, max_value, value_range)
+                        else:
+                            print(internal_event, sub_event, channel, min_voltage, max_voltage, voltage_range)
 
                     if channel < 4 and voltage_range > 0.5:
                         found_cosmic_event = True
@@ -738,7 +746,6 @@ class HexCheck:
                         raise ValueError("Invalid plotting_units. Please choose 'raw' or 'volts'.")
                     
                     # even if using volts for the units, the internal values will be the raw values
-                    value_range = max_value - min_value
                     value_offset = value_range * 0.5 or abs(max_value) * 0.5
                     
                     # this will be used for setting the y-axis limits
@@ -768,20 +775,27 @@ class HexCheck:
                     # find number of decimal places to show by converting voltage range to scientific notation
                     num_decimal_places = int(f'{_offset:e}'.split('e')[-1])  # for example, 1e-3 gives -3
                     if num_decimal_places < 0:
+                        # if negative decimals, for example, 1e-4, record "4"
                         num_decimal_places = -num_decimal_places
                     else:
                         num_decimal_places = 1
                     
+                    def formatter_func(v, t):
+                        s = f"{convert_voltage(v):.{num_decimal_places + 2}f}"
+                        return s
+                        
                     # format y-axis in terms of volts
                     # number of decimal places on y-axis based on above calculation
                     if plotting_units == "volts":
                         if num_decimal_places < 3:
-                            formatter = plt.FuncFormatter(lambda v, t: f"{convert_voltage(v):.{num_decimal_places}f}")
+                            # for example, 1e-4, or 0.0001, show all decimal places
+                            formatter = plt.FuncFormatter(formatter_func)
                             # formatter.set_offset_string(f"{_max:.{num_decimal_places}f}")
                             ax.yaxis.set_major_formatter(formatter)
                         else:
+                            # for example, 1e-3, or 0.001, show 3 decimal places every time
                             formatter = plt.FuncFormatter(lambda v, t:
-                                                          f"{convert_voltage(v)*10**num_decimal_places:.2f}")
+                                                          f"{convert_voltage(v)*10**num_decimal_places:.3f}")
                             formatter.set_offset_string(f"{1/10**num_decimal_places:.0e}")
                             ax.yaxis.set_major_formatter(formatter)
                     else:
@@ -813,7 +827,7 @@ class HexCheck:
 
                 if show_plots:
                     plt.show()
-
+                    
 
 hex_check = HexCheck()
 hex_check.get_event_types()  # populate internal event type dictionary
