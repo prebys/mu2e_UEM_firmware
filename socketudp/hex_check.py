@@ -418,22 +418,27 @@ name_to_event = {name: event for name, event in globals().items() if isinstance(
 
 
 def convert_voltage(v):
+    # ADC peak-to-peak is 1.34V (+/- 0.67V), so 0.67V = 2047, -0.67V = -2048
+    # Voltage at FMC228 transformer is 2.52V, ratio is 2.52V / 1.34V = 1.88V
+    # Therefore, values at FMC228 pins are 1.88 * ADC values
+    # 2047 = 0.67 * 1.88 = 1.26V, -2048 = -0.67 * 1.88 = -1.26V
+    # Max voltage is +/- 1.26V
     if _mode == 's12':
-        return v * 2 / 1722
+        return v * 1.26 / 2047
     elif _mode == 's16':
-        return v * 2 / (1722 / 2**11 * 2**15)
+        return v * 1.26 / (2047 / 2**11 * 2**15)
     elif _mode == 's32':
-        return v * 2 / (1722 / 2**11 * 2**31)
+        return v * 1.26 / (2047 / 2**11 * 2**31)
     
     
 def convert_voltage_reverse(v):
     if _mode == 's12':
-        return v * 1722 / 2
+        return v * 2047 / 1.26
     elif _mode == 's16':
-        return v * (1722 / 2**11 * 2**15) / 2
+        return v * (2047 / 2**11 * 2**15) / 1.26
     elif _mode == 's32':
-        return v * (1722 / 2**11 * 2**31) / 2
-
+        return v * (2047 / 2**11 * 2**31) / 1.26
+    
 
 def signed(value: int, width: int) -> int:
     """Converts an unsigned value to a signed value."""
