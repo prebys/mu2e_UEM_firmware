@@ -52,6 +52,10 @@ _mode = 's12'
 # in an SSH client, "False" is recommended
 _show_plots = True
 
+# set number of events and subevents
+_n_events = 20
+_n_subevents = 5
+
 # search for cosmic events
 # set to True to only plot subevents where the voltage range in one of the three channels is greater than 0.5V
 _search_for_cosmics = False
@@ -546,7 +550,7 @@ class HexCheck:
                   f"mean value: {convert_voltage(group['data'].mean()):.3f} V")
         
         if plot:
-            self.plot_data(3, 3, show_plots=_show_plots)
+            self.plot_data(_n_events, _n_subevents, show_plots=_show_plots)
         
         return self.event_counts
     
