@@ -136,10 +136,11 @@ class EventType:
         # the reversed() is very subtle, but it will prioritize later events over earlier ones
         # this is important for events like RawData, which can be followed by itself or End
         # by prioritizing "End", it'll end properly rather than recognizing the "End" event as another "RawData" event
+        # it'll order events in the order that they happen and look for the highest event first
         ret = [event_type for name, event_type in reversed(name_to_event.items()) if name in self._next_event]
         assert len(ret) == len(self._next_event), f"Expected {len(self._next_event)} events, got {len(ret)}."
         if "raw_data" in self._next_event:
-            assert ret[-1] == raw_data, f"Expected last event to be raw_data, got {ret}."
+            assert ret[0] != raw_data, f"raw_data cannot be the first item in the return list, instead it's {ret}."
         return ret
     
     def __eq__(self, other: Union[str, "EventType"]):
@@ -417,7 +418,8 @@ fragment_trig_mask = EventType('0000....', ['stat'])
 stat = EventType('........', ['status_word'])
 status_word = EventType('........', ['bco_low'])
 bco_low = EventType('........', ['bco_high'])
-bco_high = EventType('........', ['end_of_channel', 'raw_data'])
+bco_high = EventType('........', ['data_length', 'end_of_channel', 'raw_data'])
+data_length = EventType('........', ['end_of_channel', 'raw_data'])
 raw_data = EventType('........', ['end_of_channel', 'raw_data'])
 end_of_channel = EventType('fbfbfbfb', ['end_raw_data', 'channel_header'])
 end_raw_data = EventType('fefefefe', ['begin_peak_data'])
