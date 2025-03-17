@@ -54,7 +54,7 @@ _show_plots = True
 
 # search for cosmic events
 # set to True to only plot subevents where the voltage range in one of the three channels is greater than 0.5V
-_search_for_cosmics = True
+_search_for_cosmics = False
 
 # plotting units
 # volts: standard operation, plot data in volts (convert from raw values)
@@ -681,7 +681,8 @@ class HexCheck:
 
                     if channel < 4 and voltage_range > 0.5:
                         found_cosmic_event = True
-                        print(f"Found cosmic event in event {internal_event}, sub-event {sub_event}")
+                        if _search_for_cosmics:
+                            print(f"Found cosmic event in event {internal_event}, sub-event {sub_event}")
 
                     # Below underscore values for printing only
                     if plotting_units == "volts":
