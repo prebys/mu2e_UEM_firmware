@@ -289,32 +289,42 @@ begin
     --datainmin => datamin_value,
     --datainsum => datamin_sum,
     
-    datain_org0 => data_org0,
-    datain_org1 => data_org1,
-    datain_org2 => data_org2,
-    datain_org3 => data_org3,            
+    datain_org0 => (others => '0'),
+    datain_org1 => (others => '0'),
+    datain_org2 => (others => '0'),
+    datain_org3 => (others => '0'),            
     ithr => inthr, 
         
     inbusy => inbusy,
     clk_b => clk_b,
-    wrdata => sumarea_wr,
+    wrdata => open, -- sumarea_wr,
     --rden => '0',--sumarea_rden,
     --outvalid => sumarea_valid,
     --outempty => sumarea_empty,
-    outevent_number => sumevn_number,
-    sumpeak_out=>sumpeak_value,
+    outevent_number => open, -- sumevn_number,
+    sumpeak_out=> open, -- sumpeak_value,
 
-    orst => fifo_rst,
-    owr_peak_sum => wr_peak_sum,
-    dout_sum => fifo_sumarea_data, 
+    orst => open, -- fifo_rst,
+    owr_peak_sum => open, -- wr_peak_sum,
+    dout_sum => open, -- fifo_sumarea_data, 
 
     --rden_height  => peakhigh_rden,
     --outvalid_height => peakhigh_valid,
     --outempty_height => peakhigh_empty,        
-    owr_peak_height => wr_peak_height,
-    dout_height => fifo_peakhigh_data    
+    owr_peak_height => open, -- wr_peak_height,
+    dout_height => open -- fifo_peakhigh_data    
     
    );
+
+   sumarea_wr <= '0';
+   sumevn_number <= (others => '0');
+   sumpeak_value <= (others => '0');
+   fifo_rst <= '0';
+   wr_peak_sum <= '0';
+    fifo_sumarea_data <= (others => '0');
+    wr_peak_height <= '0';
+    fifo_peakhigh_data <= (others => '0');
+  
 
 -- ph_imp : peakhigh_module
 --   port map (
