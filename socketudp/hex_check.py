@@ -314,31 +314,45 @@ class Event:
             # https://docs.python.org/3/library/struct.html#format-characters
             word: int = struct.unpack('<I', byte_data)[0]  # unpack() returns tuple, here with one element only
             # word is the signed interpretation of the full 32-bit word, f1f2f3f4 --> -235736076, NOT simply -0xf1f2f3f4
+            # given f1f2f3f4, the least significant byte is f4, the most significant byte is f1
+            # it's natural that the ADC will fill data in starting at the least significant byte
+            # so f3f4 **is the older data** and f1f2 **is the newer data**
         except struct.error:
             print(f"Error: {self.hex} could not be converted to a 32-bit word.")
             raise
         
         if mode == 's12':
-            # Step 3: Extract the first ADC value (upper 16 bits of `word`)
-            adcvalue1: int = (((word >> 16) & 0xFFF0) >> 4)  # Shift right 16 bits, mask, then shift right 4 again
-            adcvalue1 = signed(adcvalue1, 12)
+            # start with word =0xf1f2f3f4, LSB is f4, MSB is f1
+            # LSB is the oldest, MSB is the newest
+            # the "2" byte and "4" byte contain the remaining count of ADC points to be sent
             
-            # Step 4: Extract the second ADC value (lower 16 bits of `word`)
-            adcvalue2: int = ((word & 0xFFF0) >> 4)  # Get upper 12 bits, shift right by 4 to be lowest 12 bits
-            adcvalue2 = signed(adcvalue2, 12)
+            # Step 3: Extract the newer ADC value (upper 16 bits of `word`, f1f2)
+            # word >> 16: 0xf1f2 = 61,938
+            # adcvalue1: 0xf1f0 --> 0x0f1f = -225
+            newer_adc_value: int = (((word >> 16) & 0xFFF0) >> 4)  # Shift right 16 bits, mask, then shift right 4 again
+            newer_adc_value = signed(newer_adc_value, 12)
             
-            ret_val: list[int] = [adcvalue1, adcvalue2]
+            # Step 4: Extract the older ADC value (lower 16 bits of `word`)
+            # word & 0xFFFF: 0xf3f4 = 62,452
+            # adcvalue2: 0xf3f0 --> 0x0f3f = -193
+            older_adc_value: int = ((word & 0xFFF0) >> 4)  # Get upper 12 bits, shift right by 4 to be lowest 12 bits
+            older_adc_value = signed(older_adc_value, 12)
+            
+            count = upper_count << 4 | lower_count
+            ret_val: list[int] = [older_adc_value, newer_adc_value, count]
         elif mode == 's16':
             # Step 3: Extract the first ADC value (upper 16 bits of `word`)
-            adcvalue1: int = word >> 16  # Shift right 16 bits
-            adcvalue1 = signed(adcvalue1, 16)
+            newer_adc_value: int = word >> 16  # Shift right 16 bits
+            newer_adc_value = signed(newer_adc_value, 16)
             
             # Step 4: Extract the second ADC value (lower 16 bits of `word`)
-            adcvalue2: int = word & 0xFFFF  # Get upper 12 bits, shift right by 4 to be lowest 12 bits
-            adcvalue2 = signed(adcvalue2, 16)
+            older_adc_value: int = word & 0xFFFF  # Get upper 12 bits, shift right by 4 to be lowest 12 bits
+            older_adc_value = signed(older_adc_value, 16)
             
-            ret_val = [adcvalue1, adcvalue2]
+            ret_val = [older_adc_value, newer_adc_value]
         else:  # mode == 's32'
+            # this is already ordered in the right way, with the MSB being the newest data and the LSB being oldest
+            # this was proven by doing a 32 bit ramp test and seeing the data increase in the expected way
             ret_val = [signed(word, 32)]
         
         return ret_val
@@ -803,14 +817,14 @@ if __name__ == "__main__":
     tests.assertRaises(ValueError, signed, 0b11111111111111111111111, 12)
     
     # process_hex_raw_data tests
-    # s12: f4f3f2f1 > f1f2f3f4 > [f1f2, f3f4], [_f1f, _f3f], signed(12-bit) --> [-225, -193]
-    #      78563412 > 12345678 > [1234, 5678], [_123, _567], signed(12-bit) --> [291, 1383]
-    tests.assertEqual(Event("f4f3f2f1", current_event_type=raw_data).process_hex_raw_data(mode='s12'), [-225, -193])
-    tests.assertEqual(Event("78563412", current_event_type=raw_data).process_hex_raw_data(mode='s12'), [291, 1383])
-    # s16: f4f3f2f1 > f1f2f3f4 > [f1f2, f3f4], signed(16-bit) --> [-3598, -3084]
-    #      78563412 > 12345678 > [1234, 5678], signed(16-bit) --> [4660, 22136]
-    tests.assertEqual(Event("f4f3f2f1", current_event_type=raw_data).process_hex_raw_data(mode='s16'), [-3598, -3084])
-    tests.assertEqual(Event("78563412", current_event_type=raw_data).process_hex_raw_data(mode='s16'), [4660, 22136])
+    # s12: f4f3f2f1 > [MSB→]f1f2f3f4[←LSB] > [(LSB)f3f4, (MSB)f1f2], [f3f_, f1f_], signed(12-bit) --> [-193, -225]
+    #      78563412 > 12345678 > [5678, 1234], [567_, 123_], signed(12-bit) --> [1383, 291]
+    tests.assertEqual(Event("f4f3f2f1", current_event_type=raw_data).process_hex_raw_data(mode='s12'), [-193, -225, 36])
+    tests.assertEqual(Event("78563412", current_event_type=raw_data).process_hex_raw_data(mode='s12'), [1383, 291, 72])
+    # s16: f4f3f2f1 > f1f2f3f4 > [f3f4, f1f2], signed(16-bit) --> [-3084, -3598]
+    #      78563412 > 12345678 > [5678, 1234], signed(16-bit) --> [22136, 4660]
+    tests.assertEqual(Event("f4f3f2f1", current_event_type=raw_data).process_hex_raw_data(mode='s16'), [-3084, -3598])
+    tests.assertEqual(Event("78563412", current_event_type=raw_data).process_hex_raw_data(mode='s16'), [22136, 4660])
     # s32: f4f3f2f1 > f1f2f3f4 > [f1f2f3f4], signed(32-bit) --> [-235736076]
     #      78563412 > 12345678 > [12345678], signed(32-bit) --> [305419896]
     tests.assertEqual(Event("f4f3f2f1", current_event_type=raw_data).process_hex_raw_data(mode='s32'), [-235736076])
