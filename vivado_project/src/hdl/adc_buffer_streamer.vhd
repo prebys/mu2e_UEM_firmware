@@ -133,14 +133,14 @@ architecture Behavioral of adc_buffer_streamer is
                     SendChannelHeader,
 
                     SendHeader, SendHeader0, SendHeader1, SendHeader2,
-                    SendBcoLow, SendBcoHigh, SendData,
+                    SendBcoLow, SendBcoHigh,  SendDataLength, SendData,
                                         
                     SendChannelEnd,
                     SendChannelCheck,
                     SendEventEnd,
                     SendEmpty,
                     
-                     SendStrobe );
+                     SendStrobe);
   signal state : state_t;
 
 begin
@@ -187,6 +187,9 @@ begin
 
   process ( rst, clk )
     variable stat : std_logic_vector(31 downto 0);
+    variable to_send_dout : std_logic_vector(31 downto 0);
+    variable std_logic_count : std_logic_vector(31 downto 0);
+
   begin
     if ( clk'event and clk = '1' ) then
         last_req1 <= inreq1;
@@ -297,10 +300,17 @@ begin
           strobe <= '0';
             wren <= '1';
             dout <= x"0000" & bco(47 downto 32);
-            state <= SendData;
-            read_enable <= '1';
+            state <= SendDataLength;
+            read_enable <= '0';
             even_clock <= '1';
             count <= unsigned(data_adc_length); --word_count-1;
+
+        when SendDataLength => 
+          wren <= '1';
+          dout <= data_adc_length;
+          state <= SendData;
+          read_enable <= '1';
+          count <= unsigned(data_adc_length);
           
         when SendData =>
           if(nchannel = "00") then 
@@ -330,7 +340,16 @@ begin
           case tm_r is
           when "0000" =>
             --dout <= din(to_integer(channel_number));
-            dout <= din(to_integer(nchannel));
+            -- sends packets like f1f2f3f4
+            -- the "2" and "4" in those packets are tail bytes, not real data
+            -- I want to send the value of "count" in those two tail bytes
+            -- so it should be like f1f & count(7 downto 4) & f3f & count(3 downto 0)
+            -- f1f is to_send_dout(31 downto 20)
+            -- f3f is to_send_dout(15 downto 4)
+            -- fill in the holes with the count (will be 0 to 255)
+            to_send_dout := din(to_integer(nchannel));
+            std_logic_count := std_logic_vector(count);
+            dout <= to_send_dout(31 downto 20) & std_logic_count(7 downto 4) & to_send_dout(15 downto 4) & std_logic_count(3 downto 0);
           when "0001" =>
             dout <= checker_board;
           when "0010" =>
