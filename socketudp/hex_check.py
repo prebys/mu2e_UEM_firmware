@@ -246,7 +246,9 @@ class Event:
     def raw_data(self) -> list[int]:
         """Returns the raw data as a list of integers, processed by process_hex_raw_data"""
         if self.type == raw_data:
-            return self.process_hex_raw_data(mode=self.hex_check.mode)
+            process_hex_raw_data_result = self.process_hex_raw_data(mode=self.hex_check.mode)
+            self.hex_check.raw_data_remaining = process_hex_raw_data_result[2]
+            return process_hex_raw_data_result[:2]
         else:
             raise ValueError("This event is not a raw_data event.")
     
@@ -276,6 +278,15 @@ class Event:
             if search:
                 matched = True
                 current_event_type = potential_event_type
+                if current_event_type == 'end_of_channel':
+                    if not self.hex_check.adc_length:
+                        self.hex_check.adc_length = len(self.hex_check.raw_data_buffer)
+                        print(f"ADC length: {self.hex_check.adc_length}")
+                    else:
+                        if len(self.hex_check.raw_data_buffer) % self.hex_check.adc_length == 0:
+                            pass  # this really is an "end_of_channel" event
+                        else:
+                            continue  # you got an event in raw data that just happened to look like end_of_channel
                 return matched, current_event_type
             
         return False, None
@@ -375,7 +386,7 @@ class Event:
             return f"<Event {self.hex} (UnknownType)>"
         
         if self.type == raw_data:
-            ret += f" = {self.raw_data}>"
+            ret += f" = {self.raw_data} ({self.hex_check.raw_data_remaining} left)>"
         else:
             if self.data is not None:
                 ret += f" = {self.data}>"
@@ -484,6 +495,11 @@ class HexCheck:
         self.full_hex_data, self.file_creation_date = self.read_data_file()  # Full hex data and file creation date
         self.date_str = self.file_creation_date.strftime('%Y.%m.%d_%H.%M.%S')
         self.folder_name = f"{self.date_str}_{self.file_name}"  # folder name inside /img directory
+        
+        # value of how many raw data points are remaining to be sent in current run of raw data
+        # will only have value for raw_data event types
+        self.raw_data_remaining = None
+        self.adc_length = None
         
         # set mode for data processing
         self.mode = _mode
