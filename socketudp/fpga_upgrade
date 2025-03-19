@@ -1,46 +1,89 @@
 #!/bin/bash
-
-# Define a lock file to ensure two copies of this script cannot be ran at once
-LOCKFILE="$(basename "$0").lock"
-
-# Check if the lock file exists
-if [ -e "$LOCKFILE" ]; then
-    echo "Another instance of the script is already running."
-    exit 1
-fi
-
-# Create the lock file and ensure it's deleted upon exit
-trap "rm -f $LOCKFILE" EXIT
-touch "$LOCKFILE"
+set -euo pipefail
 
 # Configuration
+LOCKFILE="$(basename \"$0\").lock"
 IP1="192.168.40.252"
 IP2="192.168.40.253"
 BASE_DIR="/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs"
 DEFAULT_FILE_PATH="${DEFAULT_FILE_PATH:-$BASE_DIR/impl_1/top_fmc228_pcie.bit}"
-ORIGINAL_FILE_PATH="${ORIGINAL_FILE_PATH:-$BASE_DIR/impl_1_old/top_fmc228_pcie_default.bit}"
 REMOTE_PATH="${REMOTE_PATH:-/upgrade}"
 SOCKET_DIR="/tmp/ssh_mux_$USER"
+SSH_OPTIONS="-o ConnectTimeout=5 -o StrictHostKeyChecking=no -o ForwardX11=no -o ControlPath=$SOCKET_DIR/%r@%h:%p"
 
-# Functions
-check_ip() { ping -c 1 -W 1 "$1" > /dev/null 2>&1; return $?; }
-
-remount_rw() { ssh -o StrictHostKeyChecking=no -o ControlPath="$SOCKET_DIR/%r@%h:%p" -o ForwardX11=no root@$ACTIVE_IP "mount -o remount,rw /"; }
-
-remount_ro() { ssh -o StrictHostKeyChecking=no -o ControlPath="$SOCKET_DIR/%r@%h:%p" -o ForwardX11=no root@$ACTIVE_IP "mount -o remount,ro /"; }
-
-cleanup() {
-    echo "Cleaning up. Ensuring remote filesystem is read-only..."
-    remount_ro && echo "Remote filesystem is now read-only."
-    ssh -O exit -o ControlPath="$SOCKET_DIR/%r@%h:%p" -o ForwardX11=no root@$ACTIVE_IP && echo "SSH connection closed."
-    rm -rf "$SOCKET_DIR" && echo "Removed socket directory."
+usage() {
+    echo "Usage:"
+    echo "  $0                       # upload default bitfile, run upgrade"
+    echo "  $0 -noupload             # no upload, use default bitfile already on system"
+    echo "  $0 new_bitfile.bit       # upload new bitfile, run upgrade"
+    echo "  $0 -noupload new_bitfile.bit # no upload, use specified bitfile already on system"
+    exit 1
 }
 
-# Set trap to call cleanup on EXIT
+# Default values
+UPLOAD=true
+FILE_TO_UPLOAD="$DEFAULT_FILE_PATH"
+
+# Parse arguments
+if [ "$#" -eq 0 ]; then
+    UPLOAD=true
+    FILE_TO_UPLOAD="$DEFAULT_FILE_PATH"
+elif [ "$#" -eq 1 ]; then
+    if [ "$1" = "-noupload" ]; then
+        UPLOAD=false
+        FILE_TO_UPLOAD="$DEFAULT_FILE_PATH"
+    else
+        UPLOAD=true
+        FILE_TO_UPLOAD="$1"
+    fi
+elif [ "$#" -eq 2 ]; then
+    if [ "$1" = "-noupload" ]; then
+        UPLOAD=false
+        FILE_TO_UPLOAD="$2"
+    else
+        usage
+    fi
+else
+    usage
+fi
+
+# Functions
+check_ip() { ping -c 1 -W 1 "$1" >/dev/null 2>&1; }
+
+remount_rw() {
+    ssh $SSH_OPTIONS root@"$ACTIVE_IP" "mount -o remount,rw /"
+}
+
+remount_ro() {
+    ssh $SSH_OPTIONS root@"$ACTIVE_IP" "mount -o remount,ro /"
+}
+
+run_upgrade() {
+    local file_name="$1"
+    ssh $SSH_OPTIONS root@"$ACTIVE_IP" "export PATH=\$PATH:/sbin:/usr/sbin; cd \"$REMOTE_PATH\"; echo 'Y' | fpga_upgrade \"$file_name\""
+}
+
+cleanup() {
+    echo "[INFO] Cleaning up..."
+
+    if [ -n "${ACTIVE_IP:-}" ]; then
+        remount_ro && echo "[SUCCESS] Remote filesystem read-only."
+        ssh -O exit $SSH_OPTIONS root@"$ACTIVE_IP" && echo "[INFO] SSH connection closed."
+    fi
+
+    [ -d "$SOCKET_DIR" ] && rm -rf "$SOCKET_DIR" && echo "[INFO] Removed socket directory."
+    [ -f "$LOCKFILE" ] && rm -f "$LOCKFILE" && echo "[INFO] Removed lock file."
+}
+
 trap cleanup EXIT
 
-# Start Script
-echo "Starting the upgrade process..."
+echo "[INFO] Starting the upgrade process..."
+
+[ -e "$LOCKFILE" ] && {
+    echo "[ERROR] Another instance already running. Exiting."
+    exit 1
+}
+touch "$LOCKFILE"
 
 # Determine active IP
 if check_ip "$IP1"; then
@@ -48,61 +91,47 @@ if check_ip "$IP1"; then
 elif check_ip "$IP2"; then
     ACTIVE_IP="$IP2"
 else
-    echo "Neither IP is reachable. Exiting."
+    echo "[ERROR] Neither IP is reachable. Exiting."
     exit 1
 fi
-echo "Using active IP: $ACTIVE_IP"
+echo "[INFO] Using active IP: $ACTIVE_IP"
 
-# Establish persistent SSH connection
 mkdir -p "$SOCKET_DIR"
-ssh -o StrictHostKeyChecking=no -o ForwardX11=no -o ControlMaster=auto -o ControlPath="$SOCKET_DIR/%r@%h:%p" -o ControlPersist=600 root@$ACTIVE_IP "echo 'SSH connection established and persisted.'" || exit 1
+ssh $SSH_OPTIONS -o ControlMaster=auto -o ControlPersist=600 root@"$ACTIVE_IP" "echo '[INFO] SSH established.'"
 
-# Validate file path
-file_path=${1:-$DEFAULT_FILE_PATH}
-if [ "$1" == "original" ]; then file_path=$ORIGINAL_FILE_PATH; fi
+if [ "$UPLOAD" = true ]; then
+    if [ ! -f "$FILE_TO_UPLOAD" ]; then
+        echo "[ERROR] File '$FILE_TO_UPLOAD' does not exist. Exiting."
+        exit 1
+    fi
 
-if [ ! -f "$file_path" ]; then
-    echo "File '$file_path' does not exist. Exiting."
-    exit 1
-fi
+    if remount_rw; then
+        echo "[SUCCESS] Remote filesystem remounted as writable."
+    else
+        echo "[ERROR] Failed to remount filesystem as writable. Exiting."
+        exit 1
+    fi
 
-# echo "File '$file_path' validated successfully."
+    if scp $SSH_OPTIONS "$FILE_TO_UPLOAD" root@"$ACTIVE_IP":"$REMOTE_PATH"; then
+        echo "[SUCCESS] File '$FILE_TO_UPLOAD' successfully copied to '$REMOTE_PATH'."
+    else
+        echo "[ERROR] Failed to copy file. Exiting."
+        exit 1
+    fi
 
-# Remount remote filesystem as writable
-if remount_rw; then
-    echo "Remote filesystem successfully remounted as writable."
+    remount_ro && echo "[SUCCESS] Remote filesystem remounted as read-only."
 else
-    echo "Failed to remount filesystem as writable. Exiting."
-    exit 1
+    echo "[INFO] Skipping file upload and filesystem remount as per '-noupload' argument."
 fi
 
-# Copy file to remote
-if scp -o ControlPath="$SOCKET_DIR/%r@%h:%p" -o ForwardX11=no "$file_path" root@$ACTIVE_IP:$REMOTE_PATH; then
-    echo "File '$file_path' successfully copied to $REMOTE_PATH on $ACTIVE_IP."
-else
-    echo "Failed to copy file. Exiting."
-    exit 1
-fi
-
-# Remount filesystem as read-only
-if remount_ro; then
-    echo "Remote filesystem successfully remounted as read-only."
-else
-    echo "Failed to remount filesystem as read-only. Please verify manually and fix the filesystem state."
-fi
+file_name=$(basename "$FILE_TO_UPLOAD")
 
 # Run upgrade command
-file_name=$(basename "$file_path")
-if ssh -o ControlPath="$SOCKET_DIR/%r@%h:%p" -o ForwardX11=no root@$ACTIVE_IP "export PATH=\$PATH:/sbin:/usr/sbin; cd $REMOTE_PATH; echo 'Y' | fpga_upgrade \"$file_name\""; then    
-    echo "Upgrade command executed successfully for file: $file_name."
-else
-    echo "Upgrade command failed. Exiting."
-    exit 1
-fi
+run_upgrade "$file_name"
 
-read -n 1 -p "Press any key once you see the 'Purdue debug monitor 1.00' confirmation in minicom..."
+read -n 1 -p "[PROMPT] Press any key once you see the 'Purdue debug monitor 1.00' confirmation in minicom..."
 sudo ./setup
 
-echo "Completed upgrade. Now starting UDP receiver."
+echo "[SUCCESS] Completed upgrade. Now starting UDP receiver."
 ./udp-recv
 
