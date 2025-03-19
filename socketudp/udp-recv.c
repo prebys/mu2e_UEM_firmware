@@ -1,7 +1,6 @@
-//
 // v1.0 (2024/05/07) Created by Ryan Hensley from original udp-recv.c
 // v1.1 (2025/01/16) Modify filename to include creation time
-// 
+//
 #ifdef _WIN32
 //For Windows
 int betriebssystem = 1;
@@ -48,7 +47,7 @@ string generateFilenameWithDatetime() {
     // Format the time as YYYYMMDD_HHMMSS
     char buffer[30];
     strftime(buffer, sizeof(buffer), "data/data_%Y%m%d_%H%M%S.dat", timeinfo);
-  
+
     return string(buffer);
 }
 
@@ -88,7 +87,7 @@ int main(int argc, char **argv)
     string line;
 
     /* create a UDP socket */
-    
+
     fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (fd < 0) {
         perror("socket creation failed");
@@ -111,7 +110,38 @@ int main(int argc, char **argv)
     /* now loop, receiving data and printing what we received */
     while (keepRunning) {
         recvlen = recvfrom(fd, reinterpret_cast<char *>(buf), BUFSIZE, 0, (struct sockaddr *)&remaddr, &addrlen);
-//        printf("received %d bytes\n", recvlen);
+
+        // Keep collapsing repeated "ff ff ff ff" at packet start.
+        while (true) {
+            // Need at least 8 bytes to compare two 4-byte words
+            if (recvlen < 8) {
+                break;
+            }
+
+            // Check if the first 4 bytes AND the next 4 bytes are all 0xFF
+            if (   buf[0] == 0xff && buf[1] == 0xff && buf[2] == 0xff && buf[3] == 0xff
+                && buf[4] == 0xff && buf[5] == 0xff && buf[6] == 0xff && buf[7] == 0xff ) {
+
+                // We have "FF FF FF FF FF FF FF FF" at the start -> remove 2nd group
+                // Shift the packet up by 4 bytes.
+                printf("Removing duplicate FF FF FF FF at start of packet\n");
+                memmove(&buf[4], &buf[8], recvlen - 8);
+                recvlen -= 4;
+
+            } else {
+                // Not a doubled "ff ff ff ff" -> stop collapsing
+                break;
+            }
+        }
+
+        // At this point, if the packet started with multiple consecutive
+        // "ff ff ff ff" words, you have compressed them to a single "ff ff ff ff"
+
+        // if the packet is empty / has been emptied after the previous code
+        if (recvlen < 8) {
+            printf("Skipping packet due to no valid data");
+            continue;
+        }
 
         for (int i=0; i<recvlen; i++){
             myfile << buf[i];
@@ -124,9 +154,13 @@ int main(int argc, char **argv)
         double fileSizeInMB = fileSize / 1048576.0;
 
         if (recvlen > 0) {
-			counter++;
+                        counter++;
             buf[recvlen] = 0;
 
+            if (recvlen < 18) {
+                perror("Unexpectedly short buffer");
+                return 0;
+            }
 
             printf("%.2x %.2x %.2x %.2x  %.2x %.2x %.2x %.2x [ ... ] "
                    "%.2x %.2x %.2x %.2x  %.2x %.2x %.2x %.2x   ",
@@ -145,8 +179,12 @@ int main(int argc, char **argv)
                 // printf("File size: %zu", myfile.tellp())
             }
 
-            printf("[%d] ev.subev: %d.%d (file: %.2f MB)\n", counter, event, subevent,
+            printf("[%d] ev.subev: %d.%d (file: %.2f MB)", counter, event, subevent,
                    fileSizeInMB);
+            printf("%.2x %.2x %.2x %.2x  %.2x %.2x %.2x %.2x  %.2x %.2x %.2x %.2x\n",
+                   buf[8], buf[9], buf[10], buf[11],
+                   buf[12], buf[13], buf[14], buf[15],
+                   buf[16], buf[17], buf[18], buf[19]);
         }
     }
     /* never exits */
