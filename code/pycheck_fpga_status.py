@@ -113,9 +113,9 @@ def main(memory_address, memory_name, data_dict):
     for key, (high_bit, low_bit) in data_dict.items():
         b = get_bits(binary_string, high_bit, low_bit)
         if len(b) == 1:
-            print(f"{key}: {b}")
+            print(f"[{high_bit}] {key}: {b}")
         else:
-            print(f"{key}: {b} ({to_hex(b)})")
+            print(f"[{high_bit}:{low_bit}] {key}: {b} ({to_hex(b)})")
             
     print()
     print()
