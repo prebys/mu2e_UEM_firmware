@@ -52,6 +52,10 @@ _mode = 's12'
 # in an SSH client, "False" is recommended
 _show_plots = True
 
+# search for cosmic events
+# set to True to only plot subevents where the voltage range in one of the three channels is greater than 0.5V
+_search_for_cosmics = True
+
 # plotting units
 # volts: standard operation, plot data in volts (convert from raw values)
 # raw: plot data in raw values (no conversion)
@@ -606,9 +610,9 @@ class HexCheck:
         # Iterate over each group
         for (internal_event, sub_event), group in grouped:
             if sub_event > n_subevents or internal_event > n_events:
-                continue
+                pass
             if internal_event > 5:
-                continue
+                pass
             # print(group.describe())
             # if sub_event > n_subevents:
             #     if internal_event < n_events:
@@ -638,6 +642,13 @@ class HexCheck:
             i: int
             ax: plt.Axes
             channel: int
+
+            # this will be set to True if a cosmic event is found (significant data in channels 1, 2, or 3)
+            # if False, it will not plot/save the current plot
+            if _search_for_cosmics:
+                found_cosmic_event = False
+            else:
+                found_cosmic_event = True
             for i, (ax, channel) in enumerate(zip(axes.flatten(), [1, 2, 3, 4])):
                 # above loop does:
                 # 0, (ax_0, 1) ... 1, (ax_1, 2) ... 2, (ax_2, 3) ... 3, (ax_3, 4)
@@ -661,7 +672,12 @@ class HexCheck:
                     max_voltage = convert_voltage(max_value)
                     min_voltage = convert_voltage(min_value)
                     voltage_range = max_voltage - min_voltage
-                    
+                    print(internal_event, sub_event, channel, voltage_range)
+
+                    if channel < 4 and voltage_range > 0.5:
+                        found_cosmic_event = True
+                        print(f"Found cosmic event in event {internal_event}, sub-event {sub_event}")
+
                     # Below underscore values for printing only
                     if plotting_units == "volts":
                         _max = max_voltage
@@ -746,11 +762,12 @@ class HexCheck:
                         raise ValueError("Invalid plotting_units. Please choose 'raw' or 'volts'.")
             
             # Adjust layout
-            plt.tight_layout(rect=(0, 0.03, 1, 0.95))
-            plt.savefig(f"img/{self.folder_name}/event_{internal_event}.{sub_event}.png")
-            
-            if show_plots:
-                plt.show()
+            if found_cosmic_event:
+                plt.tight_layout(rect=(0, 0.03, 1, 0.95))
+                plt.savefig(f"img/{self.folder_name}/event_{internal_event}.{sub_event}.png")
+
+                if show_plots:
+                    plt.show()
 
 
 hex_check = HexCheck()
@@ -793,4 +810,3 @@ if __name__ == "__main__":
     print("All tests passed.")
     
     hex_check.main(plot=True)
-
