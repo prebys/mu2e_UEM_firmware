@@ -2,9 +2,17 @@
 import functools
 import struct
 import re
+from collections import namedtuple
 
 from typing import Optional, Union
 
+PeakHeader = namedtuple("PeakHeader", ["position", "time_ns"])
+PeakHeight = namedtuple("PeakHeight", ["height"])
+
+DoubleADCTupleWithCount = namedtuple("DoubleADCTupleWithCount", ["adc1", "adc2", "count"])  # s12
+DoubleADCTuple = namedtuple("DoubleADCTuple", ["adc1", "adc2"])  # s16 mode
+SingleADC = namedtuple("SingleADC", ["adc"])  # s32 mode
+ADCTypes = Union[DoubleADCTupleWithCount, DoubleADCTuple, SingleADC]
 
 if __name__ == "__main__":
     raise ImportError("This module is not meant to be run directly. Please use it as a library.")
@@ -173,20 +181,49 @@ class Event:
             raise ValueError("This event is a raw_data event.")
     
     @functools.cached_property
-    def raw_data(self) -> list[int]:
+    def raw_data(self) -> ADCTypes:
         """Returns the raw data as a list of integers, processed by process_hex_raw_data"""
         if self.type == raw_data:
             process_hex_raw_data_result = self.process_hex_raw_data(mode=self.hex_check.mode)
             self.hex_check.raw_data_remaining = process_hex_raw_data_result[2]
-            return process_hex_raw_data_result[:2]
+            return DoubleADCTuple(*process_hex_raw_data_result[:2])
         else:
             raise ValueError("This event is not a raw_data event.")
         
     @functools.cached_property
-    def peak_height(self) -> list[int]:
-        """Returns the peak height data as a list of integers, processed by process_peak_height_data"""
-        if self.type == peak_height_data:
-            return self.process_peak_height_data()
+    def peak_height_data(self) -> PeakHeader | PeakHeight:
+        """Returns the peak height data as some tuple, processed by process_peak_height_data"""
+        if self.type == peak_height_data_1:
+            return self.process_peak_height_header()
+        elif self.type == peak_height_data_2:
+            return self.process_peak_height()
+        else:
+            raise ValueError("This event is not a peak_height_data event.")
+    
+    @functools.cached_property
+    def peak_height_position(self) -> int:
+        """Returns the peak height position as an integer (0-3)"""
+        if self.type == peak_height_data_1:
+            assert isinstance(self.peak_height_data, PeakHeader), f"Got {type(self.peak_height_data)}"
+            return self.peak_height_data[0]
+        else:
+            raise ValueError("This event is not a peak_height_data event.")
+        
+    @functools.cached_property
+    def peak_height_time(self) -> int:
+        """Returns the peak height time as an integer (in ns)"""
+        if self.type == peak_height_data_1:
+            assert isinstance(self.peak_height_data, PeakHeader), f"Got {type(self.peak_height_data)}"
+            return self.peak_height_data[1] * 4  # convert to ns, 4ns per clock cycle
+        else:
+            raise ValueError("This event is not a peak_height_data event.")
+        
+    @functools.cached_property
+    def peak_height(self) -> int:
+        """Returns the peak height as an integer (in ADC value)"""
+        if self.type == peak_height_data_2:
+            assert isinstance(self.peak_height_data, PeakHeight), f"Got {type(self.peak_height_data)}"
+            return self.peak_height_data[0]
         else:
             raise ValueError("This event is not a peak_height_data event.")
     
@@ -233,7 +270,7 @@ class Event:
         raise Exception(f"Failed to detect the kind of event for {self.hex} with previous event {self.previous_event} "
                         f"and expected next events {next_event_candidates}.")
     
-    def process_hex_raw_data(self, mode, hex_in: str = "") -> list[int]:
+    def process_hex_raw_data(self, mode, hex_in: str = "") -> ADCTypes:
         # FOR HELP UNDERSTANDING ABOUT SIGNED VS UNSIGNED INTEGERS IN PYTHON:
         # See /documentation_texts/signed_vs_unsigned_tests.ipynb
         # Short summary:
@@ -244,7 +281,8 @@ class Event:
         # - Below, it does not matter whether you use 'I' or 'i' in the struct.unpack() function.
         # - They will produce the same binary in memory, only the interpretation of that binary number will differ
         # - In the last step is where we choose to interpret it as a signed integer.
-        
+        allowed_types = ['raw_data', 'peak_height_data_1', 'peak_height_data_2']
+        assert self.type in allowed_types, f"Expected one of {allowed_types}, got {self.type}"
         if not hex_in:
             hex_in = self.hex
         
@@ -298,7 +336,7 @@ class Event:
             older_adc_value = signed(older_adc_value, 12)
             
             count = upper_count << 4 | lower_count
-            return [older_adc_value, newer_adc_value, count]
+            return DoubleADCTupleWithCount(older_adc_value, newer_adc_value, count)
         elif mode == 's16':
             # Step 3: Extract the first ADC value (upper 16 bits of `word`)
             newer_adc_value: int = word >> 16  # Shift right 16 bits
@@ -308,17 +346,17 @@ class Event:
             older_adc_value: int = word & 0xFFFF  # Get upper 12 bits, shift right by 4 to be lowest 12 bits
             older_adc_value = signed(older_adc_value, 16)
             
-            return [older_adc_value, newer_adc_value]
+            return DoubleADCTuple(older_adc_value, newer_adc_value)
         else:  # mode == 's32'
             # this is already ordered in the right way, with the MSB being the newest data and the LSB being oldest
             # this was proven by doing a 32 bit ramp test and seeing the data increase in the expected way
-            return [signed(word, 32)]
-    
-    def process_peak_height_data(self) -> list[int]:
+            return SingleADC(signed(word, 32))
+        
+    def process_peak_height_header(self) -> PeakHeader:
         """
-        Parse and return peak height events as a DataFrame.
+        Parse and return peak height header events.
 
-        Each peak is encoded as two consecutive 32-bit words (8 bytes total). The structure is:
+        Each peak is encoded as two consecutive 32-bit words (8 bytes total). The header structure is:
 
         -------------------------------
         Word 1 (32 bits) - Peak Header (examples before endian order swap: 10080040, 27000050, 40000060, 9f220070)
@@ -335,6 +373,32 @@ class Event:
         Notes:
             - Data is received little-endian (f4f3f2f1) and must be reversed
             - MSB nibble is always one of: 0x7, 0x6, 0x5, 0x4
+        """
+        assert self.type == peak_height_data_1, f"Expected peak_height_data_1, got {self.type}"
+        byte_data = bytes.fromhex(self.hex)
+        try:
+            # unpack data in little-endian format, so f4f3f2f1 becomes f1f2f3f4
+            word: int = struct.unpack('<I', byte_data)[0]
+        except struct.error:
+            print(f"Error: {self.hex} could not be converted to a 32-bit word.")
+            raise
+        
+        # first word
+        # 0x70, 0x60, 0x50, or 0x40
+        first_word = (word & 0xF0000000) >> 28
+        if first_word not in [0x7, 0x6, 0x5, 0x4]:
+            raise ValueError(f"Invalid first word: {hex(first_word)}. Expected one of [0x70, 0x60, 0x50, 0x40].")
+        peak_location = first_word & 0b0011  # get the last two bits of the first word
+        counter = (word & 0x0FFFFFFF)  # 28-bit counter value
+        time = counter * 4  # time in ns
+        self.hex_check.second_peak_height = True  # prepare for next event
+        return PeakHeader(peak_location, time)
+    
+    def process_peak_height(self):
+        """
+        Parse and return peak height events.
+
+        Each peak is encoded as two consecutive 32-bit words (8 bytes total). The height structure is:
 
         -------------------------------
         Word 2 (32 bits) - Peak Value (examples before endian order swap: 06ca0000, 14ca0000, 4dca0000, 4bca0000)
@@ -344,16 +408,8 @@ class Event:
 
         Notes:
             - Final byte is always 0x00 (lower 16 bits = 0x0000)
-
-        Returns:
-            pd.DataFrame with columns:
-                - internal_event_number
-                - sub_event_number
-                - channel_number
-                - xxyy (2-bit peak position code: 0–3)
-                - counter (28-bit peak time)
-                - peak_height (signed 16-bit ADC value)
         """
+        assert self.type == peak_height_data_2, f"Expected peak_height_data_2, got {self.type}"
         byte_data = bytes.fromhex(self.hex)
         try:
             # unpack data in little-endian format, so f4f3f2f1 becomes f1f2f3f4
@@ -361,29 +417,19 @@ class Event:
         except struct.error:
             print(f"Error: {self.hex} could not be converted to a 32-bit word.")
             raise
-        if not getattr(self.hex_check, "second_peak_height", False):
-            # first word
-            # 0x70, 0x60, 0x50, or 0x40
-            first_word = (word & 0xF0000000) >> 28
-            if first_word not in [0x7, 0x6, 0x5, 0x4]:
-                raise ValueError(f"Invalid first word: {hex(first_word)}. Expected one of [0x70, 0x60, 0x50, 0x40].")
-            peak_location = first_word & 0b0011  # get the last two bits of the first word
-            counter = (word & 0x0FFFFFFF)  # 28-bit counter value
-            time = counter * 4  # time in ns
-            self.hex_check.second_peak_height = True  # prepare for next event
-            return [peak_location, time]
-        else:
-            # top 16 bits are always 0x0000
-            if (word & 0xFFFF0000) != 0:
-                raise ValueError(f"Invalid second word: {hex(word)}. Expected top 16 bits to be 0x0000.")
-            # bottom 16 bits are the signed peak height
-            peak_height = signed(word & 0x0000FFFF, 16)
-            
-            # convert to hex string and pad with zeros
-            hex_str = peak_height.to_bytes(2, byteorder='little', signed=True).hex().zfill(4)
-            proper_height = self.process_hex_raw_data(mode='s12', hex_in=hex_str + '0000')[0] # convert to signed 12-bit
-            self.hex_check.second_peak_height = False
-            return [proper_height]
+        
+        # top 16 bits are always 0x0000
+        if (word & 0xFFFF0000) != 0:
+            raise ValueError(f"Invalid second word: {hex(word)}. Expected top 16 bits to be 0x0000.")
+        # bottom 16 bits are the signed peak height
+        peak_height = signed(word & 0x0000FFFF, 16)
+        
+        # convert to hex string and pad with zeros
+        hex_str = peak_height.to_bytes(2, byteorder='little', signed=True).hex().zfill(4)
+        proper_height = self.process_hex_raw_data(mode='s12', hex_in=hex_str + '0000')[
+            0]  # convert to signed 12-bit
+        self.hex_check.second_peak_height = False
+        return PeakHeight(proper_height)
     
     def __eq__(self, other: "Event"):
         return self.__hash__() == other.__hash__()
@@ -403,14 +449,12 @@ class Event:
         
         if self.type == raw_data:
             ret += f" = {self.raw_data} (extra bytes: {self.hex_check.raw_data_remaining})>"
-        elif self.type == peak_height_data:
-            peak_height = self.peak_height
-            if len(peak_height) > 1:
-                # [peak_number (0-3), time (ns)]
-                ret += f" = Peak #{peak_height[0]} ({peak_height[1]} ns)>"
-            else:
-                # [peak_height (ADC value)]
-                ret += f" = {peak_height[0]} ({convert_voltage(peak_height[0], 3)} V)>"
+        elif self.type == peak_height_data_1:
+            # data event 1 contains [peak_number (0-3), time (ns)]
+            ret += f" = Peak #{self.peak_height_position} ({self.peak_height_time} ns)>"
+        elif self.type == peak_height_data_2:
+            # data event 2 contains [peak_height (ADC value)]
+            ret += f" = {self.peak_height} ({convert_voltage(self.peak_height, 3)} V)>"
         else:
             if self.data is not None:
                 ret += f" = {self.data}>"
@@ -500,8 +544,9 @@ end_raw_data = EventType('fefefefe', ['begin_peak_data'])
 begin_peak_data = EventType('efefefef', ['channel_number'])
 channel_number = EventType('eeee....', ['peak_finding_header'])
 peak_finding_header = EventType('aaaaaaaa', ['peak_height_header'])
-peak_height_header = EventType('cccccccc', ['peak_height_end', 'peak_height_data'])
-peak_height_data = EventType('........', ['peak_height_end', 'peak_height_data'])
+peak_height_header = EventType('cccccccc', ['peak_height_end', 'peak_height_data_1'])
+peak_height_data_1 = EventType('........', ['peak_height_data_2'])
+peak_height_data_2 = EventType('........', ['peak_height_end', 'peak_height_data_1'])
 peak_height_end = EventType('cececece', ['peak_area_header'])
 peak_area_header = EventType('dddddddd', ['peak_area_end', 'peak_area_data'])
 peak_area_data = EventType('........', ['peak_area_end', 'peak_area_data'])

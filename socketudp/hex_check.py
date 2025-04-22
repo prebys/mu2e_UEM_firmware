@@ -7,10 +7,8 @@ from collections import Counter
 from dataclasses import field, dataclass
 from typing import Optional
 
-import matplotlib.pyplot
-import numpy as np
 import pandas
-from matplotlib import pyplot as plt, figure
+from matplotlib import pyplot as plt
 import pandas as pd
 
 from datetime import datetime
@@ -94,15 +92,15 @@ class Config:
 
 config = Config()
 
-
-
 class HexCheck:
     def __init__(self):
         self.name_to_event: dict[str, EventType] = {}
         self.event_counts: dict[EventType, int] = Counter()
         self.event_buffer: list[Event] = []  # buffer of all events
         self.raw_data_buffer: list[Event] = []  # buffer of just raw data events
-        self.panda_frame: Optional[pandas.DataFrame] = None  # buffer of raw data events in a pandas DataFrame
+        self.peak_height_buffer: list[Event] = []  # buffer of just peak height events
+        self.raw_data_dataframe: Optional[pandas.DataFrame] = None  # buffer of raw data events in a pandas DataFrame
+        self.peak_height_dataframe: Optional[pandas.DataFrame] = None  # buffer of peak height events in a DataFrame
         
         if __name__ == "__main__":
             self.dir_name: str = os.path.dirname(os.path.realpath(__file__)).replace("\\", "/")  # Directory of the script
@@ -160,8 +158,10 @@ class HexCheck:
             self.event_buffer.append(current_event)
             if current_event.type == "raw_data":
                 self.raw_data_buffer.append(current_event)
+            elif current_event.type == "peak_height_data_2":
+                self.peak_height_buffer.append(current_event)
             
-            log_number_limit = 3000
+            log_number_limit = 1000
             if current_event.type.show and number_of_printed_logs < log_number_limit:
                 number_of_printed_logs += 1
                 print(current_event)
@@ -176,6 +176,22 @@ class HexCheck:
         print(f"Starting collection of data")
         
         # add raw data to the dataframe
+        self.raw_data_dataframe = self.make_raw_data_dataframe()
+        self.peak_height_dataframe = self.make_peak_height_dataframe()
+        
+        group_by_event = self.raw_data_dataframe.groupby(["internal_event_number", "channel_number"])
+        # show number of data points per event
+        # for (_event_number, _channel_number), group in group_by_event:
+        #     print(f"Event {_event_number} (ch{_channel_number}): {len(group)} data points, "
+        #           f"mean value: {convert_voltage(group['data'].mean()):.3f} V")
+        
+        if plot:
+            # self.plot_raw_data()
+            self.plot_peak_height()
+        
+        return self.event_counts
+    
+    def make_raw_data_dataframe(self):
         panda_entry = []
         if self.mode in ["s12", "s16"]:
             for event in self.raw_data_buffer:
@@ -188,23 +204,27 @@ class HexCheck:
                 panda_entry.append((event.event_number, event.internal_event_number, event.sub_event_number,
                                     event.channel_number, event.raw_data[0]))
         
-        self.panda_frame = pd.DataFrame(panda_entry,
-                                        columns=["event_number",
-                                                 "internal_event_number",
-                                                 "sub_event_number",
-                                                 "channel_number",
-                                                 "data"])
+        panda_frame = pd.DataFrame(panda_entry,
+                                    columns=["event_number",
+                                             "internal_event_number",
+                                             "sub_event_number",
+                                             "channel_number",
+                                             "data"])
+        return panda_frame
+    
+    def make_peak_height_dataframe(self):
+        panda_entry = []
+        for event in self.peak_height_buffer:
+            panda_entry.append((event.event_number, event.internal_event_number, event.sub_event_number,
+                                event.channel_number, event.peak_height))
         
-        group_by_event = self.panda_frame.groupby(["internal_event_number", "channel_number"])
-        # show number of data points per event
-        for (_event_number, _channel_number), group in group_by_event:
-            print(f"Event {_event_number} (ch{_channel_number}): {len(group)} data points, "
-                  f"mean value: {convert_voltage(group['data'].mean()):.3f} V")
-        
-        if plot:
-            self.plot_data(config.n_events, config.n_subevents, show_plots=config.show_plots)
-        
-        return self.event_counts
+        panda_frame = pd.DataFrame(panda_entry,
+                                   columns=["event_number",
+                                            "internal_event_number",
+                                            "sub_event_number",
+                                            "channel_number",
+                                            "peak_height"])
+        return panda_frame
     
     def find_data_file(self) -> str:
         desired_file = config.desired_file
@@ -252,194 +272,67 @@ class HexCheck:
         
         return hex_data_list, file_creation_date
     
-    def plot_data(self, n_events=3, n_subevents=3, show_plots: bool = True):
-        """Plot nevents number of events from the data_log dictionary.
-        Save them in ./img/ folder."""
-        print("Starting plotting of data")
-        if not os.path.exists("img"):
-            os.mkdir("img")
-        if not os.path.exists(f"img/{self.folder_name}"):
-            os.mkdir(f"img/{self.folder_name}")
+    # Inside your HexCheck class
+    
+    def plot_event_grid(self, grouped_data: list[list[float]], internal_event: int, title_prefix: str,
+                        file_prefix: str):
+        """
+        Plots a 2x2 grid using the grouped data.
+
+        Parameters:
+            grouped_data: List of 4 lists (one per channel). Each list contains Y-axis values to plot.
+            internal_event: Event number for labeling and saving.
+            title_prefix: Title string prefix (e.g. "Raw Data - Event").
+            file_prefix: File prefix for saved image (e.g. "raw").
+        """
+        fig, axes = plt.subplots(2, 2, figsize=(10, 8))
+        fig.suptitle(f"{title_prefix} {internal_event}", fontsize=14)
         
-        # Group by internal_event_number and sub_event_number
-        grouped = self.panda_frame.groupby(["internal_event_number", "sub_event_number"])
-        # looks like:
-        # {('internal_event_number', 'sub_event_number'): DataFrame}
-        # so for example, calling grouped[0, 0] will give you the DataFrame for the first internal event and sub-event
-        # doing for (internal_event, sub_event), group in grouped: will iterate over each group
-        # Iterate over each group
-        for (internal_event, sub_event), group in grouped:
-            if sub_event + 1 > n_subevents or internal_event > n_events:
-                continue
-            if internal_event > 5:
-                pass
-            # print(group.describe())
-            # if sub_event > n_subevents:
-            #     if internal_event < n_events:
-            #         continue
-            #     else:
-            #         break
-            
-            # above loop does:
-            # (0, 0), DataFrame ... (0, 1), DataFrame ... (0, 2), DataFrame ... [ ... ]
-            # (1, 0), DataFrame ... (1, 1), DataFrame ... (1, 2), DataFrame ... [ ... ]
-            # (2, 0), DataFrame ... (2, 1), DataFrame ... (2, 2), DataFrame ... [ ... ]
-            # [ ... ]
-            
-            # Create a 2x2 grid
-            fig, axes = plt.subplots(2, 2, figsize=(10, 8))
-            fig: matplotlib.figure.Figure
-            axes: np.ndarray[plt.Axes]
-            time_str = self.file_creation_date.strftime("%Y-%m-%d %H:%M:%S")
-            title = f"Event {internal_event}, Sub-Event {sub_event}"
-            if self.mode != 's12':
-                title += f" (Mode: {self.mode})"
-            title += f"\n{self.file_name} ({time_str})"
-            
-            fig.suptitle(title, fontsize=14)
-            
-            # Plot each channel in its respective subplot
-            i: int
-            ax: plt.Axes
-            channel: int
-            
-            # this will be set to True if a cosmic event is found (significant data in channels 1, 2, or 3)
-            # if False, it will not plot/save the current plot
-            if config.search_for_cosmics:
-                found_cosmic_event = False
-            else:
-                found_cosmic_event = True
-            for i, (ax, channel) in enumerate(zip(axes.flatten(), [1, 2, 3, 4])):
-                # above loop does:
-                # 0, (ax_0, 1) ... 1, (ax_1, 2) ... 2, (ax_2, 3) ... 3, (ax_3, 4)
-                # Filter data for the current channel
-                channel_number_bool_array = (group["channel_number"] == channel)  # True or False for each row
-                channel_data = group[channel_number_bool_array]
-                
-                if not channel_data.empty:
-                    ax.plot(channel_data["data"].values, label=f"Channel {channel}")
-                    ax.set_title(f"Channel {channel}")
-                    ax.legend()
-                    
-                    # get max and min values for y-axis
-                    # VALUE refers to the matplotlib values / the raw data values in the code
-                    # VOLTAGE refers to the converted voltage values / the values shown on the y-axis
-                    max_value = max(channel_data["data"].values)
-                    min_value = min(channel_data["data"].values)
-                    max_voltage = convert_voltage(max_value)
-                    min_voltage = convert_voltage(min_value)
-                    voltage_range = max_voltage - min_voltage
-                    value_range = max_value - min_value
-                    if channel != 5:
-                        if config.plotting_units == "raw":
-                            print(internal_event, sub_event, channel, min_value, max_value, value_range)
-                        else:
-                            print(internal_event, sub_event, channel, min_voltage, max_voltage, voltage_range)
-                    
-                    if channel < 4 and voltage_range > 0.5:
-                        found_cosmic_event = True
-                        if config.search_for_cosmics:
-                            print(f"Found cosmic event in event {internal_event}, sub-event {sub_event}")
-                    
-                    # Below underscore values for printing only
-                    if config.plotting_units == "volts":
-                        _max = max_voltage
-                        _min = min_voltage
-                        _range = voltage_range
-                        _offset = _range * 0.5 or max_voltage * 0.5
-                    elif config.plotting_units == "raw":
-                        _max = max_value
-                        _min = min_value
-                        _range = max_value - min_value
-                        _offset = _range * 0.5 or max_value * 0.5
-                    else:
-                        raise ValueError("Invalid plotting_units. Please choose 'raw' or 'volts'.")
-                    
-                    # even if using volts for the units, the internal values will be the raw values
-                    value_offset = value_range * 0.5 or abs(max_value) * 0.5
-                    
-                    # this will be used for setting the y-axis limits
-                    # examples:
-                    # points between -15 and -20, zero_dist=20, range=5, zero_dist > range, y-axis is -21 to -14
-                    # points between 3 and -4, zero_dist=4, range=7, zero_dist < range, y-axis could be -5.4 to 4.4
-                    #     but let it just be something like -5.4 to 5.4 for better readability
-                    distance_to_zero = max(abs(max_value), abs(min_value))
-                    if distance_to_zero > value_range * 3:
-                        # center y-axis around points rather than zero
-                        ax.set_ylim(min_value - value_offset, max_value + value_offset)
-                    else:
-                        # center y-axis around zero
-                        ax.set_ylim(-distance_to_zero - value_offset, distance_to_zero + value_offset)
-                    
-                    # if 0 < voltage_range < 0.01:
-                    #     print(f"Channel {channel} has a small range of values, "
-                    #           f"setting y-axis to "
-                    #           f"{_min - _offset:.3} ~ {_max + _offset:.3}.")
-                    #     ax.set_ylim(min_value - value_offset, max_value + value_offset)
-                    # elif voltage_range == 0:
-                    #     print(f"Plotting constant value {_max} for channel {channel}, "
-                    #           f"setting y-axis to "
-                    #           f"{_min - _offset:.3}~{_max + _offset:.3}.")
-                    #     ax.set_ylim(min_value - value_offset, max_value + value_offset)
-                    
-                    # find number of decimal places to show by converting voltage range to scientific notation
-                    num_decimal_places = int(f'{_offset:e}'.split('e')[-1])  # for example, 1e-3 gives -3
-                    if num_decimal_places < 0:
-                        # if negative decimals, for example, 1e-4, record "4"
-                        num_decimal_places = -num_decimal_places
-                    else:
-                        num_decimal_places = 1
-                    
-                    def formatter_func(v, _):
-                        # takes in two arguments, voltage and time
-                        s = f"{convert_voltage(v):.{num_decimal_places + 2}f}"
-                        return s
-                    
-                    # format y-axis in terms of volts
-                    # number of decimal places on y-axis based on above calculation
-                    if config.plotting_units == "volts":
-                        if num_decimal_places < 3:
-                            # for example, 1e-4, or 0.0001, show all decimal places
-                            formatter = plt.FuncFormatter(formatter_func)
-                            # formatter.set_offset_string(f"{_max:.{num_decimal_places}f}")
-                            ax.yaxis.set_major_formatter(formatter)
-                        else:
-                            # for example, 1e-3, or 0.001, show 3 decimal places every time
-                            formatter = plt.FuncFormatter(lambda v, t:
-                                                          f"{convert_voltage(v) * 10 ** num_decimal_places:.3f}")
-                            formatter.set_offset_string(f"{1 / 10 ** num_decimal_places:.0e}")
-                            ax.yaxis.set_major_formatter(formatter)
-                    else:
-                        pass  # Just let matplotlib format its own axis
-                
-                else:
-                    ax.text(0.5, 0.5, "No Data", fontsize=12, ha="center", va="center")
-                    ax.set_title(f"Channel {channel}")
-                
+        for i, (ax, channel_data) in enumerate(zip(axes.flatten(), grouped_data)):
+            channel = i + 1
+            if channel_data:
+                ax.plot(channel_data, label=f"Channel {channel}")
+                ax.set_title(f"Channel {channel}")
+                ax.legend()
                 ax.grid(True)
-                
-                # Add x-labels only for the bottom row
-                if i >= 2:  # Bottom row indices are 2 and 3
-                    ax.set_xlabel("Time (ns)")
-                
-                # Add y-labels only for the left column
-                if i % 2 == 0:  # Left column indices are 0 and 2
-                    if config.plotting_units == "raw":
-                        ax.set_ylabel("Raw Data")
-                    elif config.plotting_units == "volts":
-                        ax.set_ylabel("Voltage (V)")
-                    else:
-                        raise ValueError("Invalid plotting_units. Please choose 'raw' or 'volts'.")
+            else:
+                ax.text(0.5, 0.5, "No Data", fontsize=12, ha="center", va="center")
+                ax.set_title(f"Channel {channel}")
             
-            # Adjust layout
-            if found_cosmic_event:
-                plt.tight_layout(rect=(0, 0.03, 1, 0.95))
-                plt.savefig(f"img/{self.folder_name}/event_{internal_event}.{sub_event}.png")
-                
-                if show_plots:
-                    plt.show()
-
-
+            if i >= 2:
+                ax.set_xlabel("Time (ns)")
+            if i % 2 == 0:
+                ax.set_ylabel("Voltage (V)" if config.plotting_units == "volts" else "Raw Data")
+        
+        plt.tight_layout(rect=(0, 0.03, 1, 0.95))
+        output_path = f"img/{self.folder_name}/{file_prefix}_{internal_event}.png"
+        plt.savefig(output_path)
+        if config.show_plots:
+            plt.show()
+    
+    def plot_raw_data(self):
+        grouped = self.raw_data_dataframe.groupby(["internal_event_number", "sub_event_number"])
+        for (internal_event, sub_event), group in grouped:
+            if sub_event + 1 > config.n_subevents or internal_event > config.n_events:
+                continue
+            channel_arrays = []
+            for ch in [1, 2, 3, 4]:
+                ch_data = group[group["channel_number"] == ch]["data"].values
+                y_vals = convert_voltage(ch_data) if config.plotting_units == "volts" else ch_data
+                channel_arrays.append(y_vals.tolist())
+            self.plot_event_grid(channel_arrays, internal_event, "Raw Data - Event", "raw")
+    
+    def plot_peak_height(self):
+        grouped = self.peak_height_dataframe.groupby("internal_event_number")
+        for internal_event, group in grouped:
+            if internal_event > config.n_events:
+                continue
+            channel_arrays = []
+            for ch in [1, 2, 3, 4]:
+                ch_data = group[group["channel_number"] == ch]["peak_height"].values
+                y_vals = convert_voltage(ch_data) if config.plotting_units == "volts" else ch_data
+                channel_arrays.append(y_vals.tolist())
+            self.plot_event_grid(channel_arrays, internal_event, "Peak Height - Event", "peak")
 
 
 if __name__ == "__main__":

@@ -1,6 +1,8 @@
 # tests/test_hex_check.py
 import unittest
-from socketudp.hex_check_classes import Event, signed, name_to_event, hex_check_state
+from socketudp.hex_check_classes import (Event, signed, name_to_event, hex_check_state,
+                                         DoubleADCTuple, DoubleADCTupleWithCount, SingleADC)
+
 
 class TestHexCheck(unittest.TestCase):
     @classmethod
@@ -30,24 +32,24 @@ class TestHexCheck(unittest.TestCase):
 
     def test_process_s12(self):
         e = Event("f4f3f2f1", current_event_type=name_to_event["raw_data"])
-        self.assertEqual(e.process_hex_raw_data(mode='s12'), [-193, -225, 36])
+        self.assertEqual(e.process_hex_raw_data(mode='s12'), DoubleADCTupleWithCount(-193, -225, 36))
 
         e2 = Event("78563412", current_event_type=name_to_event["raw_data"])
-        self.assertEqual(e2.process_hex_raw_data(mode='s12'), [1383, 291, 72])
+        self.assertEqual(e2.process_hex_raw_data(mode='s12'), DoubleADCTupleWithCount(1383, 291, 72))
 
     def test_process_s16(self):
         e = Event("f4f3f2f1", current_event_type=name_to_event["raw_data"])
-        self.assertEqual(e.process_hex_raw_data(mode='s16'), [-3084, -3598])
+        self.assertEqual(e.process_hex_raw_data(mode='s16'), DoubleADCTuple(-3084, -3598))
 
         e2 = Event("78563412", current_event_type=name_to_event["raw_data"])
-        self.assertEqual(e2.process_hex_raw_data(mode='s16'), [22136, 4660])
+        self.assertEqual(e2.process_hex_raw_data(mode='s16'), DoubleADCTuple(22136, 4660))
 
     def test_process_s32(self):
         e = Event("f4f3f2f1", current_event_type=name_to_event["raw_data"])
-        self.assertEqual(e.process_hex_raw_data(mode='s32'), [-235736076])
+        self.assertEqual(e.process_hex_raw_data(mode='s32'), SingleADC(-235736076))
 
         e2 = Event("78563412", current_event_type=name_to_event["raw_data"])
-        self.assertEqual(e2.process_hex_raw_data(mode='s32'), [305419896])
+        self.assertEqual(e2.process_hex_raw_data(mode='s32'), SingleADC(305419896))
 
     def test_event_data(self):
         self.assertEqual(Event("01000000", current_event_type=name_to_event["event_number_evn"]).data, 1)
