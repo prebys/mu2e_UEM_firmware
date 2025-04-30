@@ -11,9 +11,9 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="11041200000fs"></ZoomStartTime>
-      <ZoomEndTime time="11179400003fs"></ZoomEndTime>
-      <Cursor1Time time="116800000fs"></Cursor1Time>
+      <ZoomStartTime time="112750000fs"></ZoomStartTime>
+      <ZoomEndTime time="139450001fs"></ZoomEndTime>
+      <Cursor1Time time="117500000fs"></Cursor1Time>
    </zoom_setting>
    <WVObjectSize size="25" />
    <wvobject fp_name="/adc_trigger_tb/uut/mask" type="array">
@@ -40,11 +40,15 @@
    <wvobject fp_name="/adc_trigger_tb/uut/counter_raw" type="other">
       <obj_property name="ElementShortName">counter_raw</obj_property>
       <obj_property name="ObjectShortName">counter_raw</obj_property>
+      <obj_property name="CustomSignalColor">#800080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject fp_name="/adc_trigger_tb/uut/delay_count" type="array">
       <obj_property name="ElementShortName">delay_count[31:0]</obj_property>
       <obj_property name="ObjectShortName">delay_count[31:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="CustomSignalColor">#FF0000</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject fp_name="/adc_trigger_tb/uut/delay_state" type="other">
       <obj_property name="ElementShortName">delay_state</obj_property>

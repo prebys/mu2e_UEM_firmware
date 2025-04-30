@@ -1,8 +1,12 @@
 #!/usr/bin python3
 import functools
+import os
 import struct
 import re
+import sys
 from collections import namedtuple
+from dataclasses import field, dataclass
+from datetime import datetime
 
 from typing import Optional, Union
 
@@ -184,7 +188,7 @@ class Event:
     def raw_data(self) -> ADCTypes:
         """Returns the raw data as a list of integers, processed by process_hex_raw_data"""
         if self.type == raw_data:
-            process_hex_raw_data_result = self.process_hex_raw_data(mode=self.hex_check.mode)
+            process_hex_raw_data_result = self.process_hex_raw_data(mode=config.integer_mode)
             self.hex_check.raw_data_remaining = process_hex_raw_data_result[2]
             return DoubleADCTuple(*process_hex_raw_data_result[:2])
         else:
@@ -214,7 +218,7 @@ class Event:
         """Returns the peak height time as an integer (in ns)"""
         if self.type == peak_height_data_1:
             assert isinstance(self.peak_height_data, PeakHeader), f"Got {type(self.peak_height_data)}"
-            return self.peak_height_data[1] * 4  # convert to ns, 4ns per clock cycle
+            return self.peak_height_data[1]  # time is in ns
         else:
             raise ValueError("This event is not a peak_height_data event.")
         
@@ -482,17 +486,44 @@ class PrevEvent:
         self.__eq__ = event_in.__eq__
 
 
+@dataclass
+class Peak:
+    position: int
+    time_ns: int
+    height: Optional[int] = field(default=None)  # initially unset
+    event_number: int = 0
+    internal_event_number: int = 0
+    sub_event_number: int = 0
+    channel_number: int = 0
+
+    def is_complete(self) -> bool:
+        return self.height is not None
+    
+    @classmethod
+    def from_event(cls, event: Event) -> "Peak":
+        """Create a Peak object from an Event object. If a _data_1 event, fill out event numbers as well."""
+        if event.type == peak_height_data_1:
+            return cls(event.peak_height_position, event.peak_height_time,
+                       event_number=event.event_number,
+                       internal_event_number=event.internal_event_number,
+                       sub_event_number=event.sub_event_number,
+                       channel_number=event.channel_number)
+        else:
+            raise ValueError("Event type is not a peak height header data event.")
+
+
+
 def convert_voltage(v, round_n=None):
     # ADC peak-to-peak is 1.34V (+/- 0.67V), so 0.67V = 2047, -0.67V = -2048
     # Voltage at FMC228 transformer is 2.52V, ratio is 2.52V / 1.34V = 1.88V
     # Therefore, values at FMC228 pins are 1.88 * ADC values
     # 2047 = 0.67 * 1.88 = 1.26V, -2048 = -0.67 * 1.88 = -1.26V
     # Max voltage is +/- 1.26V
-    if config.mode == 's12':
+    if config.integer_mode == 's12':
         v_out = v * 1.26 / 2047
-    elif config.mode == 's16':
+    elif config.integer_mode == 's16':
         v_out = v * 1.26 / (2047 / 2 ** 11 * 2 ** 15)
-    elif config.mode == 's32':
+    elif config.integer_mode == 's32':
         v_out = v * 1.26 / (2047 / 2 ** 11 * 2 ** 31)
     else:
         raise ValueError("Invalid mode. Please choose 's12', 's16', or 's32'.")
@@ -504,11 +535,11 @@ def convert_voltage(v, round_n=None):
 
 
 def convert_voltage_reverse(v):
-    if config.mode == 's12':
+    if config.integer_mode == 's12':
         return v * 2047 / 1.26
-    elif config.mode == 's16':
+    elif config.integer_mode == 's16':
         return v * (2047 / 2 ** 11 * 2 ** 15) / 1.26
-    elif config.mode == 's32':
+    elif config.integer_mode == 's32':
         return v * (2047 / 2 ** 11 * 2 ** 31) / 1.26
 
 
@@ -519,6 +550,52 @@ def signed(value: int, width: int) -> int:
                          f"Your value {value} / {hex(value)} had {len(bin(value)) - 2} bits.")
     width = width - 1  # example: for four bit number, shift "1" over 4-1=3 to get 1000 (the desired sign bit)
     return -(value & (1 << width)) | (value & ((1 << width) - 1))
+
+
+def find_data_file(desired_file_path) -> str:
+    # get directory of the script
+    
+    # argv gets the command line arguments
+    # ex: `python3 hex_check.py path_to_data_file.dat`
+    # argv[0] = hex_check.py, argv[1] = path_to_data_file.dat
+    # args = [sys.argv[0], file_name]
+    if len(sys.argv) > 1:
+        desired_file_path = sys.argv[1]
+    
+    if desired_file_path is None:
+        desired_file_path = ""
+    if desired_file_path.startswith("./"):
+        desired_file_path = desired_file_path[2:]
+    
+    # find the file ending in .dat in the current directory
+    dir_name: str = os.path.dirname(os.path.realpath(__file__)).replace("\\", "/")  # Directory of the script
+    files = os.listdir(dir_name + "/data")
+    dat_files = sorted([file for file in files if file.endswith(".dat") and desired_file_path in file],
+                       key=lambda x: os.path.getctime(f"./data/{x}"))
+    if len(dat_files) == 0:
+        raise ValueError("No .dat files found in the current directory matching search")
+    elif len(dat_files) > 1:
+        print(f"Warning: Multiple .dat files found in the current directory. "
+              f"Picking the last one ({dat_files[-1]})")
+        input_file_name = dat_files[-config.to_use_file_index]
+    else:
+        input_file_name = dat_files[0]  # only one result
+    return input_file_name
+
+
+def read_data_file(dir_name, file_name) -> tuple[list[str], datetime]:
+    # open binary file, get binary data and file creation date
+    assert os.path.exists(os.path.join(dir_name, "data", file_name)), "File does not exist."
+    with open(os.path.join(dir_name, "data", file_name), "rb") as file:
+        binary_data = file.read()  # a "bytes" object
+        file_creation_date = datetime.fromtimestamp(os.path.getctime(file.name))
+    
+    # convert to hex, should be a single string containing the entire file starting with "ffffffffffffff00" etc
+    hex_data: str = binary_data.hex()
+    assert len(hex_data) % 8 == 0, "Hex data length is not divisible by 8"
+    hex_data_list = [hex_data[i:i + 8] for i in range(0, len(hex_data), 8)]
+    
+    return hex_data_list, file_creation_date
 
 
 begin_event = EventType('ffffffff', ['begin_event', 'begin_sub_event'])

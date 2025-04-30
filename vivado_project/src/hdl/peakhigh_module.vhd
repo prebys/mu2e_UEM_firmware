@@ -23,6 +23,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 --use ieee.std_logic_unsigned.all;
 
+
 entity peakhigh_module is
   port (
     rst : in std_logic;
@@ -53,12 +54,12 @@ end peakhigh_module;
 
 architecture Behavioral of peakhigh_module is
 
+
  component peakhigh_fifo
   port(
    rst : in std_logic;
    wr_clk: in std_logic;
    full : out std_logic;
-   --din : in std_logic_vector(31 downto 0);
    din : in std_logic_vector(63 downto 0);
    wr_en : in std_logic;
    rd_clk : in std_logic;
@@ -76,25 +77,54 @@ constant data_count : integer := 8192;
 
 signal counter : integer range 0 to data_count-1;
 
---constant data_count_64bit : integer := 5000000;
+signal latch_counter : std_logic_vector(11 downto 0) := x"000";
+
 constant data_count_64bit : integer := 200000000;
 
 signal counter_64bit : integer range 0 to data_count_64bit-1;
 
+signal peak_flag : std_logic;
 signal wr_peak : std_logic;
 signal fifo_empty : std_logic;
 signal fifo_data_out : std_logic_vector(31 downto 0);
 signal fifo_rden : std_logic;
 signal fifo_valid : std_logic;
+signal latch_data : std_logic_vector(15 downto 0);
+signal latch_data0 : std_logic_vector(15 downto 0);
+signal latch_data1 : std_logic_vector(15 downto 0);
+signal latch_data2 : std_logic_vector(15 downto 0);
+signal latch_data3 : std_logic_vector(15 downto 0);
+signal latch_data4 : std_logic_vector(15 downto 0);
 
+signal latch_datain_org0 : std_logic_vector(15 downto 0);
+signal latch_datain_org1 : std_logic_vector(15 downto 0);
+signal latch_datain_org2 : std_logic_vector(15 downto 0);
+signal latch_datain_org3 : std_logic_vector(15 downto 0);
+
+signal latch2_datain_org0 : std_logic_vector(15 downto 0);
+signal latch2_datain_org1 : std_logic_vector(15 downto 0);
+signal latch2_datain_org2 : std_logic_vector(15 downto 0);
+signal latch2_datain_org3 : std_logic_vector(15 downto 0);
+
+signal latch_maxdata0 : std_logic_vector(15 downto 0);
+signal latch_maxdata1 : std_logic_vector(15 downto 0);
+signal latch_maxdata2 : std_logic_vector(15 downto 0);
+signal latch_maxdata3 : std_logic_vector(15 downto 0);
+signal latch_maxdata4 : std_logic_vector(15 downto 0);
+
+signal latch_dintime0 : std_logic_vector(1 downto 0);
+signal latch_dintime1 : std_logic_vector(1 downto 0);
+signal latch_dintime2 : std_logic_vector(1 downto 0);
+signal latch_dintime3 : std_logic_vector(1 downto 0);
+signal latch_dintime4 : std_logic_vector(1 downto 0);
 signal peak_high : std_logic_vector(15 downto 0) := ( others => '0' );
 signal last_inwr : std_logic;
-signal event_number : unsigned (31 downto 0) := ( others => '0' );
+signal event_number : unsigned (31 downto 0):= ( others => '0' );
+signal peak_out : std_logic_vector(15 downto 0);
+signal event_out : unsigned (31 downto 0):= ( others => '0' );
+signal thr : std_logic_vector(15 downto 0) := ithr(15 downto 0);
 
---signal thr : std_logic_vector(15 downto 0) := x"F380"; --thr = -200   x"E700"=-400; --
-constant thr : signed(15 downto 0) := signed(ithr(15 downto 0));
-
-constant maxdata : std_logic_vector(15 downto 0) := x"8000";
+signal maxdata : std_logic_vector(15 downto 0) := x"8000";
 type peakhigh_state_t is ( Idle,
                            Peakhighfingding, 
                            --SendWait,
@@ -106,6 +136,7 @@ type peakfind_state_t is ( Idle,
                            PeakFinding, 
                            Strobe );
 signal peakfind_state : peakfind_state_t := Idle;
+signal last_inbusy : std_logic;
 
 constant word_count : integer := 256;
 signal countdata : integer range 0 to word_count-1;
@@ -117,48 +148,21 @@ signal last_ibusy : std_logic;
 
 signal timepeak : integer range 0 to 3;
 
-type sample_array is array (0 to 7) of signed(15 downto 0);
-type sample_input_array is array (0 to 3) of signed(15 downto 0);
-type full_sample_array is array (0 to 11) of signed(15 downto 0);
-
-signal samples : sample_array;        -- latched values t-2 and t-1
-signal inputs  : sample_input_array;  -- direct wires for t
-signal samples_full : full_sample_array; -- full values (direct wires) from t-2, t-1, and t
 
 begin
+
   peakhighfifo_imp : peakhigh_fifo
     port map (
         rst => fifo_rst, --rst,
         wr_clk => clk_a,
         full => fifo_full,
-        din => peak_data_64bit, --peak_data,
-        wr_en => wr_peak,
+        din => peak_data_64bit,        wr_en => wr_peak,
         rd_clk => clk_b,
         valid => fifo_valid,
         empty => fifo_empty,
         dout => fifo_data_out,
         rd_en => fifo_rden 
    );
-
-   -- assign combinatorically the four inputs to the inputs array
-   inputs(0) <= signed(datain_org0);
-   inputs(1) <= signed(datain_org1);
-   inputs(2) <= signed(datain_org2);
-   inputs(3) <= signed(datain_org3);
-   -- latches will be set in the samples array below later
-
-   samples_full(0) <= samples(0);
-   samples_full(1) <= samples(1);
-   samples_full(2) <= samples(2);
-   samples_full(3) <= samples(3);
-   samples_full(4) <= samples(4);
-   samples_full(5) <= samples(5);
-   samples_full(6) <= samples(6);
-   samples_full(7) <= samples(7);
-   samples_full(8) <= inputs(0);
-   samples_full(9) <= inputs(1);
-   samples_full(10) <= inputs(2);
-   samples_full(11) <= inputs(3);
 
   dout <= fifo_data_out;
   fifo_rden <= rden;
@@ -172,15 +176,38 @@ begin
  process ( rst, clk_a )
  begin
    if ( clk_a'event and clk_a = '1' ) then
-         samples(0) <= samples(4);
-         samples(1) <= samples(5);
-         samples(2) <= samples(6);
-         samples(3) <= samples(7);
+        latch_data <= datain;
+        
+        latch_data0 <= datain;
+        latch_maxdata0 <= datain_max;           
+        latch_dintime0 <= dintime;
+        
+        latch_data1 <= latch_data0;
+        latch_maxdata1 <= latch_maxdata0;
+        latch_dintime1 <= latch_dintime0;
+        
+        latch_data2 <= latch_data1;
+        latch_maxdata2 <= latch_maxdata1;
+        latch_dintime2 <= latch_dintime1;
+        
+        latch_data3 <= latch_data2;
+        latch_maxdata3 <= latch_maxdata2;                
+        latch_dintime3 <= latch_dintime2;
+        
+        latch_data4 <= latch_data3;
+        latch_maxdata4 <= latch_maxdata3;
+        latch_dintime4 <= latch_dintime3;
+        
+        latch_datain_org0 <= datain_org0;
+        latch_datain_org1 <= datain_org1;
+        latch_datain_org2 <= datain_org2;
+        latch_datain_org3 <= datain_org3;
+        
+        latch2_datain_org0 <= latch_datain_org0;
+        latch2_datain_org1 <= latch_datain_org1;
+        latch2_datain_org2 <= latch_datain_org2;
+        latch2_datain_org3 <= latch_datain_org3;
 
-         samples(4) <= signed(datain_org0);
-         samples(5) <= signed(datain_org1);
-         samples(6) <= signed(datain_org2);
-         samples(7) <= signed(datain_org3);
                 
         last_inwr <= inwr;        
       if (rst ='1') then
@@ -220,241 +247,264 @@ begin
                     peakfind_state <= Strobe; 
                     wr_peak <= '0'; 
                 end if;
-
+                
                 --=============================================================
                 -- peak high with data one by one
                 --==============================================================
 
-                -- peak at samples(4)
+                -- peak at latch_datain_org0
                 --  \   /
                 --   \/
-                if (    samples(2) > samples(3)
-                        and samples(3) > samples(4)
-                        and samples(5) > samples(4)
-                        and samples(6) > samples(5)
-                        and samples(4) < thr 
-                        and samples(2) < thr
-                        --and samples(4) > signed(maxdata)
+                if (    signed(latch2_datain_org2) > signed(latch2_datain_org3)
+                        and signed(latch2_datain_org3) > signed(latch_datain_org0)
+                        and signed(latch_datain_org1) > signed(latch_datain_org0)
+                        and signed(latch_datain_org2) > signed(latch_datain_org1)
+                        and signed(latch_datain_org0) < signed(thr) 
+                        and signed(latch2_datain_org2) < signed(thr)
+                        --and signed(latch_datain_org0) > signed(maxdata)
                         ) then
                            wr_peak <= '1';
-                            peak_data <=  "1" & "00" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(samples(4));
-                            peak_data_64bit <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(samples(4));
- 
+                            peak_data <=  "1" & "00" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(signed(latch_datain_org0(15 downto 0) ));
+                            peak_data_64bit <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch_datain_org0(15 downto 0) ));
+
                 -- \   /
                 --  \_/            
-                elsif ( samples(1) > samples(2)
-                        and samples(2) > samples(3)
-                        and samples(3) = samples(4)
-                        and samples(5) > samples(4)                        
-                        and samples(6) > samples(5)                        
-                        and samples(4) < thr 
-                        and samples(1) < thr
-                        --and samples(4) > signed(maxdata)
+                elsif ( signed(latch2_datain_org1) > signed(latch2_datain_org2)
+                        and signed(latch2_datain_org2) > signed(latch2_datain_org3)
+                        and signed(latch2_datain_org3) = signed(latch_datain_org0)
+                        and signed(latch_datain_org1) > signed(latch_datain_org0)                        
+                        and signed(latch_datain_org2) > signed(latch_datain_org1)                        
+                        and signed(latch_datain_org0) < signed(thr) 
+                        and signed(latch2_datain_org1) < signed(thr)
+                        --and signed(latch_datain_org0) > signed(maxdata)
                         ) then
                            wr_peak <= '1';
-                           peak_data <=  "1" & "00" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(samples(4));
-                           peak_data_64bit <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(samples(4));
+                           peak_data <=  "1" & "00" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(signed(latch_datain_org0(15 downto 0) ));
+                           peak_data_64bit <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch_datain_org0(15 downto 0) ));
 
-                elsif ( samples(2) > samples(3)
-                        and samples(3) > samples(4)
-                        and samples(5) = samples(4)
-                        and samples(6) > samples(5)                        
-                        and samples(7) > samples(6)                        
-                        and samples(4) < thr 
-                        and samples(2) < thr
-                        --and samples(4) > signed(maxdata)
+                elsif ( signed(latch2_datain_org2) > signed(latch2_datain_org3)
+                        and signed(latch2_datain_org3) > signed(latch_datain_org0)
+                        and signed(latch_datain_org1) = signed(latch_datain_org0)
+                        and signed(latch_datain_org2) > signed(latch_datain_org1)                        
+                        and signed(latch_datain_org3) > signed(latch_datain_org2)                        
+                        and signed(latch_datain_org0) < signed(thr) 
+                        and signed(latch2_datain_org2) < signed(thr)
+                        --and signed(latch_datain_org0) > signed(maxdata)
                         ) then
                            wr_peak <= '1';
-                           peak_data <=   "1" & "00" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(samples(4));
-                           peak_data_64bit <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(samples(4));
+                           peak_data <=   "1" & "00" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(signed(latch_datain_org0(15 downto 0) ));
+                           peak_data_64bit <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch_datain_org0(15 downto 0) ));
 
-                elsif ( samples(2) > samples(3)
-                        and samples(3) > samples(4)
-                        and samples(5) > samples(4)
-                        and samples(6) < samples(5)
-                        and samples(7) > samples(6)
-                        and samples(2) < thr
-                        ) then
-                           wr_peak <= '1';
-                           peak_data <=  "1" & "00" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(samples(4));
-                           peak_data_64bit <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(samples(4));
-
-
-                -- peak at samples(5)
-                -- \  /
-                --  \/                           
-                elsif ( samples(3) > samples(4)
-                        and samples(4) > samples(5)
-                        and samples(6) > samples(5)
-                        and samples(7) > samples(6)
-                        and samples(5) < thr
-                        and samples(3) < thr 
-                        ) then
-                           wr_peak <= '1';
-                           peak_data <=  "1" & "01" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(samples(5));
-                           peak_data_64bit <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(samples(5));
-
-                -- \   /
-                --  \_/
-                elsif ( samples(3) > samples(4)
-                        and samples(4) > samples(5)
-                        and samples(6) = samples(5)
-                        and samples(7) > samples(5)
-                        and inputs(0) > samples(7)
-                        and samples(5) < thr 
-                        and samples(3) < thr
-                        ) then
-                           wr_peak <= '1';
-                           peak_data <=  "1" & "01" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(samples(5));
-                           peak_data_64bit <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(samples(5));
 
                 -- \     /
                 --  \/\/
-                elsif ( samples(3) > samples(4)
-                        and samples(4) > samples(5)
-                        and samples(6) > samples(5)
-                        and samples(7) < samples(6)
-                        and inputs(0) > samples(7)
-                        and samples(3) < thr 
+                --
+                elsif ( signed(latch2_datain_org2) > signed(latch2_datain_org3)
+                        and signed(latch2_datain_org3) > signed(latch_datain_org0)
+                        and signed(latch_datain_org1) > signed(latch_datain_org0)
+                        and signed(latch_datain_org2) < signed(latch_datain_org1)
+                        and signed(latch_datain_org3) > signed(latch_datain_org2)
+                        --and signed(datain_org0) > signed(latch_datain_org3)
+                        --and signed(latch_datain_org0) < signed(thr) 
+                        and signed(latch2_datain_org2) < signed(thr)
+                        --and signed(latch_datain_org0) > signed(maxdata)
                         ) then
                            wr_peak <= '1';
-                           peak_data <=  "1" & "01" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(samples(5));
-                           peak_data_64bit <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(samples(5));
+                           peak_data <=  "1" & "00" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(signed(latch_datain_org0(15 downto 0) ));
+                           peak_data_64bit <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch_datain_org0(15 downto 0) ));
 
 
-                -- peak at samples(6)
+
+                -- peak at latch_datain_org1
                 -- \  /
                 --  \/                           
-                elsif ( samples(4) > samples(5)
-                        and samples(5) > samples(6)
-                        and samples(7) > samples(6)
-                        and inputs(0) > samples(7)
-                        and samples(6) < thr
-                        and samples(4) < thr 
+                elsif ( signed(latch2_datain_org3) > signed(latch_datain_org0)
+                        and signed(latch_datain_org0) > signed(latch_datain_org1)
+                        and signed(latch_datain_org2) > signed(latch_datain_org1)
+                        and signed(latch_datain_org3) > signed(latch_datain_org2)
+                        and signed(latch_datain_org1) < signed(thr)
+                        and signed(latch2_datain_org3) < signed(thr) 
+                        --and signed(latch_datain_org1) > signed(maxdata)
                         ) then
                            wr_peak <= '1';
-                           peak_data <=  "1" & "10" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(samples(6));
-                           peak_data_64bit <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(samples(6));     
+                           peak_data <=  "1" & "01" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(signed(latch_datain_org1(15 downto 0) ));
+                           peak_data_64bit <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch_datain_org1(15 downto 0) ));
 
                 -- \   /
                 --  \_/
-                elsif ( samples(4) > samples(5)
-                        and samples(5) > samples(6)
-                        and samples(7) = samples(6)
-                        and inputs(0) > samples(6)
-                        and inputs(1) > inputs(0)
-                        and samples(6) < thr
-                        and samples(4) < thr 
+                elsif ( signed(latch2_datain_org3) > signed(latch_datain_org0)
+                        and signed(latch_datain_org0) > signed(latch_datain_org1)
+                        and signed(latch_datain_org2) = signed(latch_datain_org1)
+                        and signed(latch_datain_org3) > signed(latch_datain_org1)
+                        and signed(datain_org0) > signed(latch_datain_org3)
+                        and signed(latch_datain_org1) < signed(thr) 
+                        and signed(latch2_datain_org3) < signed(thr)
+                        --and signed(latch_datain_org1) > signed(maxdata)
                         ) then
                            wr_peak <= '1';
-                           peak_data <=  "1" & "10" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(samples(6));
-                           peak_data_64bit <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(samples(6));
+                           peak_data <=  "1" & "01" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(signed(latch_datain_org1(15 downto 0) ));
+                           peak_data_64bit <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch_datain_org1(15 downto 0) ));
+
+ 
+                -- \     /
+                --  \/\/
+                elsif ( signed(latch2_datain_org3) > signed(latch_datain_org0)
+                        and signed(latch_datain_org0) > signed(latch_datain_org1)
+                        and signed(latch_datain_org2) > signed(latch_datain_org1)
+                        and signed(latch_datain_org3) < signed(latch_datain_org2)
+                        and signed(datain_org0) > signed(latch_datain_org3)
+                       -- and signed(datain_org1) > signed(datain_org0)
+                        --and signed(latch_datain_org1) < signed(thr) 
+                        and signed(latch2_datain_org3) < signed(thr) 
+                        --and signed(latch_datain_org1) > signed(maxdata)
+                        ) then
+                           wr_peak <= '1';
+                           peak_data <=  "1" & "01" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(signed(latch_datain_org1(15 downto 0) ));
+                           peak_data_64bit <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch_datain_org1(15 downto 0) ));
+
+
+                -- peak at latch_datain_org2
+                -- \  /
+                --  \/                           
+                elsif ( signed(latch_datain_org0) > signed(latch_datain_org1)
+                        and signed(latch_datain_org1) > signed(latch_datain_org2)
+                        and signed(latch_datain_org3) > signed(latch_datain_org2)
+                        and signed(datain_org0) > signed(latch_datain_org3)
+                        and signed(latch_datain_org2) < signed(thr)
+                        and signed(latch_datain_org0) < signed(thr) 
+                        --and signed(latch_datain_org2) > signed(maxdata) 
+                        ) then
+                           wr_peak <= '1';
+                           peak_data <=  "1" & "10" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(signed(latch_datain_org2(15 downto 0) ));
+                           peak_data_64bit <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch_datain_org2(15 downto 0) ));     
+
+                -- \   /
+                --  \_/
+                elsif ( signed(latch_datain_org0) > signed(latch_datain_org1)
+                        and signed(latch_datain_org1) > signed(latch_datain_org2)
+                        and signed(latch_datain_org3) = signed(latch_datain_org2)
+                        and signed(datain_org0) > signed(latch_datain_org2)
+                        and signed(datain_org1) > signed(datain_org0)
+                        and signed(latch_datain_org2) < signed(thr)
+                        and signed(latch_datain_org0) < signed(thr) 
+                        --and signed(latch_datain_org2) > signed(maxdata)
+                        ) then
+                           wr_peak <= '1';
+                           peak_data <=  "1" & "10" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(signed(latch_datain_org2(15 downto 0) ));
+                           peak_data_64bit <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch_datain_org2(15 downto 0) ));
 
                 --\    /
                 -- \/\/
-                elsif ( samples(4) > samples(5)
-                         and samples(5) > samples(6)
-                         and samples(7) > samples(6)
-                         and inputs(0) < samples(7)
-                         and inputs(1) > inputs(0)
-                         and samples(4) < thr
+                elsif ( signed(latch_datain_org0) > signed(latch_datain_org1)
+                         and signed(latch_datain_org1) > signed(latch_datain_org2)
+                         and signed(latch_datain_org3) > signed(latch_datain_org2)
+                         and signed(datain_org0) < signed(latch_datain_org3)
+                         and signed(datain_org1) > signed(datain_org0)
+                         --and signed(datain_org2) > signed(datain_org1)
+                         --and signed(latch_datain_org2) < signed(thr) 
+                         and signed(latch_datain_org0) < signed(thr)
+                         --and signed(latch_datain_org2) > signed(maxdata)
                          ) then
                             wr_peak <= '1';
-                            peak_data <=  "1" & "10" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(samples(6));
-                            peak_data_64bit <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(samples(6));
+                            peak_data <=  "1" & "10" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(signed(latch_datain_org2(15 downto 0) ));
+                            peak_data_64bit <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch_datain_org2(15 downto 0) ));
 
-
-                -- peak at samples(7)
+                -- peak at latch_datain_org3
                 -- \  /
                 --  \/                           
-                elsif ( samples(5) > samples(6)
-                        and samples(6) > samples(7)
-                        and inputs(0) > samples(7)
-                        and inputs(1) > inputs(0)
-                        and samples(7) < thr
-                        and samples(5) < thr 
+                elsif ( signed(latch_datain_org1) > signed(latch_datain_org2)
+                        and signed(latch_datain_org2) > signed(latch_datain_org3)
+                        and signed(datain_org0) > signed(latch_datain_org3)
+                        and signed(datain_org1) > signed(datain_org0)
+                        and signed(latch_datain_org3) < signed(thr)
+                        and signed(latch_datain_org1) < signed(thr) 
+                        --and signed(latch_datain_org3) > signed(maxdata)
                         ) then
                            wr_peak <= '1';
-                           peak_data <=  "1" & "11" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(samples(7));
-                           peak_data_64bit <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(samples(7));
+                           peak_data <=  "1" & "11" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(signed(latch_datain_org3(15 downto 0) ));
+                           peak_data_64bit <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch_datain_org3(15 downto 0) ));
 
                 -- \   /
                 --  \_/
-                elsif ( samples(5) > samples(6)
-                        and samples(6) > samples(7)
-                        and inputs(0) = samples(7)
-                        and inputs(1) > samples(7)
-                        and inputs(2) > inputs(1)
-                        and samples(7) < thr
-                        and samples(5) < thr 
+                elsif ( signed(latch_datain_org1) > signed(latch_datain_org2)
+                        and signed(latch_datain_org2) > signed(latch_datain_org3)
+                        and signed(datain_org0) = signed(latch_datain_org3)
+                        and signed(datain_org1) > signed(latch_datain_org3)
+                        and signed(datain_org2) > signed(datain_org1)
+                        and signed(latch_datain_org3) < signed(thr)
+                        and signed(latch_datain_org1) < signed(thr) 
+                        --and signed(latch_datain_org3) > signed(maxdata)
                         ) then
                            wr_peak <= '1';
-                           peak_data <=  "1" & "11" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(samples(7));
-                           peak_data_64bit <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(samples(7));
+                           peak_data <=  "1" & "11" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(signed(latch_datain_org3(15 downto 0) ));
+                           peak_data_64bit <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch_datain_org3(15 downto 0) ));
+
 
                 --\    /
                 -- \/\/
-                elsif ( samples(5) > samples(6)
-                        and samples(6) > samples(7)
-                        and inputs(0) > samples(7)
-                        and inputs(1) < inputs(0)
-                        and inputs(2) > inputs(1)
-                        and samples(7) < thr 
-                        and samples(5) < thr
+                elsif ( signed(latch_datain_org1) > signed(latch_datain_org2)
+                        and signed(latch_datain_org2) > signed(latch_datain_org3)
+                        and signed(datain_org0) > signed(latch_datain_org3)
+                        and signed(datain_org1) < signed(datain_org0)
+                        and signed(datain_org2) > signed(datain_org1)
+                        --and signed(datain_org3) > signed(datain_org2)
+                        and signed(latch_datain_org3) < signed(thr) 
+                        and signed(latch_datain_org1) < signed(thr)
+                        --and signed(latch_datain_org3) > signed(maxdata)
                         ) then
                            wr_peak <= '1';
-                           peak_data <=  "1" & "11" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(samples(7));
-                           peak_data_64bit <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(samples(7));
+                           peak_data <=  "1" & "11" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(signed(latch_datain_org3(15 downto 0) ));
+                           peak_data_64bit <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch_datain_org3(15 downto 0) ));
 
-                                              
-                -- saturation at samples(4)         
-                elsif ( (samples(4) and x"fff0") = signed(maxdata)
-                        and (samples(5) and x"fff0") = signed(maxdata)                          
-                        and (samples(6) and x"fff0") = signed(maxdata)
-                        and (samples(7) and x"fff0") = signed(maxdata)
+                                                                 
+                -- saturation at latch_datain_org0         
+                elsif ( signed(latch_datain_org0 and x"fff0") = signed(maxdata)
+                        and signed(latch_datain_org1 and x"fff0") = signed(maxdata)                          
+                        and signed(latch_datain_org2 and x"fff0") = signed(maxdata)
+                        and signed(latch_datain_org3 and x"fff0") = signed(maxdata)
                         ) then
                            wr_peak <= '1';
-                           peak_data <=  "1" & "00" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(samples(4));
-                           peak_data_64bit <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(samples(4)); 
+                           peak_data <=  "1" & "00" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(signed(latch_datain_org0(15 downto 0) ));
+                           peak_data_64bit <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch_datain_org0(15 downto 0) )); 
                                                    
-                elsif ( (samples(4) and x"fff0") = signed(maxdata)
-                        and (samples(5) and x"fff0") = signed(maxdata)                          
-                        and (samples(6) and x"fff0") = signed(maxdata)
-                        and (samples(7) and x"fff0") > signed(maxdata)
+                elsif ( signed(latch_datain_org0 and x"fff0") = signed(maxdata)
+                        and signed(latch_datain_org1 and x"fff0") = signed(maxdata)                          
+                        and signed(latch_datain_org2 and x"fff0") = signed(maxdata)
+                        and signed(latch_datain_org3 and x"fff0") > signed(maxdata)
                         ) then
                            wr_peak <= '1';
-                           peak_data <=  "1" & "00" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(samples(4));
-                           peak_data_64bit <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(samples(4));         
+                           peak_data <=  "1" & "00" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(signed(latch_datain_org0(15 downto 0) ));
+                           peak_data_64bit <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch_datain_org0(15 downto 0) ));         
 
-                -- saturation at samples(5)         
-                elsif ( (samples(4) and x"fff0") > signed(maxdata)
-                        and (samples(5) and x"fff0") = signed(maxdata)                          
-                        and (samples(6) and x"fff0") = signed(maxdata)
-                        and (samples(7) and x"fff0") = signed(maxdata)
+                -- saturation at latch_datain_org1         
+                elsif ( signed(latch_datain_org0 and x"fff0") > signed(maxdata)
+                        and signed(latch_datain_org1 and x"fff0") = signed(maxdata)                          
+                        and signed(latch_datain_org2 and x"fff0") = signed(maxdata)
+                        and signed(latch_datain_org3 and x"fff0") = signed(maxdata)
                         ) then
                            wr_peak <= '1';
-                           peak_data <=  "1" & "01" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(samples(5));
-                           peak_data_64bit <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(samples(5));
+                           peak_data <=  "1" & "01" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(signed(latch_datain_org1(15 downto 0) ));
+                           peak_data_64bit <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch_datain_org1(15 downto 0) ));
                 
-                -- saturation at samples(6)                                 
-                elsif ( (samples(4) and x"fff0") > signed(maxdata)
-                        and (samples(5) and x"fff0") > signed(maxdata)                          
-                        and (samples(6) and x"fff0") = signed(maxdata)
-                        and (samples(7) and x"fff0") = signed(maxdata)
+                -- saturation at latch_datain_org2                                 
+                elsif ( signed(latch_datain_org0 and x"fff0") > signed(maxdata)
+                        and signed(latch_datain_org1 and x"fff0") > signed(maxdata)                          
+                        and signed(latch_datain_org2 and x"fff0") = signed(maxdata)
+                        and signed(latch_datain_org3 and x"fff0") = signed(maxdata)
                         ) then
                            wr_peak <= '1';
-                            peak_data <=  "1" & "10" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(samples(6));
-                            peak_data_64bit <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(samples(6));
+                            peak_data <=  "1" & "10" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(signed(latch_datain_org2(15 downto 0) ));
+                            peak_data_64bit <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch_datain_org2(15 downto 0) ));
 
-                -- saturation at samples(7)                                 
-                elsif ( (samples(4) and x"fff0") > signed(maxdata)
-                        and (samples(5) and x"fff0") > signed(maxdata)                          
-                        and (samples(6) and x"fff0") > signed(maxdata)
-                        and (samples(7) and x"fff0") = signed(maxdata)
+                -- saturation at latch_datain_org3                                 
+                elsif ( signed(latch_datain_org0 and x"fff0") > signed(maxdata)
+                        and signed(latch_datain_org1 and x"fff0") > signed(maxdata)                          
+                        and signed(latch_datain_org2 and x"fff0") > signed(maxdata)
+                        and signed(latch_datain_org3 and x"fff0") = signed(maxdata)
                         ) then
                            wr_peak <= '1';
-                           peak_data <=  "1" & "11" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(samples(7));
-                           peak_data_64bit <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(samples(7));
+                           peak_data <=  "1" & "11" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(signed(latch_datain_org3(15 downto 0) ));
+                           peak_data_64bit <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch_datain_org3(15 downto 0) ));
 
 
                 --==================================================================
@@ -503,7 +553,6 @@ begin
           end if; 
 
         when Peakhighfingding =>         
-            --if(countdata = 0) then
             if(inwr = '0' and last_inwr ='1') then
                     peakhigh_state <= Strobe; --SendWait;
             else
@@ -517,11 +566,11 @@ begin
         when Strobe =>         
                 peak_high <= peak_high;    
                 event_number <= event_number;
-                peakhigh_state <= Idle;                
+                peakhigh_state <= Idle; 
   
         end case;
       end if;
     end if;
   end process;
-  
+
 end Behavioral;

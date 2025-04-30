@@ -162,10 +162,7 @@ begin
         if ( counter_raw = 0 ) then
           delay_state <= Counting2;
         else
-          -- make sure to avoid negative overflow of delay_count while counter_raw is counting down
-          if ( delay_count /= 0 ) then
-            delay_count <= delay_count - 1;
-          end if;
+          delay_count <= delay_count - 1;
           wrdata <= '1';
           counter_raw <= counter_raw - 1;
           wrdata_raw <= '1';
