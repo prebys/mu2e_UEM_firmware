@@ -115,8 +115,6 @@ signal datasum1 : std_logic_vector(31 downto 0);
 signal datasum2 : std_logic_vector(31 downto 0);
 signal datasum3 : std_logic_vector(31 downto 0);
 
-constant word_count : integer := 256;
-
 constant data_count : integer := 4096; --8192;
 
 signal counter : integer range 0 to data_count-1;
@@ -146,17 +144,6 @@ signal latch3_datain_org1 : std_logic_vector(15 downto 0);
 signal latch3_datain_org2 : std_logic_vector(15 downto 0);
 signal latch3_datain_org3 : std_logic_vector(15 downto 0);
 
-constant word_sum : integer := 10;
-signal sum_flag : std_logic;
-signal last_sum_flag : std_logic;
-signal wr_area : std_logic;
-signal fifo_empty : std_logic;
-signal fifo_data_in : std_logic_vector(31 downto 0);
-
-signal fifo_data_out : std_logic_vector(31 downto 0);
-signal fifo_rden : std_logic;
-signal fifo_full : std_logic;
-signal fifo_valid : std_logic;
 signal fifo_rst : std_logic;
 
 signal last_inwr : std_logic;
@@ -164,13 +151,6 @@ signal event_number : unsigned(31 downto 0):=( others => '0');
 signal last_ibusy : std_logic;
 signal ibusy : std_logic;
 
-signal fifo_full_height : std_logic;
-signal wr_peak_height : std_logic;
-signal fifo_valid_height : std_logic;
-signal fifo_empty_height : std_logic;
-signal fifo_data_out_height : std_logic_vector(31 downto 0);
-signal fifo_rden_height : std_logic;
-signal peak_data_64bit : std_logic_vector (63 downto 0);
 signal peak_data0_64bit : std_logic_vector (31 downto 0);
 signal peak_data0_tmp : std_logic_vector (15 downto 0);
 signal minpeak : std_logic_vector (15 downto 0);

@@ -77,13 +77,10 @@ constant data_count : integer := 8192;
 
 signal counter : integer range 0 to data_count-1;
 
-signal latch_counter : std_logic_vector(11 downto 0) := x"000";
-
 constant data_count_64bit : integer := 200000000;
 
 signal counter_64bit : integer range 0 to data_count_64bit-1;
 
-signal peak_flag : std_logic;
 signal wr_peak : std_logic;
 signal fifo_empty : std_logic;
 signal fifo_data_out : std_logic_vector(31 downto 0);
@@ -120,8 +117,6 @@ signal latch_dintime4 : std_logic_vector(1 downto 0);
 signal peak_high : std_logic_vector(15 downto 0) := ( others => '0' );
 signal last_inwr : std_logic;
 signal event_number : unsigned (31 downto 0):= ( others => '0' );
-signal peak_out : std_logic_vector(15 downto 0);
-signal event_out : unsigned (31 downto 0):= ( others => '0' );
 signal thr : std_logic_vector(15 downto 0) := ithr(15 downto 0);
 
 signal maxdata : std_logic_vector(15 downto 0) := x"8000";
@@ -136,7 +131,6 @@ type peakfind_state_t is ( Idle,
                            PeakFinding, 
                            Strobe );
 signal peakfind_state : peakfind_state_t := Idle;
-signal last_inbusy : std_logic;
 
 constant word_count : integer := 256;
 signal countdata : integer range 0 to word_count-1;
