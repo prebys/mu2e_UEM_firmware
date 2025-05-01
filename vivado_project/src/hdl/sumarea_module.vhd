@@ -129,20 +129,20 @@ signal latch_counter0_64bit : integer range 0 to data_count_64bit - 1;
 signal latch_counter1_64bit : integer range 0 to data_count_64bit - 1;
 signal latch_counter2_64bit : integer range 0 to data_count_64bit - 1;
 
-signal latch_datain_org0 : std_logic_vector(15 downto 0);
-signal latch_datain_org1 : std_logic_vector(15 downto 0);
-signal latch_datain_org2 : std_logic_vector(15 downto 0);
-signal latch_datain_org3 : std_logic_vector(15 downto 0);
+signal latch_datain_org0 : signed(15 downto 0);
+signal latch_datain_org1 : signed(15 downto 0);
+signal latch_datain_org2 : signed(15 downto 0);
+signal latch_datain_org3 : signed(15 downto 0);
 
-signal latch2_datain_org0 : std_logic_vector(15 downto 0);
-signal latch2_datain_org1 : std_logic_vector(15 downto 0);
-signal latch2_datain_org2 : std_logic_vector(15 downto 0);
-signal latch2_datain_org3 : std_logic_vector(15 downto 0);
+signal latch2_datain_org0 : signed(15 downto 0);
+signal latch2_datain_org1 : signed(15 downto 0);
+signal latch2_datain_org2 : signed(15 downto 0);
+signal latch2_datain_org3 : signed(15 downto 0);
 
-signal latch3_datain_org0 : std_logic_vector(15 downto 0);
-signal latch3_datain_org1 : std_logic_vector(15 downto 0);
-signal latch3_datain_org2 : std_logic_vector(15 downto 0);
-signal latch3_datain_org3 : std_logic_vector(15 downto 0);
+signal latch3_datain_org0 : signed(15 downto 0);
+signal latch3_datain_org1 : signed(15 downto 0);
+signal latch3_datain_org2 : signed(15 downto 0);
+signal latch3_datain_org3 : signed(15 downto 0);
 
 signal fifo_rst : std_logic;
 
@@ -206,10 +206,10 @@ begin
         last_inwr <= inwr;
         last_ibusy <= ibusy;
 
-        latch_datain_org0 <= datain_org0;
-        latch_datain_org1 <= datain_org1;
-        latch_datain_org2 <= datain_org2;
-        latch_datain_org3 <= datain_org3;
+        latch_datain_org0 <= signed(datain_org0);
+        latch_datain_org1 <= signed(datain_org1);
+        latch_datain_org2 <= signed(datain_org2);
+        latch_datain_org3 <= signed(datain_org3);
 
         latch2_datain_org0 <= latch_datain_org0;
         latch2_datain_org1 <= latch_datain_org1;
@@ -349,7 +349,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org0(15 downto 0) ));
-                           minpeak <= latch2_datain_org0;
+                           minpeak <= std_logic_vector(latch2_datain_org0);
 			   sum0_stop <= '1';
 
                 -- \   /
@@ -363,7 +363,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org0(15 downto 0) ));
-                           minpeak <= latch2_datain_org0;
+                           minpeak <= std_logic_vector(latch2_datain_org0);
 			   sum0_stop <= '1';
 
                 elsif ( signed(latch3_datain_org2) > signed(latch3_datain_org3)
@@ -375,7 +375,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org0(15 downto 0) ));
-                           minpeak <= latch2_datain_org0;
+                           minpeak <= std_logic_vector(latch2_datain_org0);
 			   sum0_stop <= '1';
 
 
@@ -392,7 +392,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org0(15 downto 0) ));
-                           minpeak <= latch2_datain_org0;
+                           minpeak <= std_logic_vector(latch2_datain_org0);
 			   sum0_stop <= '1';
 
                 -- peak at latch2_datain_org1
@@ -406,7 +406,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org1(15 downto 0) ));
-                           minpeak <= latch2_datain_org1;
+                           minpeak <= std_logic_vector(latch2_datain_org1);
 			   sum0_stop <= '1';
 
                 -- \   /
@@ -420,7 +420,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org1(15 downto 0) ));
-                           minpeak <= latch2_datain_org1;
+                           minpeak <= std_logic_vector(latch2_datain_org1);
 			   sum0_stop <= '1';
 
 
@@ -437,7 +437,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org1(15 downto 0) ));
-                           minpeak <= latch2_datain_org1;
+                           minpeak <= std_logic_vector(latch2_datain_org1);
 			   sum0_stop <= '1';
 
                 -- peak at latch2_datain_org2
@@ -452,7 +452,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org2(15 downto 0) ));
-                           minpeak <= latch2_datain_org2;
+                           minpeak <= std_logic_vector(latch2_datain_org2);
 			   sum0_stop <= '1';
 
                 -- \   /
@@ -466,7 +466,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org2(15 downto 0) ));
-                           minpeak <= latch2_datain_org2;
+                           minpeak <= std_logic_vector(latch2_datain_org2);
 			   sum0_stop <= '1';
 
                 --\    /
@@ -481,7 +481,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org2(15 downto 0) ));
-                           minpeak <= latch2_datain_org2;
+                           minpeak <= std_logic_vector(latch2_datain_org2);
 			   sum0_stop <= '1';
 
                 -- peak at latch2_datain_org3
@@ -495,7 +495,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org3(15 downto 0) ));
-                           minpeak <= latch2_datain_org3;
+                           minpeak <= std_logic_vector(latch2_datain_org3);
 			   sum0_stop <= '1';
 
                  -- \   /
@@ -509,7 +509,7 @@ begin
                          ) then
                             owr_peak_height <= '1';
                             dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org3(15 downto 0) ));
-                            minpeak <= latch2_datain_org3;
+                            minpeak <= std_logic_vector(latch2_datain_org3);
 			    sum0_stop <= '1';
 
 
@@ -525,7 +525,7 @@ begin
                          ) then
                             owr_peak_height <= '1';
                             dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org3(15 downto 0) ));
-                            minpeak <= latch2_datain_org3;
+                            minpeak <= std_logic_vector(latch2_datain_org3);
 			    sum0_stop <= '1';
 
                 -- saturation at latch2_datain_org0
@@ -536,7 +536,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org0(15 downto 0) ));
-                           minpeak <= latch2_datain_org0;
+                           minpeak <= std_logic_vector(latch2_datain_org0);
 			   sum0_stop <= '1';
 
                 elsif ( signed(latch2_datain_org0 and x"fff0") = signed(maxdata)
@@ -546,7 +546,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org0(15 downto 0) ));
-                           minpeak <= latch2_datain_org0;
+                           minpeak <= std_logic_vector(latch2_datain_org0);
 			   sum0_stop <= '1';
 
                 -- saturation at latch2_datain_org1
@@ -557,7 +557,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org1(15 downto 0) ));
-                           minpeak <= latch2_datain_org1;
+                           minpeak <= std_logic_vector(latch2_datain_org1);
 			   sum0_stop <= '1';
 
                  -- saturation at latch2_datain_org2
@@ -568,7 +568,7 @@ begin
                          ) then
                             owr_peak_height <= '1';
                             dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org2(15 downto 0) ));
-                            minpeak <= latch2_datain_org2;
+                            minpeak <= std_logic_vector(latch2_datain_org2);
 			    sum0_stop <= '1';
 
                   -- saturation at latch2_datain_org3
@@ -579,7 +579,7 @@ begin
                           ) then
                              owr_peak_height <= '1';
                              dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org3(15 downto 0) ));
-                             minpeak <= latch2_datain_org3;
+                             minpeak <= std_logic_vector(latch2_datain_org3);
 			     sum0_stop <= '1';
 
                   else
@@ -638,7 +638,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org0(15 downto 0) ));
-                           peak_data0_tmp <=  latch2_datain_org0;
+                           peak_data0_tmp <= std_logic_vector(latch2_datain_org0);
                            minpeak_stop <='1';
 
                 -- \   /
@@ -652,7 +652,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                           dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org0(15 downto 0) ));
-                          peak_data0_tmp <=  latch2_datain_org0;
+                          peak_data0_tmp <= std_logic_vector(latch2_datain_org0);
                            minpeak_stop <='1';
 
                 elsif ( signed(latch3_datain_org2) > signed(latch3_datain_org3)
@@ -664,7 +664,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org0(15 downto 0) ));
-                           peak_data0_tmp <=  latch2_datain_org0;
+                           peak_data0_tmp <= std_logic_vector(latch2_datain_org0);
                            minpeak_stop <='1';
 
 
@@ -681,7 +681,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org0(15 downto 0) ));
-                           peak_data0_tmp <=  latch2_datain_org0;
+                           peak_data0_tmp <= std_logic_vector(latch2_datain_org0);
                            minpeak_stop <='1';
 
                 -- peak at latch2_datain_org1
@@ -695,7 +695,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org1(15 downto 0) ));
-                           peak_data0_tmp <=  latch2_datain_org1;
+                           peak_data0_tmp <= std_logic_vector(latch2_datain_org1);
                            minpeak_stop <='1';
 
                 -- \   /
@@ -709,7 +709,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org1(15 downto 0) ));
-                           peak_data0_tmp <=  latch2_datain_org1;
+                           peak_data0_tmp <= std_logic_vector(latch2_datain_org1);
                            minpeak_stop <='1';
 
 
@@ -726,7 +726,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org1(15 downto 0) ));
-                           peak_data0_tmp <=  latch2_datain_org1;
+                           peak_data0_tmp <= std_logic_vector(latch2_datain_org1);
                            minpeak_stop <='1';
 
                 -- peak at latch2_datain_org2
@@ -740,7 +740,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org2(15 downto 0) ));
-                           peak_data0_tmp <=  latch2_datain_org2;
+                           peak_data0_tmp <= std_logic_vector(latch2_datain_org2);
                            minpeak_stop <='1';
 
                 -- \   /
@@ -754,7 +754,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org2(15 downto 0) ));
-                           peak_data0_tmp <=  latch2_datain_org2;
+                           peak_data0_tmp <= std_logic_vector(latch2_datain_org2);
                            minpeak_stop <='1';
 
                 --\    /
@@ -769,7 +769,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org2(15 downto 0) ));
-                           peak_data0_tmp <=  latch2_datain_org2;
+                           peak_data0_tmp <= std_logic_vector(latch2_datain_org2);
                            minpeak_stop <='1';
 
                 -- peak at latch2_datain_org3
@@ -783,7 +783,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org3(15 downto 0) ));
-                           peak_data0_tmp <=  latch2_datain_org3;
+                           peak_data0_tmp <= std_logic_vector(latch2_datain_org3);
                            minpeak_stop <='1';
 
                  -- \   /
@@ -797,7 +797,7 @@ begin
                          ) then
                             owr_peak_height <= '1';
                             dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org3(15 downto 0) ));
-                           peak_data0_tmp <=  latch2_datain_org3;
+                           peak_data0_tmp <= std_logic_vector(latch2_datain_org3);
                            minpeak_stop <='1';
 
 
@@ -813,7 +813,7 @@ begin
                          ) then
                             owr_peak_height <= '1';
                             dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org3(15 downto 0) ));
-                           peak_data0_tmp <=  latch2_datain_org3;
+                           peak_data0_tmp <= std_logic_vector(latch2_datain_org3);
                            minpeak_stop <='1';
 
                 -- saturation at latch2_datain_org0
@@ -824,7 +824,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org0(15 downto 0) ));
-                           peak_data0_tmp <=  latch2_datain_org0;
+                           peak_data0_tmp <= std_logic_vector(latch2_datain_org0);
                            minpeak_stop <='1';
 
                 elsif ( signed(latch2_datain_org0 and x"fff0") = signed(maxdata)
@@ -834,7 +834,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                           dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org0(15 downto 0) ));
-                           peak_data0_tmp <=  latch2_datain_org0;
+                           peak_data0_tmp <= std_logic_vector(latch2_datain_org0);
                            minpeak_stop <='1';
 
                 -- saturation at latch2_datain_org1
@@ -845,7 +845,7 @@ begin
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org1(15 downto 0) ));
-                           peak_data0_tmp <=  latch2_datain_org1;
+                           peak_data0_tmp <= std_logic_vector(latch2_datain_org1);
                            minpeak_stop <='1';
 
                  -- saturation at latch2_datain_org2
@@ -856,7 +856,7 @@ begin
                          ) then
                             owr_peak_height <= '1';
                             dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org2(15 downto 0) ));
-                           peak_data0_tmp <=  latch2_datain_org2;
+                           peak_data0_tmp <= std_logic_vector(latch2_datain_org2);
                            minpeak_stop <='1';
 
                   -- saturation at latch2_datain_org3
@@ -867,7 +867,7 @@ begin
                           ) then
                              owr_peak_height <= '1';
                              dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(signed(latch2_datain_org3(15 downto 0) ));
-                           peak_data0_tmp <=  latch2_datain_org3;
+                           peak_data0_tmp <= std_logic_vector(latch2_datain_org3);
                            minpeak_stop <='1';
 
                   else

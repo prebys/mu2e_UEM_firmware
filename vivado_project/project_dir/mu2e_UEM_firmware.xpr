@@ -1380,9 +1380,6 @@
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
-        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_1/bd_fc5c_rst_0_0.xci">
-          <Proxy FileSetName="bd_fc5c_rst_0_0"/>
-        </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_7/bd_fc5c_iomodule_0_0.xci">
           <Proxy FileSetName="bd_fc5c_iomodule_0_0"/>
         </CompFileExtendedInfo>
@@ -1400,6 +1397,9 @@
         </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_2/bd_fc5c_ilmb_0.xci">
           <Proxy FileSetName="bd_fc5c_ilmb_0"/>
+        </CompFileExtendedInfo>
+        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_1/bd_fc5c_rst_0_0.xci">
+          <Proxy FileSetName="bd_fc5c_rst_0_0"/>
         </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_0/bd_fc5c_microblaze_I_0.xci">
           <Proxy FileSetName="bd_fc5c_microblaze_I_0"/>
