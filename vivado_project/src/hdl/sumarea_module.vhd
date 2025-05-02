@@ -529,20 +529,20 @@ begin
 			    sum0_stop <= '1';
 
                 -- saturation at latch2_datain_org0
-                elsif ( signed(latch2_datain_org0 and x"fff0") = signed(maxdata)
-                        and signed(latch2_datain_org1 and x"fff0") = signed(maxdata)
-                        and signed(latch2_datain_org2 and x"fff0") = signed(maxdata)
-                        and signed(latch2_datain_org3 and x"fff0") = signed(maxdata)
+                elsif ( (latch2_datain_org0 and x"fff0") = signed(maxdata)
+                        and (latch2_datain_org1 and x"fff0") = signed(maxdata)
+                        and (latch2_datain_org2 and x"fff0") = signed(maxdata)
+                        and (latch2_datain_org3 and x"fff0") = signed(maxdata)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
                            minpeak <= std_logic_vector(latch2_datain_org0);
 			   sum0_stop <= '1';
 
-                elsif ( signed(latch2_datain_org0 and x"fff0") = signed(maxdata)
-                        and signed(latch2_datain_org1 and x"fff0") = signed(maxdata)
-                        and signed(latch2_datain_org2 and x"fff0") = signed(maxdata)
-                        and signed(latch2_datain_org3 and x"fff0") > signed(maxdata)
+                elsif ( (latch2_datain_org0 and x"fff0") = signed(maxdata)
+                        and (latch2_datain_org1 and x"fff0") = signed(maxdata)
+                        and (latch2_datain_org2 and x"fff0") = signed(maxdata)
+                        and (latch2_datain_org3 and x"fff0") > signed(maxdata)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
@@ -550,10 +550,10 @@ begin
 			   sum0_stop <= '1';
 
                 -- saturation at latch2_datain_org1
-                elsif ( signed(latch2_datain_org0 and x"fff0") > signed(maxdata)
-                        and signed(latch2_datain_org1 and x"fff0") = signed(maxdata)
-                        and signed(latch2_datain_org2 and x"fff0") = signed(maxdata)
-                        and signed(latch2_datain_org3 and x"fff0") = signed(maxdata)
+                elsif ( (latch2_datain_org0 and x"fff0") > signed(maxdata)
+                        and (latch2_datain_org1 and x"fff0") = signed(maxdata)
+                        and (latch2_datain_org2 and x"fff0") = signed(maxdata)
+                        and (latch2_datain_org3 and x"fff0") = signed(maxdata)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org1);
@@ -561,10 +561,10 @@ begin
 			   sum0_stop <= '1';
 
                  -- saturation at latch2_datain_org2
-                 elsif ( signed(latch2_datain_org0 and x"fff0") > signed(maxdata)
-                         and signed(latch2_datain_org1 and x"fff0") > signed(maxdata)
-                         and signed(latch2_datain_org2 and x"fff0") = signed(maxdata)
-                         and signed(latch2_datain_org3 and x"fff0") = signed(maxdata)
+                 elsif ( (latch2_datain_org0 and x"fff0") > signed(maxdata)
+                         and (latch2_datain_org1 and x"fff0") > signed(maxdata)
+                         and (latch2_datain_org2 and x"fff0") = signed(maxdata)
+                         and (latch2_datain_org3 and x"fff0") = signed(maxdata)
                          ) then
                             owr_peak_height <= '1';
                             dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org2);
@@ -572,10 +572,10 @@ begin
 			    sum0_stop <= '1';
 
                   -- saturation at latch2_datain_org3
-                  elsif ( signed(latch2_datain_org0 and x"fff0") > signed(maxdata)
-                          and signed(latch2_datain_org1 and x"fff0") > signed(maxdata)
-                          and signed(latch2_datain_org2 and x"fff0") > signed(maxdata)
-                          and signed(latch2_datain_org3 and x"fff0") = signed(maxdata)
+                  elsif ( (latch2_datain_org0 and x"fff0") > signed(maxdata)
+                          and (latch2_datain_org1 and x"fff0") > signed(maxdata)
+                          and (latch2_datain_org2 and x"fff0") > signed(maxdata)
+                          and (latch2_datain_org3 and x"fff0") = signed(maxdata)
                           ) then
                              owr_peak_height <= '1';
                              dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org3);
@@ -817,20 +817,20 @@ begin
                            minpeak_stop <='1';
 
                 -- saturation at latch2_datain_org0
-                elsif ( signed(latch2_datain_org0 and x"fff0") = signed(maxdata)
-                        and signed(latch2_datain_org1 and x"fff0") = signed(maxdata)
-                        and signed(latch2_datain_org2 and x"fff0") = signed(maxdata)
-                        and signed(latch2_datain_org3 and x"fff0") = signed(maxdata)
+                elsif ( (latch2_datain_org0 and x"fff0") = signed(maxdata)
+                        and (latch2_datain_org1 and x"fff0") = signed(maxdata)
+                        and (latch2_datain_org2 and x"fff0") = signed(maxdata)
+                        and (latch2_datain_org3 and x"fff0") = signed(maxdata)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
                            peak_data0_tmp <= std_logic_vector(latch2_datain_org0);
                            minpeak_stop <='1';
 
-                elsif ( signed(latch2_datain_org0 and x"fff0") = signed(maxdata)
-                        and signed(latch2_datain_org1 and x"fff0") = signed(maxdata)
-                        and signed(latch2_datain_org2 and x"fff0") = signed(maxdata)
-                        and signed(latch2_datain_org3 and x"fff0") > signed(maxdata)
+                elsif ( (latch2_datain_org0 and x"fff0") = signed(maxdata)
+                        and (latch2_datain_org1 and x"fff0") = signed(maxdata)
+                        and (latch2_datain_org2 and x"fff0") = signed(maxdata)
+                        and (latch2_datain_org3 and x"fff0") > signed(maxdata)
                         ) then
                            owr_peak_height <= '1';
                           dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
@@ -838,10 +838,10 @@ begin
                            minpeak_stop <='1';
 
                 -- saturation at latch2_datain_org1
-                elsif ( signed(latch2_datain_org0 and x"fff0") > signed(maxdata)
-                        and signed(latch2_datain_org1 and x"fff0") = signed(maxdata)
-                        and signed(latch2_datain_org2 and x"fff0") = signed(maxdata)
-                        and signed(latch2_datain_org3 and x"fff0") = signed(maxdata)
+                elsif ( (latch2_datain_org0 and x"fff0") > signed(maxdata)
+                        and (latch2_datain_org1 and x"fff0") = signed(maxdata)
+                        and (latch2_datain_org2 and x"fff0") = signed(maxdata)
+                        and (latch2_datain_org3 and x"fff0") = signed(maxdata)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org1);
@@ -849,10 +849,10 @@ begin
                            minpeak_stop <='1';
 
                  -- saturation at latch2_datain_org2
-                 elsif ( signed(latch2_datain_org0 and x"fff0") > signed(maxdata)
-                         and signed(latch2_datain_org1 and x"fff0") > signed(maxdata)
-                         and signed(latch2_datain_org2 and x"fff0") = signed(maxdata)
-                         and signed(latch2_datain_org3 and x"fff0") = signed(maxdata)
+                 elsif ( (latch2_datain_org0 and x"fff0") > signed(maxdata)
+                         and (latch2_datain_org1 and x"fff0") > signed(maxdata)
+                         and (latch2_datain_org2 and x"fff0") = signed(maxdata)
+                         and (latch2_datain_org3 and x"fff0") = signed(maxdata)
                          ) then
                             owr_peak_height <= '1';
                             dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org2);
@@ -860,10 +860,10 @@ begin
                            minpeak_stop <='1';
 
                   -- saturation at latch2_datain_org3
-                  elsif ( signed(latch2_datain_org0 and x"fff0") > signed(maxdata)
-                          and signed(latch2_datain_org1 and x"fff0") > signed(maxdata)
-                          and signed(latch2_datain_org2 and x"fff0") > signed(maxdata)
-                          and signed(latch2_datain_org3 and x"fff0") = signed(maxdata)
+                  elsif ( (latch2_datain_org0 and x"fff0") > signed(maxdata)
+                          and (latch2_datain_org1 and x"fff0") > signed(maxdata)
+                          and (latch2_datain_org2 and x"fff0") > signed(maxdata)
+                          and (latch2_datain_org3 and x"fff0") = signed(maxdata)
                           ) then
                              owr_peak_height <= '1';
                              dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org3);
