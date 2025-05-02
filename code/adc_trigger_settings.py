@@ -35,8 +35,15 @@ adc0_invert = False
 adc1_invert = False
 
 # 5. Test mode (0000=off, 0001=midscale short, 1111=ramp) (input in binary)
+# There's the AD9234 test mode (0x550) and JESD204B test mode (0x573)
+# AD9234 test mode comes first in the datachain, and for example the ramp will be a full
+# 16-bit ramp.
+# The JESD204B test mode is the one that is used to test the datachain,
+# and it will be a 12-bit ramp.
 adc0_test_mode = 0b0000
 adc1_test_mode = 0b0000
+jesd0_test_mode = 0b0000
+jesd1_test_mode = 0b0000
 
 # FPGA test mode: 0000: normal, 0001: checkerboard, 0010: 0xFFFF0000, 1001: data_adc_length value (ramp)
 fpga_test_mode = 0b0000
@@ -110,6 +117,8 @@ else:
 # 5. Test mode
 send_command(f"wspi adc0 550 {hex(adc0_test_mode)[2:]}")
 send_command(f"wspi adc1 550 {hex(adc1_test_mode)[2:]}")
+send_command(f"wspi adc0 573 {hex(jesd0_test_mode)[2:]}")
+send_command(f"wspi adc1 573 {hex(jesd1_test_mode)[2:]}")
 
 # FPGA test mode
 fpga_test_hex = hex(fpga_test_mode)[2:]
