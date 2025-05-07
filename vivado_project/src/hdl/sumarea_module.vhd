@@ -21,8 +21,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
---use ieee.std_logic_unsigned.all;
-
 
 entity sumarea_module is
   port (
@@ -30,8 +28,6 @@ entity sumarea_module is
     clk_a : in std_logic;
     inwr : in std_logic;
     startplus : in std_logic;
-    --datainmin : in std_logic_vector(15 downto 0);
-    --datainsum : in std_logic_vector(31 downto 0);
 
     datain_org0 : in std_logic_vector(15 downto 0);
     datain_org1 : in std_logic_vector(15 downto 0);
@@ -42,9 +38,6 @@ entity sumarea_module is
     inbusy : in std_logic;
     clk_b : in std_logic;
     wrdata : out std_logic;
-    --rden : in std_logic;
-    --outvalid : out std_logic;
-    --outempty : out std_logic;
     outevent_number : out std_logic_vector(31 downto 0);
     sumpeak_out : out std_logic_vector(31 downto 0);
 
@@ -53,9 +46,6 @@ entity sumarea_module is
     dout_sum : out std_logic_vector(31 downto 0);
 
     owr_peak_height: out std_logic;
-    --rden_height : in std_logic;
-    --outvalid_height : out std_logic;
-    --outempty_height : out std_logic;
     dout_height : out std_logic_vector(63 downto 0)
 
 
@@ -64,40 +54,8 @@ end sumarea_module;
 
 architecture Behavioral of sumarea_module is
 
-
--- component sumarea_fifo
---  port(
---   rst : in std_logic;
---   wr_clk: in std_logic;
---   full : out std_logic;
---   din : in std_logic_vector(31 downto 0);
---   wr_en : in std_logic;
---   rd_clk : in std_logic;
---   valid : out std_logic;
---   empty : out std_logic;
---   dout : out std_logic_vector(31 downto 0);
---   rd_en : in std_logic
---  );
---  end component;
---
--- component peakhigh_fifo
---  port(
---   rst : in std_logic;
---   wr_clk: in std_logic;
---   full : out std_logic;
---   --din : in std_logic_vector(31 downto 0);
---   din : in std_logic_vector(63 downto 0);
---   wr_en : in std_logic;
---   rd_clk : in std_logic;
---   empty : out std_logic;
---   valid : out std_logic;
---   dout : out std_logic_vector(31 downto 0);
---   rd_en : in std_logic
---  );
---  end component;
-
 --signal thr : std_logic_vector(15 downto 0) := x"F380"; --thr = -200
--- signal thr : std_logic_vector(15 downto 0) := ithr(15 downto 0);
+signal thr : std_logic_vector(15 downto 0) := ithr(15 downto 0);
 
 signal sum : std_logic_vector(31 downto 0):=( others => '0' );
 signal sum0 : std_logic_vector(31 downto 0):=( others => '0' );
@@ -121,7 +79,6 @@ signal counter : integer range 0 to data_count-1;
 signal latch_counter1 : integer range 0 to data_count-1;
 signal latch_counter2 : integer range 0 to data_count-1;
 
---constant data_count_64bit : integer := 5000000; --8192;
 constant data_count_64bit : integer := 200000000; --8192;
 
 signal counter_64bit : integer range 0 to data_count_64bit - 1;
@@ -157,14 +114,11 @@ signal minpeak : std_logic_vector (15 downto 0);
 signal maxdata : std_logic_vector(15 downto 0) := x"8000";
 
 
---signal datasum : std_logic_vector(31 downto 0);
-
   type sumstate_t is ( Idle,
                     WaitCount,
                     SendSum1,
                     SendSum2,
                     SendSum3,
-                    --SendWait,
                     SendStrobeCheck,
                     SendStrobe0,
                     SendStrobe1,
@@ -187,7 +141,7 @@ begin
 
   orst <= fifo_rst;
 
- process ( rst, clk_a )
+ process ( clk_a )
  begin
    if ( clk_a'event and clk_a = '1' ) then
         datainsum <= std_logic_vector(signed(datasum0) + signed(datasum1) + signed(datasum2) + signed(datasum3));
@@ -199,7 +153,7 @@ begin
 
  end process;
 
- process ( rst, clk_a )
+ process ( clk_a )
 
   begin
     if ( clk_a'event and clk_a = '1' ) then
@@ -274,10 +228,10 @@ begin
                --------------------------------------------------------------
                --  sum area condition at latch_datain_org
                --  ----------------------------------------------------------
-               if(    (latch2_datain_org0 < signed(ithr) )                   
-               and (latch2_datain_org1 < signed(ithr) )                   
-               and (latch2_datain_org2 < signed(ithr) )                   
-               and (latch2_datain_org3 < signed(ithr) )
+               if(    (latch2_datain_org0 < signed(thr) )                   
+               and (latch2_datain_org1 < signed(thr) )                   
+               and (latch2_datain_org2 < signed(thr) )                   
+               and (latch2_datain_org3 < signed(thr) )
                --------------------------------------------------------------
                --  end sum area condition at latch_datain_org
                --------------------------------------------------------------
@@ -316,10 +270,10 @@ begin
              counter_64bit <= counter_64bit + 1;
              sum <= std_logic_vector(signed(sum) + signed(latch2_datainsum));
              owr_peak_sum <= '0';
-                if( latch2_datain_org0 > signed(ithr)
-                    and latch2_datain_org1 > signed(ithr)
-                    and latch2_datain_org2 > signed(ithr)
-                    and latch2_datain_org3 > signed(ithr)
+                if( latch2_datain_org0 > signed(thr)
+                    and latch2_datain_org1 > signed(thr)
+                    and latch2_datain_org2 > signed(thr)
+                    and latch2_datain_org3 > signed(thr)
                    ) then
                     sumstate <= SendStrobeCheck; --SendStrobe0;
                     latch_counter2 <= counter;
@@ -345,7 +299,7 @@ begin
                         and latch3_datain_org3 > latch2_datain_org0
                         and latch2_datain_org1 > latch2_datain_org0
                         and latch2_datain_org2 > latch2_datain_org1
-                        and latch2_datain_org0 < signed(ithr)
+                        and latch2_datain_org0 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
@@ -359,7 +313,7 @@ begin
                         and latch3_datain_org3 = latch2_datain_org0
                         and latch2_datain_org1 > latch2_datain_org0
                         and latch2_datain_org2 > latch2_datain_org1
-                        and latch2_datain_org0 < signed(ithr)
+                        and latch2_datain_org0 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
@@ -371,7 +325,7 @@ begin
                         and latch2_datain_org1 = latch2_datain_org0
                         and latch2_datain_org2 > latch2_datain_org1
                         and latch2_datain_org3 > latch2_datain_org2
-                        and latch2_datain_org0 < signed(ithr)
+                        and latch2_datain_org0 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
@@ -388,7 +342,7 @@ begin
                         and latch2_datain_org2 < latch2_datain_org1
                         and latch2_datain_org3 > latch2_datain_org2
                         and latch_datain_org0 > latch2_datain_org3
-                        and latch2_datain_org0 < signed(ithr)
+                        and latch2_datain_org0 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
@@ -402,7 +356,7 @@ begin
                         and latch2_datain_org0 > latch2_datain_org1
                         and latch2_datain_org2 > latch2_datain_org1
                         and latch2_datain_org3 > latch2_datain_org2
-                        and latch2_datain_org1 < signed(ithr)
+                        and latch2_datain_org1 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org1);
@@ -416,7 +370,7 @@ begin
                         and latch2_datain_org2 = latch2_datain_org1
                         and latch2_datain_org3 > latch2_datain_org1
                         and latch_datain_org0 > latch2_datain_org3
-                        and latch2_datain_org1 < signed(ithr)
+                        and latch2_datain_org1 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org1);
@@ -432,7 +386,7 @@ begin
                         and latch2_datain_org3 < latch2_datain_org2
                         and latch_datain_org0 > latch2_datain_org3
                         and latch_datain_org1 > latch_datain_org0
-                        and latch2_datain_org1 < signed(ithr)
+                        and latch2_datain_org1 < signed(thr)
 
                         ) then
                            owr_peak_height <= '1';
@@ -447,7 +401,7 @@ begin
                         and latch2_datain_org1 > latch2_datain_org2
                         and latch2_datain_org3 > latch2_datain_org2
                         and latch_datain_org0 > latch2_datain_org3
-                        and latch2_datain_org2 < signed(ithr)
+                        and latch2_datain_org2 < signed(thr)
 
                         ) then
                            owr_peak_height <= '1';
@@ -462,7 +416,7 @@ begin
                         and latch2_datain_org3 = latch2_datain_org2
                         and latch_datain_org0 > latch2_datain_org2
                         and latch_datain_org1 > latch_datain_org0
-                        and latch2_datain_org2 < signed(ithr)
+                        and latch2_datain_org2 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org2);
@@ -477,7 +431,7 @@ begin
                         and latch_datain_org0 < latch2_datain_org3
                         and latch_datain_org1 > latch_datain_org0
                         and latch_datain_org2 > latch_datain_org1
-                        and latch2_datain_org2 < signed(ithr)
+                        and latch2_datain_org2 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org2);
@@ -491,7 +445,7 @@ begin
                         and latch2_datain_org2 > latch2_datain_org3
                         and latch_datain_org0 > latch2_datain_org3
                         and latch_datain_org1 > latch_datain_org0
-                        and latch2_datain_org3 < signed(ithr)
+                        and latch2_datain_org3 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org3);
@@ -505,7 +459,7 @@ begin
                          and latch_datain_org0 = latch2_datain_org3
                          and latch_datain_org1 > latch2_datain_org3
                          and latch_datain_org2 > latch_datain_org1
-                         and latch2_datain_org3 < signed(ithr)
+                         and latch2_datain_org3 < signed(thr)
                          ) then
                             owr_peak_height <= '1';
                             dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org3);
@@ -521,7 +475,7 @@ begin
                          and latch_datain_org1 < latch_datain_org0
                          and latch_datain_org2 > latch_datain_org1
                          and latch_datain_org3 > latch_datain_org2
-                         and latch2_datain_org3 < signed(ithr)
+                         and latch2_datain_org3 < signed(thr)
                          ) then
                             owr_peak_height <= '1';
                             dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org3);
@@ -597,10 +551,10 @@ begin
              counter_64bit <= counter_64bit + 1;
              owr_peak_sum <= '0';
              sum <= std_logic_vector(signed(sum) + signed(latch2_datainsum));
-                if( latch2_datain_org0 > signed(ithr)
-                    and latch2_datain_org1 > signed(ithr)
-                    and latch2_datain_org2 > signed(ithr)
-                    and latch2_datain_org3 > signed(ithr)
+                if( latch2_datain_org0 > signed(thr)
+                    and latch2_datain_org1 > signed(thr)
+                    and latch2_datain_org2 > signed(thr)
+                    and latch2_datain_org3 > signed(thr)
                    ) then
                     sumstate <= SendStrobeCheck; --SendStrobe0;
                     latch_counter2 <= counter;
@@ -634,7 +588,7 @@ begin
                         and latch3_datain_org3 > latch2_datain_org0
                         and latch2_datain_org1 > latch2_datain_org0
                         and latch2_datain_org2 > latch2_datain_org1
-                        and latch2_datain_org0 < signed(ithr)
+                        and latch2_datain_org0 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
@@ -648,7 +602,7 @@ begin
                         and latch3_datain_org3 = latch2_datain_org0
                         and latch2_datain_org1 > latch2_datain_org0
                         and latch2_datain_org2 > latch2_datain_org1
-                        and latch2_datain_org0 < signed(ithr)
+                        and latch2_datain_org0 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                           dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
@@ -660,7 +614,7 @@ begin
                         and latch2_datain_org1 = latch2_datain_org0
                         and latch2_datain_org2 > latch2_datain_org1
                         and latch2_datain_org3 > latch2_datain_org2
-                        and latch2_datain_org0 < signed(ithr)
+                        and latch2_datain_org0 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
@@ -677,7 +631,7 @@ begin
                         and latch2_datain_org2 < latch2_datain_org1
                         and latch2_datain_org3 > latch2_datain_org2
                         and latch_datain_org0 > latch2_datain_org3
-                        and latch2_datain_org0 < signed(ithr)
+                        and latch2_datain_org0 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
@@ -691,7 +645,7 @@ begin
                         and latch2_datain_org0 > latch2_datain_org1
                         and latch2_datain_org2 > latch2_datain_org1
                         and latch2_datain_org3 > latch2_datain_org2
-                        and latch2_datain_org1 < signed(ithr)
+                        and latch2_datain_org1 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org1);
@@ -705,7 +659,7 @@ begin
                         and latch2_datain_org2 = latch2_datain_org1
                         and latch2_datain_org3 > latch2_datain_org1
                         and latch_datain_org0 > latch2_datain_org3
-                        and latch2_datain_org1 < signed(ithr)
+                        and latch2_datain_org1 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org1);
@@ -721,7 +675,7 @@ begin
                         and latch2_datain_org3 < latch2_datain_org2
                         and latch_datain_org0 > latch2_datain_org3
                         and latch_datain_org1 > latch_datain_org0
-                        and latch2_datain_org1 < signed(ithr)
+                        and latch2_datain_org1 < signed(thr)
 
                         ) then
                            owr_peak_height <= '1';
@@ -736,7 +690,7 @@ begin
                         and latch2_datain_org1 > latch2_datain_org2
                         and latch2_datain_org3 > latch2_datain_org2
                         and latch_datain_org0 > latch2_datain_org3
-                        and latch2_datain_org2 < signed(ithr)
+                        and latch2_datain_org2 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org2);
@@ -750,7 +704,7 @@ begin
                         and latch2_datain_org3 = latch2_datain_org2
                         and latch_datain_org0 > latch2_datain_org2
                         and latch_datain_org1 > latch_datain_org0
-                        and latch2_datain_org2 < signed(ithr)
+                        and latch2_datain_org2 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org2);
@@ -765,7 +719,7 @@ begin
                         and latch_datain_org0 < latch2_datain_org3
                         and latch_datain_org1 > latch_datain_org0
                         and latch_datain_org2 > latch_datain_org1
-                        and latch2_datain_org2 < signed(ithr)
+                        and latch2_datain_org2 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org2);
@@ -779,7 +733,7 @@ begin
                         and latch2_datain_org2 > latch2_datain_org3
                         and latch_datain_org0 > latch2_datain_org3
                         and latch_datain_org1 > latch_datain_org0
-                        and latch2_datain_org3 < signed(ithr)
+                        and latch2_datain_org3 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
                            dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org3);
@@ -793,7 +747,7 @@ begin
                          and latch_datain_org0 = latch2_datain_org3
                          and latch_datain_org1 > latch2_datain_org3
                          and latch_datain_org2 > latch_datain_org1
-                         and latch2_datain_org3 < signed(ithr)
+                         and latch2_datain_org3 < signed(thr)
                          ) then
                             owr_peak_height <= '1';
                             dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org3);
@@ -809,7 +763,7 @@ begin
                          and latch_datain_org1 < latch_datain_org0
                          and latch_datain_org2 > latch_datain_org1
                          and latch_datain_org3 > latch_datain_org2
-                         and latch2_datain_org3 < signed(ithr)
+                         and latch2_datain_org3 < signed(thr)
                          ) then
                             owr_peak_height <= '1';
                             dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org3);

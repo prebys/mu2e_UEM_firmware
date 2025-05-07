@@ -47,7 +47,6 @@ entity peakhigh_module is
     outevent_number : out std_logic_vector(31 downto 0);
     outempty : out std_logic;
     outvalid : out std_logic;
-    --startproc : in std_logic;
     dout : out std_logic_vector(31 downto 0)
   );
 end peakhigh_module;
@@ -117,7 +116,7 @@ signal latch_dintime4 : std_logic_vector(1 downto 0);
 signal peak_high : std_logic_vector(15 downto 0) := ( others => '0' );
 signal last_inwr : std_logic;
 signal event_number : unsigned (31 downto 0):= ( others => '0' );
--- signal thr : std_logic_vector(15 downto 0) := ithr(15 downto 0);
+signal thr : std_logic_vector(15 downto 0) := ithr(15 downto 0);
 
 signal maxdata : std_logic_vector(15 downto 0) := x"8000";
 type peakhigh_state_t is ( Idle,
@@ -168,7 +167,7 @@ begin
   outvalid <= fifo_valid;
   timepeak <= to_integer(unsigned(dintime));
   
- process ( rst, clk_a )
+ process ( clk_a )
  begin
    if ( clk_a'event and clk_a = '1' ) then
         latch_data <= datain;
@@ -254,8 +253,8 @@ begin
                         and latch2_datain_org3 > latch_datain_org0
                         and latch_datain_org1 > latch_datain_org0
                         and latch_datain_org2 > latch_datain_org1
-                        and latch_datain_org0 < signed(ithr) 
-                        and latch2_datain_org2 < signed(ithr)
+                        and latch_datain_org0 < signed(thr) 
+                        and latch2_datain_org2 < signed(thr)
                         ) then
                            wr_peak <= '1';
                             peak_data <=  "1" & "00" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(latch_datain_org0);
@@ -268,8 +267,8 @@ begin
                         and latch2_datain_org3 = latch_datain_org0
                         and latch_datain_org1 > latch_datain_org0                        
                         and latch_datain_org2 > latch_datain_org1                        
-                        and latch_datain_org0 < signed(ithr) 
-                        and latch2_datain_org1 < signed(ithr)
+                        and latch_datain_org0 < signed(thr) 
+                        and latch2_datain_org1 < signed(thr)
                         ) then
                            wr_peak <= '1';
                            peak_data <=  "1" & "00" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(latch_datain_org0);
@@ -280,8 +279,8 @@ begin
                         and latch_datain_org1 = latch_datain_org0
                         and latch_datain_org2 > latch_datain_org1                        
                         and latch_datain_org3 > latch_datain_org2                        
-                        and latch_datain_org0 < signed(ithr) 
-                        and latch2_datain_org2 < signed(ithr)
+                        and latch_datain_org0 < signed(thr) 
+                        and latch2_datain_org2 < signed(thr)
                         ) then
                            wr_peak <= '1';
                            peak_data <=   "1" & "00" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(latch_datain_org0);
@@ -297,7 +296,7 @@ begin
                         and latch_datain_org2 < latch_datain_org1
                         and latch_datain_org3 > latch_datain_org2
                         --and signed(datain_org0) > latch_datain_org3
-                        and latch2_datain_org2 < signed(ithr)
+                        and latch2_datain_org2 < signed(thr)
                         ) then
                            wr_peak <= '1';
                            peak_data <=  "1" & "00" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(latch_datain_org0);
@@ -312,8 +311,8 @@ begin
                         and latch_datain_org0 > latch_datain_org1
                         and latch_datain_org2 > latch_datain_org1
                         and latch_datain_org3 > latch_datain_org2
-                        and latch_datain_org1 < signed(ithr)
-                        and latch2_datain_org3 < signed(ithr) 
+                        and latch_datain_org1 < signed(thr)
+                        and latch2_datain_org3 < signed(thr) 
                         ) then
                            wr_peak <= '1';
                            peak_data <=  "1" & "01" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(latch_datain_org1);
@@ -326,8 +325,8 @@ begin
                         and latch_datain_org2 = latch_datain_org1
                         and latch_datain_org3 > latch_datain_org1
                         and signed(datain_org0) > latch_datain_org3
-                        and latch_datain_org1 < signed(ithr) 
-                        and latch2_datain_org3 < signed(ithr)
+                        and latch_datain_org1 < signed(thr) 
+                        and latch2_datain_org3 < signed(thr)
                         ) then
                            wr_peak <= '1';
                            peak_data <=  "1" & "01" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(latch_datain_org1);
@@ -342,7 +341,7 @@ begin
                         and latch_datain_org3 < latch_datain_org2
                         and signed(datain_org0) > latch_datain_org3
                        -- and signed(datain_org1) > signed(datain_org0)
-                        and latch2_datain_org3 < signed(ithr) 
+                        and latch2_datain_org3 < signed(thr) 
                         ) then
                            wr_peak <= '1';
                            peak_data <=  "1" & "01" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(latch_datain_org1);
@@ -356,8 +355,8 @@ begin
                         and latch_datain_org1 > latch_datain_org2
                         and latch_datain_org3 > latch_datain_org2
                         and signed(datain_org0) > latch_datain_org3
-                        and latch_datain_org2 < signed(ithr)
-                        and latch_datain_org0 < signed(ithr) 
+                        and latch_datain_org2 < signed(thr)
+                        and latch_datain_org0 < signed(thr) 
                         ) then
                            wr_peak <= '1';
                            peak_data <=  "1" & "10" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(latch_datain_org2);
@@ -370,8 +369,8 @@ begin
                         and latch_datain_org3 = latch_datain_org2
                         and signed(datain_org0) > latch_datain_org2
                         and signed(datain_org1) > signed(datain_org0)
-                        and latch_datain_org2 < signed(ithr)
-                        and latch_datain_org0 < signed(ithr) 
+                        and latch_datain_org2 < signed(thr)
+                        and latch_datain_org0 < signed(thr) 
                         ) then
                            wr_peak <= '1';
                            peak_data <=  "1" & "10" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(latch_datain_org2);
@@ -385,7 +384,7 @@ begin
                          and signed(datain_org0) < latch_datain_org3
                          and signed(datain_org1) > signed(datain_org0)
                          --and signed(datain_org2) > signed(datain_org1)
-                         and latch_datain_org0 < signed(ithr)
+                         and latch_datain_org0 < signed(thr)
                          ) then
                             wr_peak <= '1';
                             peak_data <=  "1" & "10" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(latch_datain_org2);
@@ -398,8 +397,8 @@ begin
                         and latch_datain_org2 > latch_datain_org3
                         and signed(datain_org0) > latch_datain_org3
                         and signed(datain_org1) > signed(datain_org0)
-                        and latch_datain_org3 < signed(ithr)
-                        and latch_datain_org1 < signed(ithr) 
+                        and latch_datain_org3 < signed(thr)
+                        and latch_datain_org1 < signed(thr) 
                         ) then
                            wr_peak <= '1';
                            peak_data <=  "1" & "11" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(latch_datain_org3);
@@ -412,8 +411,8 @@ begin
                         and signed(datain_org0) = latch_datain_org3
                         and signed(datain_org1) > latch_datain_org3
                         and signed(datain_org2) > signed(datain_org1)
-                        and latch_datain_org3 < signed(ithr)
-                        and latch_datain_org1 < signed(ithr) 
+                        and latch_datain_org3 < signed(thr)
+                        and latch_datain_org1 < signed(thr) 
                         ) then
                            wr_peak <= '1';
                            peak_data <=  "1" & "11" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(latch_datain_org3);
@@ -428,8 +427,8 @@ begin
                         and signed(datain_org1) < signed(datain_org0)
                         and signed(datain_org2) > signed(datain_org1)
                         --and signed(datain_org3) > signed(datain_org2)
-                        and latch_datain_org3 < signed(ithr) 
-                        and latch_datain_org1 < signed(ithr)
+                        and latch_datain_org3 < signed(thr) 
+                        and latch_datain_org1 < signed(thr)
                         ) then
                            wr_peak <= '1';
                            peak_data <=  "1" & "11" & std_logic_vector(to_unsigned((counter+1),13)) & std_logic_vector(latch_datain_org3);
