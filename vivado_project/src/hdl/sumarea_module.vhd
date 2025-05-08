@@ -113,6 +113,8 @@ signal peak_data0_tmp : std_logic_vector (15 downto 0);
 signal minpeak : std_logic_vector (15 downto 0);
 signal maxdata : std_logic_vector(15 downto 0) := x"8000";
 
+type sample_array is array (0 to 11) of signed(15 downto 0);
+signal samples : sample_array;        -- latched values t-3 to t-1
 
   type sumstate_t is ( Idle,
                     WaitCount,
@@ -160,6 +162,25 @@ begin
         last_inwr <= inwr;
         last_ibusy <= ibusy;
 
+        -- new samples
+        -- one can imagine doing something like samples.append(new_sample) 
+        --   four times with new samples, and they would go at the end of the
+        --   array, and the oldest sample would be removed from the beginning
+        samples(0) <= samples(4);  -- latch3_datain_org0
+        samples(1) <= samples(5);  -- latch3_datain_org1
+        samples(2) <= samples(6);  -- latch3_datain_org2
+        samples(3) <= samples(7);  -- latch3_datain_org3
+
+        samples(4) <= samples(8);  -- latch2_datain_org0
+        samples(5) <= samples(9);  -- latch2_datain_org1
+        samples(6) <= samples(10);  -- latch2_datain_org2
+        samples(7) <= samples(11);  -- latch2_datain_org3
+
+        samples(8) <= signed(datain_org0);  -- latch_datain_org0
+        samples(9) <= signed(datain_org1);  -- latch_datain_org1
+        samples(10) <= signed(datain_org2);  -- latch_datain_org2
+        samples(11) <= signed(datain_org3);  -- latch_datain_org3
+
         latch_datain_org0 <= signed(datain_org0);
         latch_datain_org1 <= signed(datain_org1);
         latch_datain_org2 <= signed(datain_org2);
@@ -174,7 +195,6 @@ begin
         latch3_datain_org1 <= latch2_datain_org1;
         latch3_datain_org2 <= latch2_datain_org2;
         latch3_datain_org3 <= latch2_datain_org3;
-
 
       if ( rst = '1' ) then
           event_number <= (others => '0');
@@ -341,7 +361,7 @@ begin
                         and latch2_datain_org1 > latch2_datain_org0
                         and latch2_datain_org2 < latch2_datain_org1
                         and latch2_datain_org3 > latch2_datain_org2
-                        and latch_datain_org0 > latch2_datain_org3
+                        and samples(8) > latch2_datain_org3
                         and latch2_datain_org0 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
@@ -369,7 +389,7 @@ begin
                         and latch2_datain_org0 > latch2_datain_org1
                         and latch2_datain_org2 = latch2_datain_org1
                         and latch2_datain_org3 > latch2_datain_org1
-                        and latch_datain_org0 > latch2_datain_org3
+                        and samples(8) > latch2_datain_org3
                         and latch2_datain_org1 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
@@ -384,8 +404,8 @@ begin
                         and latch2_datain_org0 > latch2_datain_org1
                         and latch2_datain_org2 > latch2_datain_org1
                         and latch2_datain_org3 < latch2_datain_org2
-                        and latch_datain_org0 > latch2_datain_org3
-                        and latch_datain_org1 > latch_datain_org0
+                        and samples(8) > latch2_datain_org3
+                        and latch_datain_org1 > samples(8)
                         and latch2_datain_org1 < signed(thr)
 
                         ) then
@@ -400,7 +420,7 @@ begin
                 elsif ( latch2_datain_org0 > latch2_datain_org1
                         and latch2_datain_org1 > latch2_datain_org2
                         and latch2_datain_org3 > latch2_datain_org2
-                        and latch_datain_org0 > latch2_datain_org3
+                        and samples(8) > latch2_datain_org3
                         and latch2_datain_org2 < signed(thr)
 
                         ) then
@@ -414,8 +434,8 @@ begin
                 elsif ( latch2_datain_org0 > latch2_datain_org1
                         and latch2_datain_org1 > latch2_datain_org2
                         and latch2_datain_org3 = latch2_datain_org2
-                        and latch_datain_org0 > latch2_datain_org2
-                        and latch_datain_org1 > latch_datain_org0
+                        and samples(8) > latch2_datain_org2
+                        and latch_datain_org1 > samples(8)
                         and latch2_datain_org2 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
@@ -428,8 +448,8 @@ begin
                 elsif ( latch2_datain_org0 > latch2_datain_org1
                         and latch2_datain_org1 > latch2_datain_org2
                         and latch2_datain_org3 > latch2_datain_org2
-                        and latch_datain_org0 < latch2_datain_org3
-                        and latch_datain_org1 > latch_datain_org0
+                        and samples(8) < latch2_datain_org3
+                        and latch_datain_org1 > samples(8)
                         and latch_datain_org2 > latch_datain_org1
                         and latch2_datain_org2 < signed(thr)
                         ) then
@@ -443,8 +463,8 @@ begin
                 --  \/
                 elsif ( latch2_datain_org1 > latch2_datain_org2
                         and latch2_datain_org2 > latch2_datain_org3
-                        and latch_datain_org0 > latch2_datain_org3
-                        and latch_datain_org1 > latch_datain_org0
+                        and samples(8) > latch2_datain_org3
+                        and latch_datain_org1 > samples(8)
                         and latch2_datain_org3 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
@@ -456,7 +476,7 @@ begin
                  --  \_/
                  elsif ( latch2_datain_org1 > latch2_datain_org2
                          and latch2_datain_org2 > latch2_datain_org3
-                         and latch_datain_org0 = latch2_datain_org3
+                         and samples(8) = latch2_datain_org3
                          and latch_datain_org1 > latch2_datain_org3
                          and latch_datain_org2 > latch_datain_org1
                          and latch2_datain_org3 < signed(thr)
@@ -471,8 +491,8 @@ begin
                  -- \/\/
                  elsif ( latch2_datain_org1 > latch2_datain_org2
                          and latch2_datain_org2 > latch2_datain_org3
-                         and latch_datain_org0 > latch2_datain_org3
-                         and latch_datain_org1 < latch_datain_org0
+                         and samples(8) > latch2_datain_org3
+                         and latch_datain_org1 < samples(8)
                          and latch_datain_org2 > latch_datain_org1
                          and latch_datain_org3 > latch_datain_org2
                          and latch2_datain_org3 < signed(thr)
@@ -630,7 +650,7 @@ begin
                         and latch2_datain_org1 > latch2_datain_org0
                         and latch2_datain_org2 < latch2_datain_org1
                         and latch2_datain_org3 > latch2_datain_org2
-                        and latch_datain_org0 > latch2_datain_org3
+                        and samples(8) > latch2_datain_org3
                         and latch2_datain_org0 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
@@ -658,7 +678,7 @@ begin
                         and latch2_datain_org0 > latch2_datain_org1
                         and latch2_datain_org2 = latch2_datain_org1
                         and latch2_datain_org3 > latch2_datain_org1
-                        and latch_datain_org0 > latch2_datain_org3
+                        and samples(8) > latch2_datain_org3
                         and latch2_datain_org1 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
@@ -673,8 +693,8 @@ begin
                         and latch2_datain_org0 > latch2_datain_org1
                         and latch2_datain_org2 > latch2_datain_org1
                         and latch2_datain_org3 < latch2_datain_org2
-                        and latch_datain_org0 > latch2_datain_org3
-                        and latch_datain_org1 > latch_datain_org0
+                        and samples(8) > latch2_datain_org3
+                        and latch_datain_org1 > samples(8)
                         and latch2_datain_org1 < signed(thr)
 
                         ) then
@@ -689,7 +709,7 @@ begin
                 elsif ( latch2_datain_org0 > latch2_datain_org1
                         and latch2_datain_org1 > latch2_datain_org2
                         and latch2_datain_org3 > latch2_datain_org2
-                        and latch_datain_org0 > latch2_datain_org3
+                        and samples(8) > latch2_datain_org3
                         and latch2_datain_org2 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
@@ -702,8 +722,8 @@ begin
                 elsif ( latch2_datain_org0 > latch2_datain_org1
                         and latch2_datain_org1 > latch2_datain_org2
                         and latch2_datain_org3 = latch2_datain_org2
-                        and latch_datain_org0 > latch2_datain_org2
-                        and latch_datain_org1 > latch_datain_org0
+                        and samples(8) > latch2_datain_org2
+                        and latch_datain_org1 > samples(8)
                         and latch2_datain_org2 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
@@ -716,8 +736,8 @@ begin
                 elsif ( latch2_datain_org0 > latch2_datain_org1
                         and latch2_datain_org1 > latch2_datain_org2
                         and latch2_datain_org3 > latch2_datain_org2
-                        and latch_datain_org0 < latch2_datain_org3
-                        and latch_datain_org1 > latch_datain_org0
+                        and samples(8) < latch2_datain_org3
+                        and latch_datain_org1 > samples(8)
                         and latch_datain_org2 > latch_datain_org1
                         and latch2_datain_org2 < signed(thr)
                         ) then
@@ -731,8 +751,8 @@ begin
                 --  \/
                 elsif ( latch2_datain_org1 > latch2_datain_org2
                         and latch2_datain_org2 > latch2_datain_org3
-                        and latch_datain_org0 > latch2_datain_org3
-                        and latch_datain_org1 > latch_datain_org0
+                        and samples(8) > latch2_datain_org3
+                        and latch_datain_org1 > samples(8)
                         and latch2_datain_org3 < signed(thr)
                         ) then
                            owr_peak_height <= '1';
@@ -744,7 +764,7 @@ begin
                  --  \_/
                  elsif ( latch2_datain_org1 > latch2_datain_org2
                          and latch2_datain_org2 > latch2_datain_org3
-                         and latch_datain_org0 = latch2_datain_org3
+                         and samples(8) = latch2_datain_org3
                          and latch_datain_org1 > latch2_datain_org3
                          and latch_datain_org2 > latch_datain_org1
                          and latch2_datain_org3 < signed(thr)
@@ -759,8 +779,8 @@ begin
                  -- \/\/
                  elsif ( latch2_datain_org1 > latch2_datain_org2
                          and latch2_datain_org2 > latch2_datain_org3
-                         and latch_datain_org0 > latch2_datain_org3
-                         and latch_datain_org1 < latch_datain_org0
+                         and samples(8) > latch2_datain_org3
+                         and latch_datain_org1 < samples(8)
                          and latch_datain_org2 > latch_datain_org1
                          and latch_datain_org3 > latch_datain_org2
                          and latch2_datain_org3 < signed(thr)
