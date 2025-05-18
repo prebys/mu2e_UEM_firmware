@@ -313,3 +313,401 @@ z = channel number
 <Event 4c240070 #125934-1-4-1 (peak_height_data_1) = Peak #3 (37168 ns)>
 <Event 65240070 #125934-1-4-1 (peak_height_data_1) = Peak #3 (37268 ns)>
 ```
+
+
+2025/05/16
+data_20250516_182203.dat
+
+Recording 10 events with 1 subevent each, 100 raw data per event. Function generator is set to 10,000ns period of modulation for a 100ns sine wave. We should expect a decrease of about 50μV per ns, or 5mV per 100ns, assuming starting amplitude of +/- 0.5V.
+
+Peakfinding window length is set to hex 0x4E20 = 20000.
+
+Note that originally the start of the sine wave was synchronized to the start of the modulation but now it's not, so the start of the data right now is with the sine wave already at -0.001V for peaks.
+
+Example peaks for first event:
+
+<Event 14000040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (80 ns)>
+<Event f2ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 1c000060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (112 ns)>
+<Event f7ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 34000040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (208 ns)>
+<Event f4ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 59000060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (356 ns)>
+<Event feff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 64000050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (400 ns)>
+<Event 06000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event 6f000060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (444 ns)>
+<Event f5ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 90000050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (576 ns)>
+<Event f6ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 91000060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (580 ns)>
+<Event feff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event ae000050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (696 ns)>
+<Event f7ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event d8000040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (864 ns)>
+<Event e2ff0000 #200297-1-0-1 (peak_height_data_2) = -2 (-0.001 V)>
+<Event dd000050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (884 ns)>
+<Event f7ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event e5000050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (916 ns)>
+<Event fcff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event f0000040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (960 ns)>
+<Event 03000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event 04010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1040 ns)>
+<Event f5ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 0e010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1080 ns)>
+<Event fcff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 19010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1124 ns)>
+<Event f4ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 20010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1152 ns)>
+<Event f6ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 2c010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1200 ns)>
+<Event e0ff0000 #200297-1-0-1 (peak_height_data_2) = -2 (-0.001 V)>
+<Event 39010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1252 ns)>
+<Event 09000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event 5e010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1400 ns)>
+<Event f1ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 60010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1408 ns)>
+<Event eeff0000 #200297-1-0-1 (peak_height_data_2) = -2 (-0.001 V)>
+<Event 70010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1472 ns)>
+<Event f7ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 7b010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1516 ns)>
+<Event 02000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event 82010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1544 ns)>
+<Event f4ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 84010040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (1552 ns)>
+<Event f4ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 94010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1616 ns)>
+<Event edff0000 #200297-1-0-1 (peak_height_data_2) = -2 (-0.001 V)>
+<Event 96010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1624 ns)>
+<Event 04000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event 9d010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1652 ns)>
+<Event f8ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 9f010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1660 ns)>
+<Event faff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event a1010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1668 ns)>
+<Event fcff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event b6010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1752 ns)>
+<Event f1ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event c5010040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (1812 ns)>
+<Event e2ff0000 #200297-1-0-1 (peak_height_data_2) = -2 (-0.001 V)>
+<Event d2010070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (1864 ns)>
+<Event f5ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event ed010070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (1972 ns)>
+<Event e3ff0000 #200297-1-0-1 (peak_height_data_2) = -2 (-0.001 V)>
+<Event fe010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (2040 ns)>
+<Event fcff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 15020040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (2132 ns)>
+<Event fdff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 16020040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (2136 ns)>
+<Event f0ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 34020060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (2256 ns)>
+<Event 00000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event 3b020060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (2284 ns)>
+<Event f9ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 4b020060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (2348 ns)>
+<Event f6ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 5c020040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (2416 ns)>
+<Event f8ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 5e020050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (2424 ns)>
+<Event f4ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 20000060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (128 ns)>
+<Event 00000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event 27000070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (156 ns)>
+<Event 18000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 35000050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (212 ns)>
+<Event 12000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 37000040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (220 ns)>
+<Event 11000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 44000060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (272 ns)>
+<Event 16000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 6f000060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (444 ns)>
+<Event 05000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event 70000070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (448 ns)>
+<Event 24000000 #200297-1-0-1 (peak_height_data_2) = 2 (0.001 V)>
+<Event 78000040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (480 ns)>
+<Event 1b000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 7f000050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (508 ns)>
+<Event 11000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 90000060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (576 ns)>
+<Event 16000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 97000070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (604 ns)>
+<Event 16000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 9a000070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (616 ns)>
+<Event 1c000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event ba000060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (744 ns)>
+<Event 14000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event e6000040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (920 ns)>
+<Event 17000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 12010040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (1096 ns)>
+<Event 09000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event 2b010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1196 ns)>
+<Event 10000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 2d010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1204 ns)>
+<Event 11000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 35010040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (1236 ns)>
+<Event 16000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 47010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1308 ns)>
+<Event 17000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 4e010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1336 ns)>
+<Event 04000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event 63010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1420 ns)>
+<Event 14000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 79010040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (1508 ns)>
+<Event 12000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 96010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1624 ns)>
+<Event 14000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event a9010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1700 ns)>
+<Event 0a000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event c0010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1792 ns)>
+<Event 14000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event c4010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1808 ns)>
+<Event 13000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event c9010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1828 ns)>
+<Event 14000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event e3010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1932 ns)>
+<Event 09000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event ee010070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (1976 ns)>
+<Event 1d000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event ff010070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (2044 ns)>
+<Event 1d000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 01020040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (2052 ns)>
+<Event 12000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 03020070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (2060 ns)>
+<Event 11000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 2c020060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (2224 ns)>
+<Event 0b000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event 2f020050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (2236 ns)>
+<Event 19000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 37020040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (2268 ns)>
+<Event 00000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event 3f020070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (2300 ns)>
+<Event 17000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 42020050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (2312 ns)>
+<Event 04000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event 44020050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (2320 ns)>
+<Event 1c000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 6c020060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (2480 ns)>
+<Event 1e000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event 7d020040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (2548 ns)>
+<Event 01000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event 84020060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (2576 ns)>
+<Event 1d000000 #200297-1-0-1 (peak_height_data_2) = 1 (0.001 V)>
+<Event d2020050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (2888 ns)>
+<Event 22000000 #200297-1-0-1 (peak_height_data_2) = 2 (0.001 V)>
+<Event 09000050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (36 ns)>
+<Event 03000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event 0e000070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (56 ns)>
+<Event 0b000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event 10000050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (64 ns)>
+<Event 06000000 #200297-1-0-1 (peak_height_data_2) = 0 (0.0 V)>
+<Event 12000060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (72 ns)>
+<Event f1ff0000 #200297-1-0-1 (peak_height_data_2) = -1 (-0.001 V)>
+<Event 24000050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (144 ns)>
+<Event abfd0000 #200297-1-0-1 (peak_height_data_2) = -38 (-0.023 V)>
+<Event 26000070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (152 ns)>
+<Event 62fd0000 #200297-1-0-1 (peak_height_data_2) = -42 (-0.026 V)>
+<Event 28000060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (160 ns)>
+<Event b5fb0000 #200297-1-0-1 (peak_height_data_2) = -69 (-0.042 V)>
+<Event 2a000070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (168 ns)>
+<Event c3fb0000 #200297-1-0-1 (peak_height_data_2) = -68 (-0.042 V)>
+<Event 2d000040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (180 ns)>
+<Event 19fc0000 #200297-1-0-1 (peak_height_data_2) = -63 (-0.039 V)>
+<Event 2e000060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (184 ns)>
+<Event 23fc0000 #200297-1-0-1 (peak_height_data_2) = -62 (-0.038 V)>
+<Event 43000040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (268 ns)>
+<Event 10fd0000 #200297-1-0-1 (peak_height_data_2) = -47 (-0.029 V)>
+<Event 45000050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (276 ns)>
+<Event 11fd0000 #200297-1-0-1 (peak_height_data_2) = -47 (-0.029 V)>
+<Event 5a000070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (360 ns)>
+<Event 84fd0000 #200297-1-0-1 (peak_height_data_2) = -40 (-0.025 V)>
+<Event 91000050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (580 ns)>
+<Event dcfd0000 #200297-1-0-1 (peak_height_data_2) = -35 (-0.022 V)>
+<Event 9a000040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (616 ns)>
+<Event e1fd0000 #200297-1-0-1 (peak_height_data_2) = -34 (-0.021 V)>
+<Event a0000040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (640 ns)>
+<Event edfd0000 #200297-1-0-1 (peak_height_data_2) = -34 (-0.021 V)>
+<Event ac000060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (688 ns)>
+<Event e3fd0000 #200297-1-0-1 (peak_height_data_2) = -34 (-0.021 V)>
+<Event e0000050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (896 ns)>
+<Event 2afe0000 #200297-1-0-1 (peak_height_data_2) = -30 (-0.018 V)>
+<Event e2000040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (904 ns)>
+<Event 1bfe0000 #200297-1-0-1 (peak_height_data_2) = -31 (-0.019 V)>
+<Event e9000040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (932 ns)>
+<Event 28fe0000 #200297-1-0-1 (peak_height_data_2) = -30 (-0.018 V)>
+<Event f6000070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (984 ns)>
+<Event 26fe0000 #200297-1-0-1 (peak_height_data_2) = -30 (-0.018 V)>
+<Event 06010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1048 ns)>
+<Event 17fe0000 #200297-1-0-1 (peak_height_data_2) = -31 (-0.019 V)>
+<Event 07010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1052 ns)>
+<Event 19fe0000 #200297-1-0-1 (peak_height_data_2) = -31 (-0.019 V)>
+<Event 0b010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1068 ns)>
+<Event 21fe0000 #200297-1-0-1 (peak_height_data_2) = -30 (-0.018 V)>
+<Event 16010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1112 ns)>
+<Event 35fe0000 #200297-1-0-1 (peak_height_data_2) = -29 (-0.018 V)>
+<Event 1a010040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (1128 ns)>
+<Event 3dfe0000 #200297-1-0-1 (peak_height_data_2) = -29 (-0.018 V)>
+<Event 1b010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1132 ns)>
+<Event 32fe0000 #200297-1-0-1 (peak_height_data_2) = -29 (-0.018 V)>
+<Event 28010040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (1184 ns)>
+<Event 25fe0000 #200297-1-0-1 (peak_height_data_2) = -30 (-0.018 V)>
+<Event 2f010070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (1212 ns)>
+<Event 45fe0000 #200297-1-0-1 (peak_height_data_2) = -28 (-0.017 V)>
+<Event 42010040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (1288 ns)>
+<Event 48fe0000 #200297-1-0-1 (peak_height_data_2) = -28 (-0.017 V)>
+<Event 4a010040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (1320 ns)>
+<Event 4efe0000 #200297-1-0-1 (peak_height_data_2) = -28 (-0.017 V)>
+<Event 55010070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (1364 ns)>
+<Event 3efe0000 #200297-1-0-1 (peak_height_data_2) = -29 (-0.018 V)>
+<Event 5e010040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (1400 ns)>
+<Event 5afe0000 #200297-1-0-1 (peak_height_data_2) = -27 (-0.017 V)>
+<Event 62010070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (1416 ns)>
+<Event 5afe0000 #200297-1-0-1 (peak_height_data_2) = -27 (-0.017 V)>
+<Event 74010070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (1488 ns)>
+<Event 57fe0000 #200297-1-0-1 (peak_height_data_2) = -27 (-0.017 V)>
+<Event 76010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1496 ns)>
+<Event 54fe0000 #200297-1-0-1 (peak_height_data_2) = -27 (-0.017 V)>
+<Event 79010040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (1508 ns)>
+<Event 61fe0000 #200297-1-0-1 (peak_height_data_2) = -26 (-0.016 V)>
+<Event 82010050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (1544 ns)>
+<Event 73fe0000 #200297-1-0-1 (peak_height_data_2) = -25 (-0.015 V)>
+<Event 8d010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1588 ns)>
+<Event 62fe0000 #200297-1-0-1 (peak_height_data_2) = -26 (-0.016 V)>
+<Event 99010070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (1636 ns)>
+<Event 55fe0000 #200297-1-0-1 (peak_height_data_2) = -27 (-0.017 V)>
+<Event 9b010070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (1644 ns)>
+<Event 79fe0000 #200297-1-0-1 (peak_height_data_2) = -25 (-0.015 V)>
+<Event ad010040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (1716 ns)>
+<Event 77fe0000 #200297-1-0-1 (peak_height_data_2) = -25 (-0.015 V)>
+<Event 81000070 #200297-1-0-1 (peak_height_data_1) = Peak #3 (516 ns)>
+<Event 12ff0000 #200297-1-0-1 (peak_height_data_2) = -15 (-0.009 V)>
+<Event 87000040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (540 ns)>
+<Event 12ff0000 #200297-1-0-1 (peak_height_data_2) = -15 (-0.009 V)>
+<Event aa000050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (680 ns)>
+<Event 19010000 #200297-1-0-1 (peak_height_data_2) = 17 (0.01 V)>
+<Event bf000050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (764 ns)>
+<Event 66000000 #200297-1-0-1 (peak_height_data_2) = 6 (0.004 V)>
+<Event d3000040 #200297-1-0-1 (peak_height_data_1) = Peak #0 (844 ns)>
+<Event 74de0000 #200297-1-0-1 (peak_height_data_2) = -537 (-0.331 V)>
+<Event e8000060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (928 ns)>
+<Event 5ad00000 #200297-1-0-1 (peak_height_data_2) = -763 (-0.47 V)>
+<Event 01010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1028 ns)>
+<Event f4d00000 #200297-1-0-1 (peak_height_data_2) = -753 (-0.463 V)>
+<Event 1a010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1128 ns)>
+<Event 7dd10000 #200297-1-0-1 (peak_height_data_2) = -745 (-0.459 V)>
+<Event 33010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1228 ns)>
+<Event fcd10000 #200297-1-0-1 (peak_height_data_2) = -737 (-0.454 V)>
+<Event 4c010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1328 ns)>
+<Event 8fd20000 #200297-1-0-1 (peak_height_data_2) = -728 (-0.448 V)>
+<Event 65010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1428 ns)>
+<Event 03d30000 #200297-1-0-1 (peak_height_data_2) = -720 (-0.443 V)>
+<Event 7e010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1528 ns)>
+<Event 84d30000 #200297-1-0-1 (peak_height_data_2) = -712 (-0.438 V)>
+<Event 97010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1628 ns)>
+<Event 05d40000 #200297-1-0-1 (peak_height_data_2) = -704 (-0.433 V)>
+<Event c9010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1828 ns)>
+<Event 08d50000 #200297-1-0-1 (peak_height_data_2) = -688 (-0.423 V)>
+<Event e2010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (1928 ns)>
+<Event 89d50000 #200297-1-0-1 (peak_height_data_2) = -680 (-0.419 V)>
+<Event fb010060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (2028 ns)>
+<Event 17d60000 #200297-1-0-1 (peak_height_data_2) = -671 (-0.413 V)>
+<Event 14020060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (2128 ns)>
+<Event 9fd60000 #200297-1-0-1 (peak_height_data_2) = -663 (-0.408 V)>
+<Event 2d020060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (2228 ns)>
+<Event f5d60000 #200297-1-0-1 (peak_height_data_2) = -657 (-0.404 V)>
+<Event 46020050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (2328 ns)>
+<Event 78d70000 #200297-1-0-1 (peak_height_data_2) = -649 (-0.399 V)>
+<Event 5f020060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (2428 ns)>
+<Event fed70000 #200297-1-0-1 (peak_height_data_2) = -641 (-0.395 V)>
+<Event 78020050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (2528 ns)>
+<Event 86d80000 #200297-1-0-1 (peak_height_data_2) = -632 (-0.389 V)>
+<Event 91020060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (2628 ns)>
+<Event f7d80000 #200297-1-0-1 (peak_height_data_2) = -625 (-0.385 V)>
+<Event dc020060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (2928 ns)>
+<Event 5cda0000 #200297-1-0-1 (peak_height_data_2) = -603 (-0.371 V)>
+<Event f5020060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (3028 ns)>
+<Event dbda0000 #200297-1-0-1 (peak_height_data_2) = -595 (-0.366 V)>
+<Event 0e030060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (3128 ns)>
+<Event 67db0000 #200297-1-0-1 (peak_height_data_2) = -586 (-0.361 V)>
+<Event 27030060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (3228 ns)>
+<Event efdb0000 #200297-1-0-1 (peak_height_data_2) = -578 (-0.356 V)>
+<Event 59030050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (3428 ns)>
+<Event d2dc0000 #200297-1-0-1 (peak_height_data_2) = -563 (-0.347 V)>
+<Event 72030060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (3528 ns)>
+<Event 4add0000 #200297-1-0-1 (peak_height_data_2) = -556 (-0.342 V)>
+<Event 8b030060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (3628 ns)>
+<Event d0dd0000 #200297-1-0-1 (peak_height_data_2) = -547 (-0.337 V)>
+<Event a4030060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (3728 ns)>
+<Event 3ede0000 #200297-1-0-1 (peak_height_data_2) = -541 (-0.333 V)>
+<Event bd030060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (3828 ns)>
+<Event bede0000 #200297-1-0-1 (peak_height_data_2) = -533 (-0.328 V)>
+<Event d6030050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (3928 ns)>
+<Event 48df0000 #200297-1-0-1 (peak_height_data_2) = -524 (-0.323 V)>
+<Event ef030050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (4028 ns)>
+<Event b7df0000 #200297-1-0-1 (peak_height_data_2) = -517 (-0.318 V)>
+<Event 08040060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (4128 ns)>
+<Event 27e00000 #200297-1-0-1 (peak_height_data_2) = -510 (-0.314 V)>
+<Event 21040060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (4228 ns)>
+<Event a7e00000 #200297-1-0-1 (peak_height_data_2) = -502 (-0.309 V)>
+<Event 3a040060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (4328 ns)>
+<Event 1ae10000 #200297-1-0-1 (peak_height_data_2) = -495 (-0.305 V)>
+<Event 53040060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (4428 ns)>
+<Event a7e10000 #200297-1-0-1 (peak_height_data_2) = -486 (-0.299 V)>
+<Event 6c040060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (4528 ns)>
+<Event 10e20000 #200297-1-0-1 (peak_height_data_2) = -479 (-0.295 V)>
+<Event 85040060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (4628 ns)>
+<Event 60e20000 #200297-1-0-1 (peak_height_data_2) = -474 (-0.292 V)>
+<Event 9e040060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (4728 ns)>
+<Event f2e20000 #200297-1-0-1 (peak_height_data_2) = -465 (-0.286 V)>
+<Event d0040060 #200297-1-0-1 (peak_height_data_1) = Peak #2 (4928 ns)>
+<Event 06e40000 #200297-1-0-1 (peak_height_data_2) = -448 (-0.276 V)>
+<Event e9040050 #200297-1-0-1 (peak_height_data_1) = Peak #1 (5028 ns)>
+<Event 80e40000 #200297-1-0-1 (peak_height_data_2) = -440 (-0.271 V)>
+
+Event counts:
+
+<EventType 'begin_event', regex 'ffffffff'>: 10
+<EventType 'begin_sub_event', regex '00ffffff'>: 10
+<EventType 'byte_order', regex 'f4f3f2f1'>: 10
+<EventType 'fmc228_number', regex '..ccccfc'>: 10
+<EventType 'sub_event_number_evn', regex '........'>: 10
+<EventType 'event_number_evn', regex '........'>: 10
+<EventType 'begin_raw_data', regex 'fdfdfdfd'>: 10
+<EventType 'byte_order2', regex 'f4f3f2f1'>: 10
+<EventType 'event_number_evn2', regex '........'>: 10
+<EventType 'channel_header', regex 'fafa..fa'>: 40
+<EventType 'waveform', regex 'ffff....'>: 40
+<EventType 'fragment_trig_mask', regex '0000....'>: 40
+<EventType 'stat', regex '........'>: 40
+<EventType 'status_word', regex '........'>: 40
+<EventType 'bco_low', regex '........'>: 40
+<EventType 'bco_high', regex '........'>: 40
+<EventType 'data_length', regex '....aaff'>: 0
+<EventType 'raw_data', regex '........'>: 4000
+<EventType 'end_of_channel', regex 'fbfbfbfb'>: 40
+<EventType 'end_raw_data', regex 'fefefefe'>: 10
+<EventType 'begin_peak_data', regex 'efefefef'>: 10
+<EventType 'channel_number', regex 'eeee....'>: 40
+<EventType 'peak_finding_header', regex 'aaaaaaaa'>: 40
+<EventType 'peak_height_header', regex 'cccccccc'>: 40
+<EventType 'peak_height_data_1', regex '....00..'>: 1680
+<EventType 'peak_height_data_2', regex '........'>: 1680
+<EventType 'peak_height_end', regex 'cececece'>: 40
+<EventType 'peak_area_header', regex 'dddddddd'>: 40
+<EventType 'peak_area_data_1', regex '....1111'>: 85
+<EventType 'peak_area_data_2', regex '........'>: 85
+<EventType 'peak_area_data_3', regex '........'>: 85
+<EventType 'peak_area_data_4', regex '......0.'>: 85
+<EventType 'peak_area_data_5', regex '......0.'>: 85
+<EventType 'peak_area_data_6', regex '......0.'>: 85
+<EventType 'peak_area_end', regex 'dededede'>: 40
+<EventType 'end_peak_data', regex 'bbbbbbbb'>: 40
+<EventType 'end_peak_channel', regex 'ecececec'>: 40
+<EventType 'end_peak_stream_data', regex 'edededed'>: 10
+<EventType 'end_sub_event', regex '00fcfcfc'>: 10
+<EventType 'end_event', regex 'fcfcfcfc'>: 10
+Used input file data_20250516_182203.dat
+
+First event had 336 / 2 = 168 peaks.
+Total number of peaks is 1680, so perfectly 168 peaks per event.
+
+For peak area, it's

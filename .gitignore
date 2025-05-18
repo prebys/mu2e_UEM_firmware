@@ -145,3 +145,4 @@ sources/
 socketudp/__pycache__/__init__.cpython-310.pyc
 socketudp/__pycache__/hex_check_classes.cpython-310.pyc
 socketudp/__pycache__/hex_check.cpython-310.pyc
+socketudp/tests/__pycache__/*

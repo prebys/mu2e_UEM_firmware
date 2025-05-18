@@ -4,18 +4,18 @@ import os
 import struct
 import re
 import sys
-from collections import namedtuple
 from dataclasses import field, dataclass
 from datetime import datetime
 
-from typing import Optional, Union
+from typing import NamedTuple, Optional, Union
 
-PeakHeader = namedtuple("PeakHeader", ["position", "time_ns"])
-PeakHeight = namedtuple("PeakHeight", ["height"])
+PeakHeader = NamedTuple("PeakHeader", [("position", int), ("time_ns", int)])
+PeakHeight = NamedTuple("PeakHeight", [("height", int)])
 
-DoubleADCTupleWithCount = namedtuple("DoubleADCTupleWithCount", ["adc1", "adc2", "count"])  # s12
-DoubleADCTuple = namedtuple("DoubleADCTuple", ["adc1", "adc2"])  # s16 mode
-SingleADC = namedtuple("SingleADC", ["adc"])  # s32 mode
+DoubleADCTupleWithCount = NamedTuple("DoubleADCTupleWithCount", 
+                                     [("adc1", int), ("adc2", int), ("count", int)])  # s12
+DoubleADCTuple = NamedTuple("DoubleADCTuple", [("adc1", int), ("adc2", int)])  # s16 mode
+SingleADC = NamedTuple("SingleADC", [("adc", int)])  # s32 mode
 ADCTypes = Union[DoubleADCTupleWithCount, DoubleADCTuple, SingleADC]
 
 if __name__ == "__main__":
@@ -61,8 +61,10 @@ class EventType:
             return True
         if config.show_nothing:
             return False
-        if self.name in config.only_show:
-            return True
+        for show_this_event_name in config.only_show:
+            # allow partial matches, for example, "peak_height_data" will match both data events
+            if show_this_event_name in self.name:
+                return True
         return self._show
     
     @functools.cached_property
@@ -152,7 +154,10 @@ class Event:
         """Return the channel number of the event."""
         if self.type == begin_event:
             return 0
-        return self.get_event_channel_number("channel_number", channel_header)
+        if self.type in [channel_header, channel_number]:
+            return self.data + 1  # change range of channels from 0~3 to 1~4
+        else:
+            return getattr(self.previous_event, "channel_number", 0)
     
     @functools.cached_property
     def previous_event(self) -> Optional["PrevEvent"]:
@@ -231,12 +236,15 @@ class Event:
         else:
             raise ValueError("This event is not a peak_height_data event.")
     
-    def get_event_channel_number(self, number_type: str, event_type: EventType) -> int:
+    def get_event_channel_number(self,
+                                 number_type: str,  # either event_number or sub_event_number
+                                 event_type: EventType
+                                 ) -> int:
+        """This function can be used for event number or sub_event number."""
+        # if the current event is one of the special ones, update channel number
         if self.type == event_type:
-            if event_type == channel_header:
-                return self.data + 1  # change range of channels from 0~3 to 1~4
-            else:
-                return self.data
+            return self.data
+        # otherwise, return the previous event's channel number and carry it over
         else:
             return getattr(self.previous_event, number_type, 0)
     
@@ -619,14 +627,19 @@ raw_data = EventType('........', ['end_of_channel', 'raw_data'])
 end_of_channel = EventType('fbfbfbfb', ['end_raw_data', 'channel_header'])
 end_raw_data = EventType('fefefefe', ['begin_peak_data'])
 begin_peak_data = EventType('efefefef', ['channel_number'])
-channel_number = EventType('eeee....', ['peak_finding_header'])
+channel_number = EventType('eeee..ee', ['peak_finding_header'])
 peak_finding_header = EventType('aaaaaaaa', ['peak_height_header'])
 peak_height_header = EventType('cccccccc', ['peak_height_end', 'peak_height_data_1'])
-peak_height_data_1 = EventType('........', ['peak_height_data_2'])
+peak_height_data_1 = EventType('....00..', ['peak_height_data_2'])
 peak_height_data_2 = EventType('........', ['peak_height_end', 'peak_height_data_1'])
 peak_height_end = EventType('cececece', ['peak_area_header'])
-peak_area_header = EventType('dddddddd', ['peak_area_end', 'peak_area_data'])
-peak_area_data = EventType('........', ['peak_area_end', 'peak_area_data'])
+peak_area_header = EventType('dddddddd', ['peak_area_end', 'peak_area_data_1'])
+peak_area_data_1 = EventType('....1111', ['peak_area_data_2'])
+peak_area_data_2 = EventType('........', ['peak_area_data_3'])
+peak_area_data_3 = EventType('........', ['peak_area_data_4'])
+peak_area_data_4 = EventType('......0.', ['peak_area_data_5'])
+peak_area_data_5 = EventType('......0.', ['peak_area_data_6'])
+peak_area_data_6 = EventType('......0.', ['peak_area_end', 'peak_area_data_1'])
 peak_area_end = EventType('dededede', ['end_peak_data'])
 end_peak_data = EventType('bbbbbbbb', ['end_peak_channel'])
 end_peak_channel = EventType('ecececec', ['end_peak_stream_data', 'channel_number'])

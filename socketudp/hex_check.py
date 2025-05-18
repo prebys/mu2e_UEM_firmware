@@ -56,8 +56,8 @@ class Config:
     plotting_mode = "raw_data"  # "raw_data" or "peak_height" or "both"
     
     # set number of events and subevents
-    n_events: int = 5
-    n_subevents: int = 19
+    n_events: int = 1
+    n_subevents: int = 1
 
     # search for cosmic events
     # set to True to only plot subevents where the voltage range in one of the three channels is greater than 0.5V
@@ -69,13 +69,13 @@ class Config:
     plotting_units: str = "volts"  # "volts" or "raw"
 
     # if True, will print all event types regardless of the "only_show" list below
-    show_all: bool = False
+    show_all: bool = True
 
     # if True, will print NO EVENTS regardless of the "only_show" list
     show_nothing: bool = False
 
     # if this contains entries, then this code will only print the events in this list
-    only_show: list[str] = field(default_factory=lambda: ['raw_data'])  # ["peak_height_data_1"])  # , "event_number_evn", etc.
+    only_show: list[str] = field(default_factory=lambda: ['peak_height_data', 'peak_area_data'])  # ["peak_height_data_1"])  # , "event_number_evn", etc.
     # set to empty list [] to use the "show" attribute of the name_to_event dictionary
     
     # maximum number of logs to show
@@ -145,6 +145,11 @@ class HexCheck:
                 previous_event=current_event  # this "current_event" is the event from the previous loop
             )
             
+            # end file processing if the event number and subevent number
+            # are greater than the configured values
+            if current_event.internal_event_number > config.n_events:
+                break
+            
             # current_event object contains:
             # - current_event.hex: the current hex value
             # - current_event.previous_event: the previous event object
@@ -177,7 +182,8 @@ class HexCheck:
                 number_of_printed_logs += 1
                 print(current_event)
                 if number_of_printed_logs == config.n_logs_to_show:
-                    print(f"[INFO] Printing of data has been limited to {config.n_logs_to_show} logs.")
+                    print(f"[INFO] Printing of data has been "
+                          f"limited to {config.n_logs_to_show} logs.")
         
         for _, event_type in self.name_to_event.items():
             count = self.event_counts.get(event_type, 0)
