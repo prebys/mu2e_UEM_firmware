@@ -103,34 +103,34 @@ architecture Behavioral of peakfinding is
     );
  end component;
 
- component peakhigh_module
-   port (
-    rst : in std_logic;
-    clk_a : in std_logic; 
-    intrigger : in std_logic;
-    inwr : in std_logic;
-    inbusy : in std_logic;
-    startplus : in std_logic;
-    datain : in std_logic_vector(15 downto 0);
-    datain_org0 : in std_logic_vector(15 downto 0);
-    datain_org1 : in std_logic_vector(15 downto 0);
-    datain_org2 : in std_logic_vector(15 downto 0);
-    datain_org3 : in std_logic_vector(15 downto 0);
-    datain_max : in std_logic_vector(15 downto 0);
-    ithr : in std_logic_vector(31 downto 0);
+-- component peakhigh_module
+--   port (
+--    rst : in std_logic;
+--    clk_a : in std_logic; 
+--    intrigger : in std_logic;
+--    inwr : in std_logic;
+--    inbusy : in std_logic;
+--    startplus : in std_logic;
+--    datain : in std_logic_vector(15 downto 0);
+--    datain_org0 : in std_logic_vector(15 downto 0);
+--    datain_org1 : in std_logic_vector(15 downto 0);
+--    datain_org2 : in std_logic_vector(15 downto 0);
+--    datain_org3 : in std_logic_vector(15 downto 0);
+--    datain_max : in std_logic_vector(15 downto 0);
+--    ithr : in std_logic_vector(31 downto 0);
     
-    dintime : in std_logic_vector(1 downto 0);
-    clk_b : in std_logic;
-    wrdata : out std_logic;
-    rden : in std_logic;
-    peakhigh_out : out std_logic_vector(15 downto 0);
-    outevent_number : out std_logic_vector(31 downto 0);
-    outempty : out std_logic;
-    outvalid : out std_logic;
-    --startproc : in std_logic;
-    dout : out std_logic_vector(31 downto 0)
-    );
- end component;
+--    dintime : in std_logic_vector(1 downto 0);
+--    clk_b : in std_logic;
+--    wrdata : out std_logic;
+--    rden : in std_logic;
+--    peakhigh_out : out std_logic_vector(15 downto 0);
+--    outevent_number : out std_logic_vector(31 downto 0);
+--    outempty : out std_logic;
+--    outvalid : out std_logic;
+--    --startproc : in std_logic;
+--    dout : out std_logic_vector(31 downto 0)
+--    );
+-- end component;
 
  component sumarea_fifo
   port(

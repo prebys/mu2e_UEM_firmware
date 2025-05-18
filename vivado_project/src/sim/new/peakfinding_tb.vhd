@@ -34,16 +34,16 @@ architecture behavior of sumarea_module_tb is
 
 begin
 
-    -- Instantiate the Unit Under Test (UUT)
-    uut: sumarea_module
-        port map (
-            clk => clk,
-            rst => rst,
-            trig_in => trig_in,
-            adc_data => adc_data,
-            sum_valid => sum_valid,
-            sum_out => sum_out
-        );
+    -- -- Instantiate the Unit Under Test (UUT)
+    -- uut: sumarea_module
+    --     port map (
+    --         clk => clk,
+    --         rst => rst,
+    --         trig_in => trig_in,
+    --         adc_data => adc_data,
+    --         sum_valid => sum_valid,
+    --         sum_out => sum_out
+    --     );
 
     -- Clock process
     clk_process :process

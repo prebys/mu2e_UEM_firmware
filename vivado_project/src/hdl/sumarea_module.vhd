@@ -22,6 +22,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+library common;
+use common.TextUtil.all;
+
 entity sumarea_module is
   port (
     rst : in std_logic;
@@ -54,8 +57,12 @@ end sumarea_module;
 
 architecture Behavioral of sumarea_module is
 
---signal thr : std_logic_vector(15 downto 0) := x"F380"; --thr = -200
-signal thr : std_logic_vector(15 downto 0) := ithr(15 downto 0);
+-- signal thr : std_logic_vector(15 downto 0) := x"F380"; --thr = -200
+signal thr : std_logic_vector(15 downto 0) := x"B000";  -- 0xB000 = -20480
+-- IMPORTANT: when passing in a threshold value through minicom, only assign up to 16 bits
+--   For example, passing in 0xB000 would be fine, it will get passed in as 0x0000_B000, and 
+--   the top 16 bits will be ignored. 
+--   No extra logic is needed to convert the 32-bit value to 16 bits
 
 signal sum : std_logic_vector(31 downto 0):=( others => '0' );
 signal sum0 : std_logic_vector(31 downto 0):=( others => '0' );
@@ -86,21 +93,6 @@ signal latch_counter0_64bit : integer range 0 to data_count_64bit - 1;
 signal latch_counter1_64bit : integer range 0 to data_count_64bit - 1;
 signal latch_counter2_64bit : integer range 0 to data_count_64bit - 1;
 
-signal latch_datain_org0 : signed(15 downto 0);
-signal latch_datain_org1 : signed(15 downto 0);
-signal latch_datain_org2 : signed(15 downto 0);
-signal latch_datain_org3 : signed(15 downto 0);
-
-signal latch2_datain_org0 : signed(15 downto 0);
-signal latch2_datain_org1 : signed(15 downto 0);
-signal latch2_datain_org2 : signed(15 downto 0);
-signal latch2_datain_org3 : signed(15 downto 0);
-
-signal latch3_datain_org0 : signed(15 downto 0);
-signal latch3_datain_org1 : signed(15 downto 0);
-signal latch3_datain_org2 : signed(15 downto 0);
-signal latch3_datain_org3 : signed(15 downto 0);
-
 signal fifo_rst : std_logic;
 
 signal last_inwr : std_logic;
@@ -113,8 +105,14 @@ signal peak_data0_tmp : std_logic_vector (15 downto 0);
 signal minpeak : std_logic_vector (15 downto 0);
 signal maxdata : std_logic_vector(15 downto 0) := x"8000";
 
-type sample_array is array (0 to 11) of signed(15 downto 0);
-signal samples : sample_array;        -- latched values t-3 to t-1
+type sample_array is array (0 to 7) of signed(15 downto 0);
+type sample_input_array is array (0 to 3) of signed(15 downto 0);
+type full_sample_array is array (0 to 11) of signed(15 downto 0);
+
+signal samples : sample_array;        -- latched values t-2 and t-1
+signal inputs  : sample_input_array;  -- direct wires for t
+signal samples_full : full_sample_array; -- all values (inc. direct wires) from t-2, t-1, and t
+
 
   type sumstate_t is ( Idle,
                     WaitCount,
@@ -132,16 +130,192 @@ signal samples : sample_array;        -- latched values t-3 to t-1
                      );
   signal sumstate : sumstate_t;
 
+  -- Peak detection functions
+  -- Below function matches a simple V shape
+  --     (i-2)                 (i+2)
+  --          (i-1)      (i+1)
+  --               (*i*)
+function is_v_valley_centered_at(
+    i : integer;
+    v : full_sample_array;
+    thr : signed(15 downto 0)
+  ) return boolean is
+  begin
+    return (
+      v(i-2) > v(i-1) and
+      v(i-1) > v(i)   and
+      v(i)   < v(i+1) and
+      v(i+1) < v(i+2) and
+      v(i)   < signed(thr)
+    );
+  end function;
+  
+  -- Below function matches a flat-bottom
+  --      (i-2)                     (i+3)
+  --           (i-1)           (i+2)
+  --                (*i*) (i+1)
+  -- 
+  -- For the left-most point in the center four points (i=4), it also matches a flat-bottom extending into i=3
+  --      (i-3)                     (i+2)
+  --           (i-2)           (i+1)
+  --                (i-1) (*i*)
+  --
+
+  function is_flat_bottom_valley_at_left(
+    i : integer;
+    v : full_sample_array;
+    thr : signed(15 downto 0)
+  ) return boolean is
+  begin
+    return (
+      v(i-3) > v(i-2) and
+      v(i-2) > v(i-1) and
+      v(i-1) = v(i) and
+      v(i)   < v(i+1) and
+      v(i+1) < v(i+2) and
+      v(i)   < signed(thr)
+    );
+  end function;
+
+   function is_flat_bottom_valley_at_right(
+    i : integer;
+    v : full_sample_array;
+    thr : signed(15 downto 0)
+  ) return boolean is
+  begin
+    return (
+      v(i-2) > v(i-1) and
+      v(i-1) > v(i) and
+      v(i)   = v(i+1) and
+      v(i+1) < v(i+2) and
+      v(i+2) < v(i+3) and
+      v(i)   < signed(thr)
+    );
+  end function;
+
+  function is_flat_bottom_valley_at(
+    i : integer;
+    v : full_sample_array;
+    thr : signed(15 downto 0)
+  ) return boolean is
+   -- This function checks for a flat bottom valley at the given index
+   -- if it's the leftmost index (i=4), then it also checks for if the flat-bottom 
+   -- went to the left at i=3 or right at i=5
+   -- for the base at i=5, it doesn't need to check left anymore because the right-sided i=4 
+   -- case already checked for that
+  begin
+   if (i = 4) then
+      return is_flat_bottom_valley_at_left(i, v, thr) or
+             is_flat_bottom_valley_at_right(i, v, thr);
+   else
+      return is_flat_bottom_valley_at_right(i, v, thr);
+   end if;
+  end function;
+  
+
+  -- Matches patterns of the following form
+  --  (i-2)                                 (i+4) 
+  --        (i-1)        (i+1)        (i+3)
+  --              (*i*)        (i+2) 
+  function is_ripple_valley_at(
+    i : integer;
+    v : full_sample_array;
+    thr : signed(15 downto 0)
+  ) return boolean is
+  begin
+    return (
+      v(i-2) > v(i-1) and
+      v(i-1) > v(i) and
+      v(i)   < v(i+1) and
+      v(i+1) > v(i+2) and
+      v(i+2) < v(i+3) and
+      v(i+3) < v(i+4) and
+      v(i)   < signed(thr)
+    );
+  end function;
+
+-- Check if a saturation pattern exists starting at index i
+function is_saturation_pattern_at(
+  i       : integer;
+  v       : full_sample_array;
+  maxdata : signed(15 downto 0)
+) return boolean is
+begin
+  return (
+    signed(v(i)   and x"fff0") = maxdata and
+    signed(v(i+1) and x"fff0") = maxdata and
+    signed(v(i+2) and x"fff0") = maxdata and
+    signed(v(i+3) and x"fff0") = maxdata
+  );
+end function;
+
+
+
+    -- Refactored peak detection logic
+function check_peaks(
+    i : integer;
+    v : full_sample_array;
+    thr : signed(15 downto 0);
+    maxdata : signed(15 downto 0)
+  ) return boolean is
+  begin
+    return (
+      is_v_valley_centered_at(i, v, thr) or
+      is_flat_bottom_valley_at(i, v, thr) or
+      is_ripple_valley_at(i, v, thr) or 
+      is_saturation_pattern_at(i, v, maxdata)
+    );
+  end function;
+
+function all_above_threshold(v: full_sample_array; thr : signed(15 downto 0)) return boolean is 
+begin
+   -- Tells if all of the middle data points are "above" the threshold
+   -- Remember, signals are negative, so "above" threshold means outside the threshold
+   return (
+      v(4) > thr and
+      v(5) > thr and
+      v(6) > thr and
+      v(7) > thr
+   );
+end function;
+
+
 begin
 
   ibusy <= inbusy;
 
-  datasum0 <= std_logic_vector(resize(latch_datain_org0, datasum0'length));
-  datasum1 <= std_logic_vector(resize(latch_datain_org1, datasum1'length));
-  datasum2 <= std_logic_vector(resize(latch_datain_org2, datasum2'length));
-  datasum3 <= std_logic_vector(resize(latch_datain_org3, datasum3'length));
+  datasum0 <= std_logic_vector(resize(samples_full(8), datasum0'length));
+  datasum1 <= std_logic_vector(resize(samples_full(9), datasum1'length));
+  datasum2 <= std_logic_vector(resize(samples_full(10), datasum2'length));
+  datasum3 <= std_logic_vector(resize(samples_full(11), datasum3'length));
 
   orst <= fifo_rst;
+
+   -- latch0 
+   inputs(0) <= signed(datain_org0);  -- latch_datain_org0
+   inputs(1) <= signed(datain_org1);  -- latch_datain_org1
+   inputs(2) <= signed(datain_org2);  -- latch_datain_org2
+   inputs(3) <= signed(datain_org3);  -- latch_datain_org3
+
+   --  latch3         latch2     (these come from latches)
+   samples_full(0) <= samples(0);  -- latch3_datain_org0  OLDEST (t=11)
+   samples_full(1) <= samples(1);  -- latch3_datain_org1
+   samples_full(2) <= samples(2);  -- latch3_datain_org2
+   samples_full(3) <= samples(3);  -- latch3_datain_org3  ~old (t=8)
+
+   --  latch2         latch1     (these come from latches)
+   samples_full(4) <= samples(4);  -- latch2_datain_org0  mid-old (t=7)
+   samples_full(5) <= samples(5);  -- latch2_datain_org1
+   samples_full(6) <= samples(6);  -- latch2_datain_org2
+   samples_full(7) <= samples(7);  -- latch2_datain_org3  mid-new (t=4)
+
+   --  latch1         latch0      (these should all be instant wires)
+   samples_full(8) <= inputs(0);  -- latch_datain_org0  ~new (t=3)
+   samples_full(9) <= inputs(1);  -- latch_datain_org1
+   samples_full(10) <= inputs(2); -- latch_datain_org2
+   samples_full(11) <= inputs(3); -- latch_datain_org3  NEWEST (t=0)
+
+   
 
  process ( clk_a )
  begin
@@ -156,45 +330,20 @@ begin
  end process;
 
  process ( clk_a )
-
   begin
     if ( clk_a'event and clk_a = '1' ) then
         last_inwr <= inwr;
         last_ibusy <= ibusy;
 
-        -- new samples
-        -- one can imagine doing something like samples.append(new_sample) 
-        --   four times with new samples, and they would go at the end of the
-        --   array, and the oldest sample would be removed from the beginning
-        samples(0) <= samples(4);  -- latch3_datain_org0
-        samples(1) <= samples(5);  -- latch3_datain_org1
-        samples(2) <= samples(6);  -- latch3_datain_org2
-        samples(3) <= samples(7);  -- latch3_datain_org3
+         samples(0) <= samples(4);  -- oldest (t=12)
+         samples(1) <= samples(5);
+         samples(2) <= samples(6);
+         samples(3) <= samples(7);  -- slightly newer (t=9)
 
-        samples(4) <= samples(8);  -- latch2_datain_org0
-        samples(5) <= samples(9);  -- latch2_datain_org1
-        samples(6) <= samples(10);  -- latch2_datain_org2
-        samples(7) <= samples(11);  -- latch2_datain_org3
-
-        samples(8) <= signed(datain_org0);  -- latch_datain_org0
-        samples(9) <= signed(datain_org1);  -- latch_datain_org1
-        samples(10) <= signed(datain_org2);  -- latch_datain_org2
-        samples(11) <= signed(datain_org3);  -- latch_datain_org3
-
-        latch_datain_org0 <= signed(datain_org0);
-        latch_datain_org1 <= signed(datain_org1);
-        latch_datain_org2 <= signed(datain_org2);
-        latch_datain_org3 <= signed(datain_org3);
-
-        latch2_datain_org0 <= latch_datain_org0;
-        latch2_datain_org1 <= latch_datain_org1;
-        latch2_datain_org2 <= latch_datain_org2;
-        latch2_datain_org3 <= latch_datain_org3;
-
-        latch3_datain_org0 <= latch2_datain_org0;
-        latch3_datain_org1 <= latch2_datain_org1;
-        latch3_datain_org2 <= latch2_datain_org2;
-        latch3_datain_org3 <= latch2_datain_org3;
+         samples(4) <= inputs(0);  -- slightly older (latched version of datain_0)
+         samples(5) <= inputs(1);
+         samples(6) <= inputs(2);
+         samples(7) <= inputs(3);  -- newest (t=0), latched of what was the last to be appended
 
       if ( rst = '1' ) then
           event_number <= (others => '0');
@@ -204,6 +353,7 @@ begin
           counter <= 0;
           counter_64bit <=0;
           sumstate <= Idle;
+          thr <= ithr(15 downto 0);
       else
 
         case sumstate is
@@ -215,6 +365,7 @@ begin
              counter_64bit <= 0;
              owr_peak_height <= '0';
              owr_peak_sum <= '0';
+             thr <= ithr(15 downto 0);
              if(inwr = '1' and last_inwr = '0') then
                        sumstate <= WaitCount;
                        sum <= ( others => '0' );
@@ -248,10 +399,10 @@ begin
                --------------------------------------------------------------
                --  sum area condition at latch_datain_org
                --  ----------------------------------------------------------
-               if(    (latch2_datain_org0 < signed(thr) )                   
-               and (latch2_datain_org1 < signed(thr) )                   
-               and (latch2_datain_org2 < signed(thr) )                   
-               and (latch2_datain_org3 < signed(thr) )
+               if(    (samples_full(4) < signed(thr) )                   
+               and (samples_full(5) < signed(thr) )                   
+               and (samples_full(6) < signed(thr) )                   
+               and (samples_full(7) < signed(thr) )
                --------------------------------------------------------------
                --  end sum area condition at latch_datain_org
                --------------------------------------------------------------
@@ -290,298 +441,72 @@ begin
              counter_64bit <= counter_64bit + 1;
              sum <= std_logic_vector(signed(sum) + signed(latch2_datainsum));
              owr_peak_sum <= '0';
-                if( latch2_datain_org0 > signed(thr)
-                    and latch2_datain_org1 > signed(thr)
-                    and latch2_datain_org2 > signed(thr)
-                    and latch2_datain_org3 > signed(thr)
-                   ) then
+                if( all_above_threshold(samples_full, signed(thr)) ) then
                     sumstate <= SendStrobeCheck; --SendStrobe0;
                     latch_counter2 <= counter;
                     latch_counter2_64bit <= counter_64bit;
                  elsif (sum0_stop = '1') then
-			sum0 <= sum;
+			               sum0 <= sum;
                         latch_counter0_64bit <= counter_64bit;
                         sumstate <= SendSum3;
-		 else
-			sum0 <= sum0;
+		            else
+			               sum0 <= sum0;
                         sumstate <= SendSum2;
                  end if;
+
+                  -- -- Print comparisons between adjacent samples from 0 to 11
+                  -- PrintT("");  -- print a blank line for spacing
+                  -- for i in 0 to 10 loop
+                  --    Print("samples_full(" & integer'image(i) & ") > samples_full(" & integer'image(i+1) & ") = " &
+                  --          boolean'image(samples_full(i) > samples_full(i+1)));
+                  -- end loop;
+
 
 
                 --=============================================================
                 -- peak high with data one by one
                 --==============================================================
 
-                -- peak at latch2_datain_org0
-                --  \   /
-                --   \/
-                if (    latch3_datain_org2 > latch3_datain_org3
-                        and latch3_datain_org3 > latch2_datain_org0
-                        and latch2_datain_org1 > latch2_datain_org0
-                        and latch2_datain_org2 > latch2_datain_org1
-                        and latch2_datain_org0 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
-                           minpeak <= std_logic_vector(latch2_datain_org0);
-			   sum0_stop <= '1';
+               -- assume no peak. if a peak is found, this will be overwritten
+               owr_peak_height <= '0';  -- signals "there is no peak"
 
-                -- \   /
-                --  \_/
-                elsif ( latch3_datain_org1 > latch3_datain_org2
-                        and latch3_datain_org2 > latch3_datain_org3
-                        and latch3_datain_org3 = latch2_datain_org0
-                        and latch2_datain_org1 > latch2_datain_org0
-                        and latch2_datain_org2 > latch2_datain_org1
-                        and latch2_datain_org0 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
-                           minpeak <= std_logic_vector(latch2_datain_org0);
-			   sum0_stop <= '1';
+               -- loop from i = 4 to i = 7, running the three is_..._at()
+               for i in 4 to 7 loop
+                  if (check_peaks(i, samples_full, signed(thr), signed(maxdata)))  -- check for a peak
+                     then
+                           owr_peak_height <= '1';  -- signals "there is a peak", 
 
-                elsif ( latch3_datain_org2 > latch3_datain_org3
-                        and latch3_datain_org3 > latch2_datain_org0
-                        and latch2_datain_org1 = latch2_datain_org0
-                        and latch2_datain_org2 > latch2_datain_org1
-                        and latch2_datain_org3 > latch2_datain_org2
-                        and latch2_datain_org0 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
-                           minpeak <= std_logic_vector(latch2_datain_org0);
-			   sum0_stop <= '1';
+                           -- Format: [2-bit peak_type ("01")] & [2-bit position] & [28-bit counter] & [16-bit padding] & [12-bit peak]
+                           dout_height <= 
+                              "01" &  -- this is always 01, not sure what it means, maybe it means it's a peak in the middle four peaks of the 12
+                              std_logic_vector(to_unsigned(i-4, 2)) &  -- this shows where in the middle four points is the peak
+                              std_logic_vector(to_unsigned((counter_64bit+1), 28)) &  -- a counter that just increments every clock cycle
+                              x"0000" &  -- idk what this is, maybe just padding, they ran out of things to put here
+                              std_logic_vector(samples_full(i));  -- the peak height
 
-
-                -- \     /
-                --  \/\/
-                --
-                elsif ( latch3_datain_org2 > latch3_datain_org3
-                        and latch3_datain_org3 > latch2_datain_org0
-                        and latch2_datain_org1 > latch2_datain_org0
-                        and latch2_datain_org2 < latch2_datain_org1
-                        and latch2_datain_org3 > latch2_datain_org2
-                        and samples(8) > latch2_datain_org3
-                        and latch2_datain_org0 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
-                           minpeak <= std_logic_vector(latch2_datain_org0);
-			   sum0_stop <= '1';
-
-                -- peak at latch2_datain_org1
-                -- \  /
-                --  \/
-                elsif ( latch3_datain_org3 > latch2_datain_org0
-                        and latch2_datain_org0 > latch2_datain_org1
-                        and latch2_datain_org2 > latch2_datain_org1
-                        and latch2_datain_org3 > latch2_datain_org2
-                        and latch2_datain_org1 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org1);
-                           minpeak <= std_logic_vector(latch2_datain_org1);
-			   sum0_stop <= '1';
-
-                -- \   /
-                --  \_/
-                elsif ( latch3_datain_org3 > latch2_datain_org0
-                        and latch2_datain_org0 > latch2_datain_org1
-                        and latch2_datain_org2 = latch2_datain_org1
-                        and latch2_datain_org3 > latch2_datain_org1
-                        and samples(8) > latch2_datain_org3
-                        and latch2_datain_org1 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org1);
-                           minpeak <= std_logic_vector(latch2_datain_org1);
-			   sum0_stop <= '1';
-
-
-                -- \     /
-                --  \/\/
-                elsif ( latch3_datain_org3 > latch2_datain_org0
-                        and latch2_datain_org0 > latch2_datain_org1
-                        and latch2_datain_org2 > latch2_datain_org1
-                        and latch2_datain_org3 < latch2_datain_org2
-                        and samples(8) > latch2_datain_org3
-                        and latch_datain_org1 > samples(8)
-                        and latch2_datain_org1 < signed(thr)
-
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org1);
-                           minpeak <= std_logic_vector(latch2_datain_org1);
-			   sum0_stop <= '1';
-
-                -- peak at latch2_datain_org2
-                -- \  /
-                --  \/
-                elsif ( latch2_datain_org0 > latch2_datain_org1
-                        and latch2_datain_org1 > latch2_datain_org2
-                        and latch2_datain_org3 > latch2_datain_org2
-                        and samples(8) > latch2_datain_org3
-                        and latch2_datain_org2 < signed(thr)
-
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org2);
-                           minpeak <= std_logic_vector(latch2_datain_org2);
-			   sum0_stop <= '1';
-
-                -- \   /
-                --  \_/
-                elsif ( latch2_datain_org0 > latch2_datain_org1
-                        and latch2_datain_org1 > latch2_datain_org2
-                        and latch2_datain_org3 = latch2_datain_org2
-                        and samples(8) > latch2_datain_org2
-                        and latch_datain_org1 > samples(8)
-                        and latch2_datain_org2 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org2);
-                           minpeak <= std_logic_vector(latch2_datain_org2);
-			   sum0_stop <= '1';
-
-                --\    /
-                -- \/\/
-                elsif ( latch2_datain_org0 > latch2_datain_org1
-                        and latch2_datain_org1 > latch2_datain_org2
-                        and latch2_datain_org3 > latch2_datain_org2
-                        and samples(8) < latch2_datain_org3
-                        and latch_datain_org1 > samples(8)
-                        and latch_datain_org2 > latch_datain_org1
-                        and latch2_datain_org2 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org2);
-                           minpeak <= std_logic_vector(latch2_datain_org2);
-			   sum0_stop <= '1';
-
-                -- peak at latch2_datain_org3
-                -- \  /
-                --  \/
-                elsif ( latch2_datain_org1 > latch2_datain_org2
-                        and latch2_datain_org2 > latch2_datain_org3
-                        and samples(8) > latch2_datain_org3
-                        and latch_datain_org1 > samples(8)
-                        and latch2_datain_org3 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org3);
-                           minpeak <= std_logic_vector(latch2_datain_org3);
-			   sum0_stop <= '1';
-
-                 -- \   /
-                 --  \_/
-                 elsif ( latch2_datain_org1 > latch2_datain_org2
-                         and latch2_datain_org2 > latch2_datain_org3
-                         and samples(8) = latch2_datain_org3
-                         and latch_datain_org1 > latch2_datain_org3
-                         and latch_datain_org2 > latch_datain_org1
-                         and latch2_datain_org3 < signed(thr)
-                         ) then
-                            owr_peak_height <= '1';
-                            dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org3);
-                            minpeak <= std_logic_vector(latch2_datain_org3);
-			    sum0_stop <= '1';
-
-
-                 --\    /
-                 -- \/\/
-                 elsif ( latch2_datain_org1 > latch2_datain_org2
-                         and latch2_datain_org2 > latch2_datain_org3
-                         and samples(8) > latch2_datain_org3
-                         and latch_datain_org1 < samples(8)
-                         and latch_datain_org2 > latch_datain_org1
-                         and latch_datain_org3 > latch_datain_org2
-                         and latch2_datain_org3 < signed(thr)
-                         ) then
-                            owr_peak_height <= '1';
-                            dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org3);
-                            minpeak <= std_logic_vector(latch2_datain_org3);
-			    sum0_stop <= '1';
-
-                -- saturation at latch2_datain_org0
-                elsif ( (latch2_datain_org0 and x"fff0") = signed(maxdata)
-                        and (latch2_datain_org1 and x"fff0") = signed(maxdata)
-                        and (latch2_datain_org2 and x"fff0") = signed(maxdata)
-                        and (latch2_datain_org3 and x"fff0") = signed(maxdata)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
-                           minpeak <= std_logic_vector(latch2_datain_org0);
-			   sum0_stop <= '1';
-
-                elsif ( (latch2_datain_org0 and x"fff0") = signed(maxdata)
-                        and (latch2_datain_org1 and x"fff0") = signed(maxdata)
-                        and (latch2_datain_org2 and x"fff0") = signed(maxdata)
-                        and (latch2_datain_org3 and x"fff0") > signed(maxdata)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
-                           minpeak <= std_logic_vector(latch2_datain_org0);
-			   sum0_stop <= '1';
-
-                -- saturation at latch2_datain_org1
-                elsif ( (latch2_datain_org0 and x"fff0") > signed(maxdata)
-                        and (latch2_datain_org1 and x"fff0") = signed(maxdata)
-                        and (latch2_datain_org2 and x"fff0") = signed(maxdata)
-                        and (latch2_datain_org3 and x"fff0") = signed(maxdata)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org1);
-                           minpeak <= std_logic_vector(latch2_datain_org1);
-			   sum0_stop <= '1';
-
-                 -- saturation at latch2_datain_org2
-                 elsif ( (latch2_datain_org0 and x"fff0") > signed(maxdata)
-                         and (latch2_datain_org1 and x"fff0") > signed(maxdata)
-                         and (latch2_datain_org2 and x"fff0") = signed(maxdata)
-                         and (latch2_datain_org3 and x"fff0") = signed(maxdata)
-                         ) then
-                            owr_peak_height <= '1';
-                            dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org2);
-                            minpeak <= std_logic_vector(latch2_datain_org2);
-			    sum0_stop <= '1';
-
-                  -- saturation at latch2_datain_org3
-                  elsif ( (latch2_datain_org0 and x"fff0") > signed(maxdata)
-                          and (latch2_datain_org1 and x"fff0") > signed(maxdata)
-                          and (latch2_datain_org2 and x"fff0") > signed(maxdata)
-                          and (latch2_datain_org3 and x"fff0") = signed(maxdata)
-                          ) then
-                             owr_peak_height <= '1';
-                             dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org3);
-                             minpeak <= std_logic_vector(latch2_datain_org3);
-			     sum0_stop <= '1';
-
-                  else
-                            owr_peak_height <= '0';
-
-                  end if;
+                           minpeak <= std_logic_vector(samples_full(i));  -- the peak height (again)
+                           sum0_stop <= '1';  -- signals for this sumstate to end and move onto SendSum3
+                           exit;  -- exit the loop if you find a peak
+                     end if;
+               end loop;
 
                   --==================================================================
                   -- end
                   --==================================================================
-
+                     
           when SendSum3 =>
              sum0_stop <= sum0_stop;
              counter <= counter + 1;
              counter_64bit <= counter_64bit + 1;
              owr_peak_sum <= '0';
              sum <= std_logic_vector(signed(sum) + signed(latch2_datainsum));
-                if( latch2_datain_org0 > signed(thr)
-                    and latch2_datain_org1 > signed(thr)
-                    and latch2_datain_org2 > signed(thr)
-                    and latch2_datain_org3 > signed(thr)
-                   ) then
+                if( all_above_threshold(samples_full, signed(thr)) ) then
                     sumstate <= SendStrobeCheck; --SendStrobe0;
                     latch_counter2 <= counter;
                     latch_counter2_64bit <= counter_64bit;
-		    sum_pulse <= sum;
+		                sum_pulse <= sum;
                  else
-	           sum_pulse <= sum_pulse;
+	                sum_pulse <= sum_pulse;
                    sumstate <= SendSum3;
                  end if;
 
@@ -601,254 +526,29 @@ begin
                 -- peak high with data one by one
                 --==============================================================
 
-                -- peak at latch2_datain_org0
-                --  \   /
-                --   \/
-                if (    latch3_datain_org2 > latch3_datain_org3
-                        and latch3_datain_org3 > latch2_datain_org0
-                        and latch2_datain_org1 > latch2_datain_org0
-                        and latch2_datain_org2 > latch2_datain_org1
-                        and latch2_datain_org0 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
-                           peak_data0_tmp <= std_logic_vector(latch2_datain_org0);
+                -- default these to '0' for the state, and they still stay zero unless set to '1' in the loop below
+                owr_peak_height <= '0';
+                minpeak_stop <= '0';
+
+                -- loop from i = 4 to i = 7, running the three is_..._at()
+               for i in 4 to 7 loop
+                  if (check_peaks(i, samples_full, signed(thr), signed(maxdata)))  -- check for a peak
+                     then
+                           owr_peak_height <= '1';  -- signals "there is a peak", 
+
+                           -- Format: [2-bit peak_type ("01")] & [2-bit position] & [28-bit counter] & [16-bit padding] & [12-bit peak]
+                           dout_height <= 
+                              "01" &  -- this is always 01, not sure what it means, maybe it means it's a peak in the middle four peaks of the 12
+                              std_logic_vector(to_unsigned(i-4, 2)) &  -- this shows where in the middle four points is the peak
+                              std_logic_vector(to_unsigned((counter_64bit+1), 28)) &  -- a counter that just increments every clock cycle
+                              x"0000" &  -- idk what this is, maybe just padding, they ran out of things to put here
+                              std_logic_vector(samples_full(i));  -- the peak height
+
+                           peak_data0_tmp <= std_logic_vector(samples_full(i));
                            minpeak_stop <='1';
-
-                -- \   /
-                --  \_/
-                elsif ( latch3_datain_org1 > latch3_datain_org2
-                        and latch3_datain_org2 > latch3_datain_org3
-                        and latch3_datain_org3 = latch2_datain_org0
-                        and latch2_datain_org1 > latch2_datain_org0
-                        and latch2_datain_org2 > latch2_datain_org1
-                        and latch2_datain_org0 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                          dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
-                          peak_data0_tmp <= std_logic_vector(latch2_datain_org0);
-                           minpeak_stop <='1';
-
-                elsif ( latch3_datain_org2 > latch3_datain_org3
-                        and latch3_datain_org3 > latch2_datain_org0
-                        and latch2_datain_org1 = latch2_datain_org0
-                        and latch2_datain_org2 > latch2_datain_org1
-                        and latch2_datain_org3 > latch2_datain_org2
-                        and latch2_datain_org0 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
-                           peak_data0_tmp <= std_logic_vector(latch2_datain_org0);
-                           minpeak_stop <='1';
-
-
-                -- \     /
-                --  \/\/
-                --
-                elsif ( latch3_datain_org2 > latch3_datain_org3
-                        and latch3_datain_org3 > latch2_datain_org0
-                        and latch2_datain_org1 > latch2_datain_org0
-                        and latch2_datain_org2 < latch2_datain_org1
-                        and latch2_datain_org3 > latch2_datain_org2
-                        and samples(8) > latch2_datain_org3
-                        and latch2_datain_org0 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
-                           peak_data0_tmp <= std_logic_vector(latch2_datain_org0);
-                           minpeak_stop <='1';
-
-                -- peak at latch2_datain_org1
-                -- \  /
-                --  \/
-                elsif ( latch3_datain_org3 > latch2_datain_org0
-                        and latch2_datain_org0 > latch2_datain_org1
-                        and latch2_datain_org2 > latch2_datain_org1
-                        and latch2_datain_org3 > latch2_datain_org2
-                        and latch2_datain_org1 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org1);
-                           peak_data0_tmp <= std_logic_vector(latch2_datain_org1);
-                           minpeak_stop <='1';
-
-                -- \   /
-                --  \_/
-                elsif ( latch3_datain_org3 > latch2_datain_org0
-                        and latch2_datain_org0 > latch2_datain_org1
-                        and latch2_datain_org2 = latch2_datain_org1
-                        and latch2_datain_org3 > latch2_datain_org1
-                        and samples(8) > latch2_datain_org3
-                        and latch2_datain_org1 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org1);
-                           peak_data0_tmp <= std_logic_vector(latch2_datain_org1);
-                           minpeak_stop <='1';
-
-
-                -- \     /
-                --  \/\/
-                elsif ( latch3_datain_org3 > latch2_datain_org0
-                        and latch2_datain_org0 > latch2_datain_org1
-                        and latch2_datain_org2 > latch2_datain_org1
-                        and latch2_datain_org3 < latch2_datain_org2
-                        and samples(8) > latch2_datain_org3
-                        and latch_datain_org1 > samples(8)
-                        and latch2_datain_org1 < signed(thr)
-
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org1);
-                           peak_data0_tmp <= std_logic_vector(latch2_datain_org1);
-                           minpeak_stop <='1';
-
-                -- peak at latch2_datain_org2
-                -- \  /
-                --  \/
-                elsif ( latch2_datain_org0 > latch2_datain_org1
-                        and latch2_datain_org1 > latch2_datain_org2
-                        and latch2_datain_org3 > latch2_datain_org2
-                        and samples(8) > latch2_datain_org3
-                        and latch2_datain_org2 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org2);
-                           peak_data0_tmp <= std_logic_vector(latch2_datain_org2);
-                           minpeak_stop <='1';
-
-                -- \   /
-                --  \_/
-                elsif ( latch2_datain_org0 > latch2_datain_org1
-                        and latch2_datain_org1 > latch2_datain_org2
-                        and latch2_datain_org3 = latch2_datain_org2
-                        and samples(8) > latch2_datain_org2
-                        and latch_datain_org1 > samples(8)
-                        and latch2_datain_org2 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org2);
-                           peak_data0_tmp <= std_logic_vector(latch2_datain_org2);
-                           minpeak_stop <='1';
-
-                --\    /
-                -- \/\/
-                elsif ( latch2_datain_org0 > latch2_datain_org1
-                        and latch2_datain_org1 > latch2_datain_org2
-                        and latch2_datain_org3 > latch2_datain_org2
-                        and samples(8) < latch2_datain_org3
-                        and latch_datain_org1 > samples(8)
-                        and latch_datain_org2 > latch_datain_org1
-                        and latch2_datain_org2 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org2);
-                           peak_data0_tmp <= std_logic_vector(latch2_datain_org2);
-                           minpeak_stop <='1';
-
-                -- peak at latch2_datain_org3
-                -- \  /
-                --  \/
-                elsif ( latch2_datain_org1 > latch2_datain_org2
-                        and latch2_datain_org2 > latch2_datain_org3
-                        and samples(8) > latch2_datain_org3
-                        and latch_datain_org1 > samples(8)
-                        and latch2_datain_org3 < signed(thr)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org3);
-                           peak_data0_tmp <= std_logic_vector(latch2_datain_org3);
-                           minpeak_stop <='1';
-
-                 -- \   /
-                 --  \_/
-                 elsif ( latch2_datain_org1 > latch2_datain_org2
-                         and latch2_datain_org2 > latch2_datain_org3
-                         and samples(8) = latch2_datain_org3
-                         and latch_datain_org1 > latch2_datain_org3
-                         and latch_datain_org2 > latch_datain_org1
-                         and latch2_datain_org3 < signed(thr)
-                         ) then
-                            owr_peak_height <= '1';
-                            dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org3);
-                           peak_data0_tmp <= std_logic_vector(latch2_datain_org3);
-                           minpeak_stop <='1';
-
-
-                 --\    /
-                 -- \/\/
-                 elsif ( latch2_datain_org1 > latch2_datain_org2
-                         and latch2_datain_org2 > latch2_datain_org3
-                         and samples(8) > latch2_datain_org3
-                         and latch_datain_org1 < samples(8)
-                         and latch_datain_org2 > latch_datain_org1
-                         and latch_datain_org3 > latch_datain_org2
-                         and latch2_datain_org3 < signed(thr)
-                         ) then
-                            owr_peak_height <= '1';
-                            dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org3);
-                           peak_data0_tmp <= std_logic_vector(latch2_datain_org3);
-                           minpeak_stop <='1';
-
-                -- saturation at latch2_datain_org0
-                elsif ( (latch2_datain_org0 and x"fff0") = signed(maxdata)
-                        and (latch2_datain_org1 and x"fff0") = signed(maxdata)
-                        and (latch2_datain_org2 and x"fff0") = signed(maxdata)
-                        and (latch2_datain_org3 and x"fff0") = signed(maxdata)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
-                           peak_data0_tmp <= std_logic_vector(latch2_datain_org0);
-                           minpeak_stop <='1';
-
-                elsif ( (latch2_datain_org0 and x"fff0") = signed(maxdata)
-                        and (latch2_datain_org1 and x"fff0") = signed(maxdata)
-                        and (latch2_datain_org2 and x"fff0") = signed(maxdata)
-                        and (latch2_datain_org3 and x"fff0") > signed(maxdata)
-                        ) then
-                           owr_peak_height <= '1';
-                          dout_height <=  "01" & "00" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org0);
-                           peak_data0_tmp <= std_logic_vector(latch2_datain_org0);
-                           minpeak_stop <='1';
-
-                -- saturation at latch2_datain_org1
-                elsif ( (latch2_datain_org0 and x"fff0") > signed(maxdata)
-                        and (latch2_datain_org1 and x"fff0") = signed(maxdata)
-                        and (latch2_datain_org2 and x"fff0") = signed(maxdata)
-                        and (latch2_datain_org3 and x"fff0") = signed(maxdata)
-                        ) then
-                           owr_peak_height <= '1';
-                           dout_height <=  "01" & "01" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org1);
-                           peak_data0_tmp <= std_logic_vector(latch2_datain_org1);
-                           minpeak_stop <='1';
-
-                 -- saturation at latch2_datain_org2
-                 elsif ( (latch2_datain_org0 and x"fff0") > signed(maxdata)
-                         and (latch2_datain_org1 and x"fff0") > signed(maxdata)
-                         and (latch2_datain_org2 and x"fff0") = signed(maxdata)
-                         and (latch2_datain_org3 and x"fff0") = signed(maxdata)
-                         ) then
-                            owr_peak_height <= '1';
-                            dout_height <=  "01" & "10" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org2);
-                           peak_data0_tmp <= std_logic_vector(latch2_datain_org2);
-                           minpeak_stop <='1';
-
-                  -- saturation at latch2_datain_org3
-                  elsif ( (latch2_datain_org0 and x"fff0") > signed(maxdata)
-                          and (latch2_datain_org1 and x"fff0") > signed(maxdata)
-                          and (latch2_datain_org2 and x"fff0") > signed(maxdata)
-                          and (latch2_datain_org3 and x"fff0") = signed(maxdata)
-                          ) then
-                             owr_peak_height <= '1';
-                             dout_height <=  "01" & "11" & std_logic_vector(to_unsigned((counter_64bit+1),28)) & x"0000" & std_logic_vector(latch2_datain_org3);
-                           peak_data0_tmp <= std_logic_vector(latch2_datain_org3);
-                           minpeak_stop <='1';
-
-                  else
-                            owr_peak_height <= '0';
-                            minpeak_stop <='0';
-
-                  end if;
+                           exit;  -- exit the loop if you find a peak
+                     end if;
+               end loop;
 
                   --==================================================================
                   -- end
@@ -858,7 +558,7 @@ begin
 
           when SendStrobeCheck =>
                owr_peak_height <= '0';
-	       owr_peak_sum <= '0';
+	            owr_peak_sum <= '0';
                sumstate <= SendStrobe0;
                counter <= counter + 1;
                counter_64bit <= counter_64bit + 1;
@@ -869,7 +569,7 @@ begin
                end if;
           when SendStrobe0 =>
                  owr_peak_height <= '0';
-	          owr_peak_sum <= '1';
+	               owr_peak_sum <= '1';
                   dout_sum <= x"1111" & std_logic_vector(signed(minpeak(15 downto 0) ));
                   --dout_sum <= sum0;
 
@@ -914,7 +614,6 @@ begin
                  counter_64bit <= counter_64bit + 1;
                  sumstate <= SendStrobe5;
 
-
           when SendStrobe5 =>
                  owr_peak_sum <= '1';
                  dout_sum <= x"0" & std_logic_vector(to_unsigned((latch_counter2_64bit+1),28));
@@ -948,9 +647,6 @@ begin
    end if;
 
   end process;
-
-
-
 
 
 end Behavioral;

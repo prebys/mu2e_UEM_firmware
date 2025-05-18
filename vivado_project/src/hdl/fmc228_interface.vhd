@@ -611,6 +611,7 @@ begin
     );
   end generate;
 
+  -- 250 MHz
   jesd204_core_clk_bufg : bufg
   port map (
     i => gte_refclk,
@@ -622,8 +623,8 @@ begin
     rxn_in => rx_n(3 downto 0),
     rxp_in => rx_p(3 downto 0),
     reset => jesd204_sys_reset,
-    refclk => gte_refclk,
-    core_clk => jesd204_core_clk,
+    refclk => gte_refclk,  -- 250 MHz
+    core_clk => jesd204_core_clk,  -- 250 MHz
     qpll_lock => jesd204_phy_qpll_lock(0),
     jesd204_sysref => sysref(0),
     enable_descrambler => adc0_sync_csr(1),
@@ -633,7 +634,7 @@ begin
     align_cgs => do_cgs(0),
     align_busy => align_busy(0),
     sync => adc_sync(0),
-    clk => busclk,
+    clk => busclk,  -- 100 MHz
     lane_sync => lane_sync_adc0
   );
 

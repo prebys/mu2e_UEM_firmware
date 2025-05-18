@@ -44,6 +44,13 @@
   <FileSets Version="1" Minor="31">
     <FileSet Name="sources_1" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
       <Filter Type="Srcs"/>
+      <File Path="$PPRDIR/../src/hdl/TextUtil.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="common"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <File Path="$PPRDIR/../src/hdl/add8.vhd">
         <FileInfo>
           <Attr Name="Library" Val="hep337dev"/>
@@ -541,7 +548,7 @@
       <File Path="$PPRDIR/../src/hdl/peakhigh_module.vhd">
         <FileInfo>
           <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/peakhigh_module.vhd"/>
           <Attr Name="ImportTime" Val="1580329878"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -1104,7 +1111,6 @@
       <File Path="$PPRDIR/../src/hdl/fmc228card1_interface.vhd">
         <FileInfo>
           <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
@@ -1389,12 +1395,6 @@
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_5/bd_fc5c_ilmb_cntlr_0.xci">
           <Proxy FileSetName="bd_fc5c_ilmb_cntlr_0"/>
         </CompFileExtendedInfo>
-        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_1/bd_fc5c_rst_0_0.xci">
-          <Proxy FileSetName="bd_fc5c_rst_0_0"/>
-        </CompFileExtendedInfo>
-        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_0/bd_fc5c_microblaze_I_0.xci">
-          <Proxy FileSetName="bd_fc5c_microblaze_I_0"/>
-        </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_4/bd_fc5c_dlmb_cntlr_0.xci">
           <Proxy FileSetName="bd_fc5c_dlmb_cntlr_0"/>
         </CompFileExtendedInfo>
@@ -1403,6 +1403,12 @@
         </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_2/bd_fc5c_ilmb_0.xci">
           <Proxy FileSetName="bd_fc5c_ilmb_0"/>
+        </CompFileExtendedInfo>
+        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_1/bd_fc5c_rst_0_0.xci">
+          <Proxy FileSetName="bd_fc5c_rst_0_0"/>
+        </CompFileExtendedInfo>
+        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_0/bd_fc5c_microblaze_I_0.xci">
+          <Proxy FileSetName="bd_fc5c_microblaze_I_0"/>
         </CompFileExtendedInfo>
       </File>
       <Config>
@@ -1689,9 +1695,9 @@
         <StratHandle Name="Flow_PerfOptimized_high" Flow="Vivado Synthesis 2016"/>
         <Step Id="synth_design">
           <Option Id="FsmExtraction">1</Option>
-          <Option Id="KeepEquivalentRegisters">1</Option>
           <Option Id="RepFanoutThreshold">400</Option>
           <Option Id="ResourceSharing">2</Option>
+          <Option Id="KeepEquivalentRegisters">1</Option>
           <Option Id="NoCombineLuts">1</Option>
           <Option Id="ShregMinSize">5</Option>
         </Step>
