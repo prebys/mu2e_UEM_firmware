@@ -128,6 +128,7 @@ hw_handoff
 ipshared
 
 ila*
+!ilas.vhd
 Vadatech_amc_example/
 socketudp_tmnguyen/
 socketudp/FRU*
