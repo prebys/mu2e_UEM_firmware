@@ -154,15 +154,15 @@ begin
     rx_reset_gt => rx_reset_gt,
     tx_reset_gt => '0',
     rx_reset_done => rx_reset_done,
-    qpll_refclk => refclk,
+    qpll_refclk => refclk,  -- ??? MHz
     common0_qpll_lock_out => qpll_lock,
     common0_qpll_refclk_out => open,
     common0_qpll_clk_out => open,
     rxencommaalign => rxcommaalign,
-    rx_core_clk => core_clk,
-    tx_core_clk => core_clk,
+    rx_core_clk => core_clk,  -- 250 MHz in
+    tx_core_clk => core_clk,  -- 250 MHz in
     rxoutclk => open,
-    drpclk => clk,
+    drpclk => clk,  -- 100 MHz in
     gt_prbssel => "000",
     gt0_rxdata => gt_rxdata(0),
     gt0_rxcharisk => gt_rxcharisk(0),
@@ -195,7 +195,7 @@ begin
   g_ilas: for i in 0 to 3 generate
     ilas_imp : ilas
     port map (
-      clk => core_clk,
+      clk => core_clk,  -- 250 MHz
       data_in => gt_rxdata(i),
       charisk_in => gt_rxcharisk(i),
       sync => align_cgs,
@@ -222,7 +222,7 @@ begin
                 rxdata_out(2)(15 downto 8) & rxdata_out(3)(15 downto 8) &
                 rxdata_out(2)(7 downto 0) & rxdata_out(3)(7 downto 0);
 
-  process ( clk ) begin
+  process ( clk ) begin  -- 100 MHz
     if ( clk'event and clk = '1' ) then
 
       if ( reset = '1' ) then

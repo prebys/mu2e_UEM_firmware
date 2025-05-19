@@ -354,7 +354,7 @@ architecture behavioral of top_fmc228_pcie is
   signal fmc_led : std_logic_vector(2 downto 0);
 
   signal fmc_refclk : std_logic;
-  signal fmc_dclkout0 : std_logic;
+  signal fmc_dclkout0 : std_logic;  -- 250 MHz
   signal fmc_dclkout10 : std_logic;
   signal fmc_dclkout12 : std_logic;
   signal fmc_dclkout2 : std_logic;
@@ -1273,7 +1273,7 @@ event_amc_imp : event_amc
     i => fmc228_dclkout0_p,
     ib => fmc228_dclkout0_n
   );
-  fmc_refclk <= fmc_dclkout0;
+  fmc_refclk <= fmc_dclkout0;  -- 250 MHz
 
   dclkout2_gtbclk0_inst : ibufds_gte2
   generic map (

@@ -95,7 +95,8 @@ begin
         inhibit <= '0';
         mask <= "01111111";
         pres <= x"0000";
-        delay <= x"00000418"; -- Small delay, 1048 (0x418) clock cycles
+        -- delay <= x"00000418"; -- Small delay, 1048 (0x418) clock cycles
+        delay <= x"000003E8"; -- Small delay, 1000 (0x3E8) clock cycles
         ibusy <= '0';
         
         wait for 20 ns;
