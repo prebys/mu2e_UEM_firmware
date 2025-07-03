@@ -125,6 +125,17 @@ architecture Behavioral of adc_buffer_streamer is
   signal event_number : unsigned(31 downto 0) := (others => '0');
   signal last_req1 : std_logic := '0';
 
+  type triangle_array_t is array(0 to 49) of std_logic_vector(11 downto 0);
+  constant triangle_wave : triangle_array_t := (
+    x"000", x"055", x"0AA", x"0FF", x"155", x"1AA", x"1FF", x"255", x"2AA", x"2FF",
+    x"355", x"3AA", x"3FF", x"455", x"4AA", x"4FF", x"555", x"5AA", x"5FF", x"655",
+    x"6AA", x"6FF", x"755", x"7AA", x"7FF", x"7AA", x"755", x"6FF", x"6AA", x"655",
+    x"5FF", x"5AA", x"555", x"4FF", x"4AA", x"455", x"3FF", x"3AA", x"355", x"2FF",
+    x"2AA", x"255", x"1FF", x"1AA", x"155", x"0FF", x"0AA", x"055", x"000", x"000"
+  );
+
+  signal triangle_index : integer range 0 to 49 := 0;
+
   
   type state_t is ( Idle,
                     SendEventHeader,
@@ -342,6 +353,16 @@ begin
           when "1001" =>
             --dout <= x"0000" & std_logic_vector(to_unsigned(count,16));
             dout <= std_logic_vector(count);
+
+          when "1010" =>  -- triangle wave test mode
+            dout <= triangle_wave(triangle_index + 1) & "0000" 
+              & triangle_wave(triangle_index) & "0000";
+            if triangle_index = 48 then
+              triangle_index <= 0;
+            else
+              triangle_index <= triangle_index + 2;
+            end if;
+            
           when others =>
             dout <= x"f8f8f8f8";
           end case;
