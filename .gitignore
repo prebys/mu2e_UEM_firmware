@@ -130,6 +130,7 @@ hw_handoff
 ipshared
 
 ila*
+!ilas.vhd
 Vadatech_amc_example/
 socketudp_tmnguyen/
 socketudp/FRU*
@@ -141,3 +142,10 @@ sources/
 /createSigasiProject.py
 /convertVivadoProjectToCsv.tcl
 *notes.txt
+
+/vivado_project/project_dir/*
+!/vivado_project/project_dir/mu2e_UEM_firmware.runs/impl_1/top_fmc228_pcie.bit
+socketudp/__pycache__/__init__.cpython-310.pyc
+socketudp/__pycache__/hex_check_classes.cpython-310.pyc
+socketudp/__pycache__/hex_check.cpython-310.pyc
+socketudp/tests/__pycache__/*
