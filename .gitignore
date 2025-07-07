@@ -1,6 +1,6 @@
 # stuff about webtalk
 # **/*webtalk*
-
+old/
 socketudp/output.txt
 
 # include ONLY ".cc", ".sh", and ".txt" files from ./code, don't include compiled programs
