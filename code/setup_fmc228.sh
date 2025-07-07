@@ -41,7 +41,7 @@ poke cf000058 fb    -- 0 --> 127 sum_count
 
 -- cf00004c: max subevn, 
 -- 1d: 0-->29,   13: 0-->19
-poke cf00004c 13
+poke cf00004c 2
 
 -- cf000038: adc buffer csr
 -- 00000001: standard operation
@@ -78,3 +78,8 @@ arp 192.168.40.2
 
 stream 192.168.40.2 48879 off
 EOF
+
+echo "test"
+source /disk2/miniconda3/etc/profile.d/conda.sh
+conda activate base
+python3 adc_trigger_settings.py

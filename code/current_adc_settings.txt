@@ -1,0 +1,4 @@
+Peakfinding Length: 1500
+Number of subevents: 1
+Raw Data Length: 100
+Peakfinding Threshold: -20000

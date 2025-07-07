@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Configuration
-LOCKFILE="$(basename \"$0\").lock"
+LOCKFILE="fpga_upgrade.lock"
 IP1="192.168.40.252"
 IP2="192.168.40.253"
 BASE_DIR="/disk2/mu2e/mu2e_UEM_firmware/mu2e_UEM_firmware.runs"
@@ -60,7 +60,16 @@ remount_ro() {
 
 run_upgrade() {
     local file_name="$1"
-    ssh $SSH_OPTIONS root@"$ACTIVE_IP" "export PATH=\$PATH:/sbin:/usr/sbin; cd \"$REMOTE_PATH\"; echo 'Y' | fpga_upgrade \"$file_name\""
+    SSH_COMMAND="export PATH=\$PATH:/sbin:/usr/sbin;
+                cd \"$REMOTE_PATH\" || exit 1;
+                echo 'Y' | fpga_upgrade \"$file_name\""
+
+    if ssh $SSH_OPTIONS root@"$ACTIVE_IP" "$SSH_COMMAND"; then
+	echo "[PROMPT] Check above console result to see if upgrade succeeded (press Ctrl + C if not)"
+    else
+	echo "[ERROR] Upgrade failed"
+	exit 1
+    fi
 }
 
 cleanup() {
@@ -102,6 +111,7 @@ ssh $SSH_OPTIONS -o ControlMaster=auto -o ControlPersist=600 root@"$ACTIVE_IP" "
 if [ "$UPLOAD" = true ]; then
     if [ ! -f "$FILE_TO_UPLOAD" ]; then
         echo "[ERROR] File '$FILE_TO_UPLOAD' does not exist. Exiting."
+        usage
         exit 1
     fi
 
@@ -127,11 +137,18 @@ fi
 file_name=$(basename "$FILE_TO_UPLOAD")
 
 # Run upgrade command
-run_upgrade "$file_name"
+if run_upgrade "$file_name"; then
+    :
+else
+    echo "[ERROR] FPGA Upgrade failed."
+    exit 1
+fi
+
+echo "$file_name" > last_bitfile_used.txt
 
 read -n 1 -p "[PROMPT] Press any key once you see the 'Purdue debug monitor 1.00' confirmation in minicom..."
-sudo ./setup
+./setup
 
 echo "[SUCCESS] Completed upgrade. Now starting UDP receiver."
-./udp-recv
+# ./udp-recv
 

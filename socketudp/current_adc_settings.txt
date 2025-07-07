@@ -1,0 +1,7 @@
+Peakfinding Length: 20000
+Number of subevents: 1
+Raw Data Length: 100
+Peakfinding Threshold: -200
+Peak height event count: 84
+Peak area event count: 252
+FPGA Test Mode: 0

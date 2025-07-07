@@ -20,6 +20,7 @@ int betriebssystem = 1;
 int betriebssystem = 2;
 #endif
 
+// General imports
 #include <signal.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -38,6 +39,24 @@ using namespace std;
 
 ofstream myfile;
 bool keepRunning = true;
+int eventLimit = -1;  // limit of events, default to infinity
+
+
+// === Helper function to prepend config files ===
+void writeFileWithComments(const string &sourceFilename, ofstream &outfile) {
+    ifstream infile(sourceFilename.c_str());
+    if (!infile.is_open()) {
+        cerr << "Warning: Failed to open " << sourceFilename << endl;
+        return;
+    }
+
+    string line;
+    while (getline(infile, line)) {
+        outfile << "# " << line << "\n";
+    }
+    infile.close();
+}
+
 
 string generateFilenameWithDatetime() {
     // Get the current time
@@ -65,6 +84,14 @@ int main(int argc, char **argv)
 {
     signal(SIGINT, handleSigint);  // Register signal handler
 
+    if (argc > 1) {
+        eventLimit = atoi(argv[1]);
+        if (eventLimit < 0) {
+            perror("Invalid event limit. Exiting...\n");
+            return 1;
+        }
+    }
+
     // Generate filename with current datetime
     string filename = generateFilenameWithDatetime();
     myfile.open(filename.c_str());
@@ -74,6 +101,10 @@ int main(int argc, char **argv)
         return 1;
     }
     cout << "File created: " << filename << endl;
+
+    // === Prepend text files ===
+    writeFileWithComments("current_adc_settings.txt", myfile);
+    writeFileWithComments("last_bitfile_used.txt", myfile);
 
     struct sockaddr_in myaddr;      /* our address */
     struct sockaddr_in remaddr;     /* remote address */
@@ -87,13 +118,11 @@ int main(int argc, char **argv)
     string line;
 
     /* create a UDP socket */
-
     fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (fd < 0) {
         perror("socket creation failed");
         return 0;
     }
-
 
     /* bind the socket to any valid IP address and a specific port */
     memset((char *)&myaddr, 0, sizeof(myaddr));
@@ -106,10 +135,12 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    printf("waiting on port %d\n", SERVICE_PORT);
     /* now loop, receiving data and printing what we received */
+    printf("waiting on port %d\n", SERVICE_PORT);
     while (keepRunning) {
-        recvlen = recvfrom(fd, reinterpret_cast<char *>(buf), BUFSIZE, 0, (struct sockaddr *)&remaddr, &addrlen);
+        recvlen = recvfrom(fd, reinterpret_cast<char *>(buf), 
+                           BUFSIZE, 0, 
+                           (struct sockaddr *)&remaddr, &addrlen);
 
         // Keep collapsing repeated "ff ff ff ff" at packet start.
         while (true) {
@@ -117,6 +148,11 @@ int main(int argc, char **argv)
             if (recvlen < 8) {
                 break;
             }
+
+            if(buf[0] == 0xff && buf[1] == 0xff && buf[2] == 0xff && buf[3] == 0xff
+               && buf[4] == 0xFF && buf[5] == 0xff && buf[6] == 0xff && buf[7] == 0xff) {
+                printf("Found event: FF FF FF FF FF FF FF FF\n");
+	    }
 
             // Check if the first 4 bytes AND the next 4 bytes are all 0xFF
             if (   buf[0] == 0xff && buf[1] == 0xff && buf[2] == 0xff && buf[3] == 0xff
@@ -143,49 +179,74 @@ int main(int argc, char **argv)
             continue;
         }
 
-        for (int i=0; i<recvlen; i++){
-            myfile << buf[i];
-        }
-
         // Get the current position of the put pointer
         streamoff fileSize = myfile.tellp();
 
         // Convert the size from bytes to megabytes
         double fileSizeInMB = fileSize / 1048576.0;
 
-        if (recvlen > 0) {
-                        counter++;
-            buf[recvlen] = 0;
+        counter++;
+        buf[recvlen] = 0;
 
-            if (recvlen < 18) {
-                perror("Unexpectedly short buffer");
-                return 0;
-            }
-
-            printf("%.2x %.2x %.2x %.2x  %.2x %.2x %.2x %.2x [ ... ] "
-                   "%.2x %.2x %.2x %.2x  %.2x %.2x %.2x %.2x   ",
-                   buf[0], buf[1], buf[2], buf[3],
-                   buf[4], buf[5], buf[6], buf[7],
-                   buf[recvlen-8], buf[recvlen-7], buf[recvlen-6], buf[recvlen-5],
-                   buf[recvlen-4], buf[recvlen-3], buf[recvlen-2], buf[recvlen-1]);
-
-            if(buf[0] == 0xff && buf[1] == 0xff && buf[2] == 0xff && buf[3] == 0xff) {
-                event++;
-                subevent = buf[16] & 0xff;
-                // printf("event = %d subevent = %d \n", event, subevent);
-            } else if(buf[0] == 0x00 && buf[1] == 0xff && buf[2] == 0xff && buf[3] == 0xff) {
-                subevent = buf[12] & 0xff;
-                // printf("sub event = %d\n", subevent);
-                // printf("File size: %zu", myfile.tellp())
-            }
-
-            printf("[%d] ev.subev: %d.%d (file: %.2f MB)", counter, event, subevent,
-                   fileSizeInMB);
-            printf("%.2x %.2x %.2x %.2x  %.2x %.2x %.2x %.2x  %.2x %.2x %.2x %.2x\n",
-                   buf[8], buf[9], buf[10], buf[11],
-                   buf[12], buf[13], buf[14], buf[15],
-                   buf[16], buf[17], buf[18], buf[19]);
+        if (recvlen < 18) {
+            perror("Unexpectedly short buffer");
+            return 0;
         }
+
+        // start of event word: FF FF FF FF, 00 FF FF FF, [ ... ]
+        if(buf[0] == 0xff && buf[1] == 0xff && buf[2] == 0xff && buf[3] == 0xff) {
+            event++;
+            
+            if (eventLimit > 0 && event > eventLimit) {
+                printf("Program has reached max number of events (%d), exiting...\n", event - 1);
+                break;
+            }
+            
+            subevent = buf[16] & 0xff;
+
+
+	if (event <= 10) {
+	    printf("Event %d\n", event);
+	}
+	if (event <= 100 && event & 10 == 0) {
+	    printf("Event %d\n", event);
+	}
+	if (event % 1000 == 0) {
+	    printf("Event %d\n", event);
+	}
+            
+        // start of subevent word, 00 FF FF FF, [ ... ]
+        } else if(buf[0] == 0x00 && buf[1] == 0xff && buf[2] == 0xff && buf[3] == 0xff) {
+            subevent = buf[12] & 0xff;
+        }
+
+	if (true) {
+
+        printf("%.2x %.2x %.2x %.2x  %.2x %.2x %.2x %.2x [ ... ] "
+               "%.2x %.2x %.2x %.2x  %.2x %.2x %.2x %.2x   ",
+               buf[0], buf[1], buf[2], buf[3],
+               buf[4], buf[5], buf[6], buf[7],
+               buf[recvlen-8], buf[recvlen-7], buf[recvlen-6], buf[recvlen-5],
+               buf[recvlen-4], buf[recvlen-3], buf[recvlen-2], buf[recvlen-1]);
+        printf("[%d] ev.subev: %d.%d (file: %.2f MB)\n", counter, event, subevent,
+               fileSizeInMB);
+        // printf("%.2x %.2x %.2x %.2x  %.2x %.2x %.2x %.2x  %.2x %.2x %.2x %.2x\n",
+        //       buf[8], buf[9], buf[10], buf[11],
+        //       buf[12], buf[13], buf[14], buf[15],
+        //       buf[16], buf[17], buf[18], buf[19]);
+        }
+
+
+        for (int i=0; i<recvlen; i++){
+            myfile << buf[i];
+        }
+    
     }
-    /* never exits */
+    if (myfile.is_open()) {
+        myfile.close();
+    }
+
+    printf("Program closed after reaching %d events.\n", event - 1);
+
+    return 0;
 }
