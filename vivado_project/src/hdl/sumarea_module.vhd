@@ -105,13 +105,23 @@ signal peak_data0_tmp : std_logic_vector (15 downto 0);
 signal minpeak : std_logic_vector (15 downto 0);
 signal maxdata : std_logic_vector(15 downto 0) := x"8000";
 
-type sample_array is array (0 to 7) of signed(15 downto 0);
-type sample_input_array is array (0 to 3) of signed(15 downto 0);
-type full_sample_array is array (0 to 11) of signed(15 downto 0);
+constant WINDOW_TOP_INDEX : integer := 19; -- 20 samples in the window
 
-signal samples : sample_array;        -- latched values t-2 and t-1
-signal inputs  : sample_input_array;  -- direct wires for t
+type sample_old_data_array is array (0 to WINDOW_TOP_INDEX - 4) of signed(15 downto 0);
+type sample_new_input_array is array (0 to 3) of signed(15 downto 0);
+type full_sample_array is array (0 to WINDOW_TOP_INDEX) of signed(15 downto 0);
+type min_pipeline_array is array (0 to 4) of signed(15 downto 0); -- min pipeline for the four samples
+type min_index_pipeline_array is array (0 to 4) of integer range 0 to 3; -- min index pipeline for the four samples
+
+
+signal samples : sample_old_data_array;   -- latched values t-2 and t-1
+signal inputs  : sample_new_input_array;  -- direct wires for t
 signal samples_full : full_sample_array; -- all values (inc. direct wires) from t-2, t-1, and t
+
+signal min_pipeline: min_pipeline_array; -- min pipeline for the four samples
+signal min_index_pipeline : min_index_pipeline_array; -- min index pipeline for the four samples
+
+signal peak_found : boolean := false;  -- flag to indicate if a peak was found
 
 
   type sumstate_t is ( Idle,
@@ -130,143 +140,6 @@ signal samples_full : full_sample_array; -- all values (inc. direct wires) from 
                      );
   signal sumstate : sumstate_t;
 
-  -- Peak detection functions
-  -- Below function matches a simple V shape
-  --     (i-2)                 (i+2)
-  --          (i-1)      (i+1)
-  --               (*i*)
-function is_v_valley_centered_at(
-    i : integer;
-    v : full_sample_array;
-    thr : signed(15 downto 0)
-  ) return boolean is
-  begin
-    return (
-      v(i-2) > v(i-1) and
-      v(i-1) > v(i)   and
-      v(i)   < v(i+1) and
-      v(i+1) < v(i+2) and
-      v(i)   < signed(thr)
-    );
-  end function;
-  
-  -- Below function matches a flat-bottom
-  --      (i-2)                     (i+3)
-  --           (i-1)           (i+2)
-  --                (*i*) (i+1)
-  -- 
-  -- For the left-most point in the center four points (i=4), it also matches a flat-bottom extending into i=3
-  --      (i-3)                     (i+2)
-  --           (i-2)           (i+1)
-  --                (i-1) (*i*)
-  --
-
-  function is_flat_bottom_valley_at_left(
-    i : integer;
-    v : full_sample_array;
-    thr : signed(15 downto 0)
-  ) return boolean is
-  begin
-    return (
-      v(i-3) > v(i-2) and
-      v(i-2) > v(i-1) and
-      v(i-1) = v(i) and
-      v(i)   < v(i+1) and
-      v(i+1) < v(i+2) and
-      v(i)   < signed(thr)
-    );
-  end function;
-
-   function is_flat_bottom_valley_at_right(
-    i : integer;
-    v : full_sample_array;
-    thr : signed(15 downto 0)
-  ) return boolean is
-  begin
-    return (
-      v(i-2) > v(i-1) and
-      v(i-1) > v(i) and
-      v(i)   = v(i+1) and
-      v(i+1) < v(i+2) and
-      v(i+2) < v(i+3) and
-      v(i)   < signed(thr)
-    );
-  end function;
-
-  function is_flat_bottom_valley_at(
-    i : integer;
-    v : full_sample_array;
-    thr : signed(15 downto 0)
-  ) return boolean is
-   -- This function checks for a flat bottom valley at the given index
-   -- if it's the leftmost index (i=4), then it also checks for if the flat-bottom 
-   -- went to the left at i=3 or right at i=5
-   -- for the base at i=5, it doesn't need to check left anymore because the right-sided i=4 
-   -- case already checked for that
-  begin
-   if (i = 4) then
-      return is_flat_bottom_valley_at_left(i, v, thr) or
-             is_flat_bottom_valley_at_right(i, v, thr);
-   else
-      return is_flat_bottom_valley_at_right(i, v, thr);
-   end if;
-  end function;
-  
-
-  -- Matches patterns of the following form
-  --  (i-2)                                 (i+4) 
-  --        (i-1)        (i+1)        (i+3)
-  --              (*i*)        (i+2) 
-  function is_ripple_valley_at(
-    i : integer;
-    v : full_sample_array;
-    thr : signed(15 downto 0)
-  ) return boolean is
-  begin
-    return (
-      v(i-2) > v(i-1) and
-      v(i-1) > v(i) and
-      v(i)   < v(i+1) and
-      v(i+1) > v(i+2) and
-      v(i+2) < v(i+3) and
-      v(i+3) < v(i+4) and
-      v(i)   < signed(thr)
-    );
-  end function;
-
--- Check if a saturation pattern exists starting at index i
-function is_saturation_pattern_at(
-  i       : integer;
-  v       : full_sample_array;
-  maxdata : signed(15 downto 0)
-) return boolean is
-begin
-  return (
-    signed(v(i)   and x"fff0") = maxdata and
-    signed(v(i+1) and x"fff0") = maxdata and
-    signed(v(i+2) and x"fff0") = maxdata and
-    signed(v(i+3) and x"fff0") = maxdata
-  );
-end function;
-
-
-
-    -- Refactored peak detection logic
-function check_peaks(
-    i : integer;
-    v : full_sample_array;
-    thr : signed(15 downto 0);
-    maxdata : signed(15 downto 0)
-  ) return boolean is
-  begin
-    return (
-      is_v_valley_centered_at(i, v, thr) or
-      is_flat_bottom_valley_at(i, v, thr) or
-      is_ripple_valley_at(i, v, thr) or 
-      is_saturation_pattern_at(i, v, maxdata)
-    );
-  end function;
-
 function all_above_threshold(v: full_sample_array; thr : signed(15 downto 0)) return boolean is 
 begin
    -- Tells if all of the middle data points are "above" the threshold
@@ -278,7 +151,6 @@ begin
       v(7) > thr
    );
 end function;
-
 
 begin
 
@@ -297,54 +169,168 @@ begin
    inputs(2) <= signed(datain_org2);  -- latch_datain_org2
    inputs(3) <= signed(datain_org3);  -- latch_datain_org3
 
-   --  latch3         latch2     (these come from latches)
-   samples_full(0) <= samples(0);  -- latch3_datain_org0  OLDEST (t=11)
-   samples_full(1) <= samples(1);  -- latch3_datain_org1
-   samples_full(2) <= samples(2);  -- latch3_datain_org2
-   samples_full(3) <= samples(3);  -- latch3_datain_org3  ~old (t=8)
+  --  --  latch3         latch2     (these come from latches)
+  --  samples_full(0) <= samples(0);  -- latch3_datain_org0  OLDEST (t=11)
+  --  samples_full(1) <= samples(1);  -- latch3_datain_org1
+  --  samples_full(2) <= samples(2);  -- latch3_datain_org2
+  --  samples_full(3) <= samples(3);  -- latch3_datain_org3  ~old (t=8)
 
-   --  latch2         latch1     (these come from latches)
-   samples_full(4) <= samples(4);  -- latch2_datain_org0  mid-old (t=7)
-   samples_full(5) <= samples(5);  -- latch2_datain_org1
-   samples_full(6) <= samples(6);  -- latch2_datain_org2
-   samples_full(7) <= samples(7);  -- latch2_datain_org3  mid-new (t=4)
+  --  --  latch2         latch1     (these come from latches)
+  --  samples_full(4) <= samples(4);  -- latch2_datain_org0  mid-old (t=7)
+  --  samples_full(5) <= samples(5);  -- latch2_datain_org1
+  --  samples_full(6) <= samples(6);  -- latch2_datain_org2
+  --  samples_full(7) <= samples(7);  -- latch2_datain_org3  mid-new (t=4)
 
-   --  latch1         latch0      (these should all be instant wires)
-   samples_full(8) <= inputs(0);  -- latch_datain_org0  ~new (t=3)
-   samples_full(9) <= inputs(1);  -- latch_datain_org1
-   samples_full(10) <= inputs(2); -- latch_datain_org2
-   samples_full(11) <= inputs(3); -- latch_datain_org3  NEWEST (t=0)
+  --  --  latch1         latch0      (these should all be instant wires)
+  --  samples_full(8) <= inputs(0);  -- latch_datain_org0  ~new (t=3)
+  --  samples_full(9) <= inputs(1);  -- latch_datain_org1
+  --  samples_full(10) <= inputs(2); -- latch_datain_org2
+  --  samples_full(11) <= inputs(3); -- latch_datain_org3  NEWEST (t=0)
 
-   
+  -- set samples_full(0 to 15) to samples(0 to 15)
+  gen_samples : for i in 0 to WINDOW_TOP_INDEX - 4 generate  -- from 0 to 15
+    samples_full(i) <= samples(i);
+  end generate;
 
- process ( clk_a )
+  -- set samples_full(16 to 19) to inputs(0 to 3)
+  gen_inputs : for i in 0 to 3 generate
+    samples_full(i + 16) <= inputs(i);
+  end generate;
+
+ -- SIGNAL PROCESSING
+ process (clk_a) 
+  variable min01 : integer range 0 to 4;
+  variable min23 : integer range 0 to 4;
+  variable min0123 : integer range 0 to 4;
+  variable min01234 : integer range 0 to 4;
+  variable abs_min : signed(15 downto 0);
+
+  variable min_index : integer range 0 to 3;  -- index of the minimum value in the min_pipeline array
+  variable min_in_center : boolean;
+
+  variable current_min : signed(15 downto 0) := to_signed(0, 16);  -- initialize to zero
  begin
-   if ( clk_a'event and clk_a = '1' ) then
-        datainsum <= std_logic_vector(signed(datasum0) + signed(datasum1) + signed(datasum2) + signed(datasum3));
-        latch_datainsum <= datainsum;
-        latch2_datainsum <= latch_datainsum;
-        latch3_datainsum <= latch2_datainsum;
+  if ( clk_a'event and clk_a = '1' ) then
 
-   end if;
+    -- datainsum processing
+    datainsum <= std_logic_vector(signed(datasum0) + signed(datasum1) + signed(datasum2) + signed(datasum3));
+    latch_datainsum <= datainsum;
+    latch2_datainsum <= latch_datainsum;
+    latch3_datainsum <= latch2_datainsum;
 
- end process;
+    last_inwr <= inwr;
+    last_ibusy <= ibusy;
 
+    -- shift the samples down by 4
+    -- samples(0) is the oldest sample (t=12 or 20 depending on the window size)
+    -- newest samples will be added to top of array (highest indices) 
+    
+    -- set samples(0 to 11) <= samples(4 to 15) (assuming WINDOW_TOP_INDEX = 19)
+    samples(0 to WINDOW_TOP_INDEX - 8) <= samples(4 to WINDOW_TOP_INDEX - 4);  
+    -- then samples(12 to 15) <= inputs(0 to 3) (on a latch, so they come in next clock cycle)
+    samples(WINDOW_TOP_INDEX - 8 + 1) <= inputs(0);  -- latch_datain_org0
+    samples(WINDOW_TOP_INDEX - 8 + 2) <= inputs(1);  -- latch_datain_org1
+    samples(WINDOW_TOP_INDEX - 8 + 3) <= inputs(2);  -- latch_datain_org2
+    samples(WINDOW_TOP_INDEX - 8 + 4) <= inputs(3);  -- latch_datain_org3
+    -- samples (16 to 19) will be directly wired to inputs(0 to 3) in the current clock cycle
+
+    -- PROCESS MIN VALUES
+    current_min := inputs(0);  -- start with current_min equal to value of samples_full(0)
+    min_index := 0;
+    for i in 1 to 3 loop
+      if (inputs(i) < current_min) then
+        current_min := inputs(i);
+        min_index := i;
+      end if;
+    end loop;
+
+    -- min_pipeline is array of five min values, one for each window
+    min_pipeline(4) <= current_min;  -- min of samples_full(16 to 19)
+    min_pipeline(3) <= min_pipeline(4); 
+    min_pipeline(2) <= min_pipeline(3);
+    min_pipeline(1) <= min_pipeline(2);
+    min_pipeline(0) <= min_pipeline(1);
+    -- 0 is oldest min, 4 is newest min, old entries are pushed to left
+
+    -- pipeline for index of max in each sub-window
+    min_index_pipeline(4) <= min_index;  -- index of min in samples_full(16 to 19)
+    min_index_pipeline(3) <= min_index_pipeline(4);
+    min_index_pipeline(2) <= min_index_pipeline(3);
+    min_index_pipeline(1) <= min_index_pipeline(2);
+    min_index_pipeline(0) <= min_index_pipeline(1);
+
+    -- FIND ABS MIN VALUE (comparison tree)
+    -- these integer values specify which window # the minimum value is in
+    -- it will output the position of the left-most minimum among the five windows
+
+    -- redo below code as priority encoder, will delete below code after finishing this
+    if min_pipeline(0) <= min_pipeline(1) and
+       min_pipeline(0) <= min_pipeline(2) and
+       min_pipeline(0) <= min_pipeline(3) and
+       min_pipeline(0) <= min_pipeline(4) then
+      min01234 := 0;  -- min in window # 0 (oldest, leftmost)
+    elsif min_pipeline(0) > min_pipeline(1) and
+          min_pipeline(1) <= min_pipeline(2) and
+          min_pipeline(1) <= min_pipeline(3) and
+          min_pipeline(1) <= min_pipeline(4) then
+      min01234 := 1;  -- min in window # 1
+    elsif min_pipeline(0) > min_pipeline(1) and
+          min_pipeline(1) > min_pipeline(2) and
+          min_pipeline(2) <= min_pipeline(3) and
+          min_pipeline(2) <= min_pipeline(4) then
+      min01234 := 2;  -- min in window # 2
+    elsif min_pipeline(0) > min_pipeline(1) and
+          min_pipeline(1) > min_pipeline(2) and
+          min_pipeline(2) > min_pipeline(3) and
+          min_pipeline(3) <= min_pipeline(4) then
+      min01234 := 3;  -- min in window # 3
+    else
+      min01234 := 4;  -- min in window # 4 (newest, rightmost)
+    end if;
+
+    -- old code, tournament style binary tree
+    if min_pipeline(0) <= min_pipeline(1) then
+      min01 := 0;  -- min in window # 0 (oldest, leftmost)
+    else
+      min01 := 1;  -- min in window # 1
+    end if;
+
+    if min_pipeline(2) <= min_pipeline(3) then
+      min23 := 2;  -- min in window # 2
+    else
+      min23 := 3;  -- min in window # 3
+    end if;
+
+    if min_pipeline(min01) <= min_pipeline(min23) then
+      min0123 := min01;  -- min in window # 0 or 1
+    else
+      min0123 := min23;  -- min in window # 2 or 3
+    end if;
+
+    if min_pipeline(min0123) <= min_pipeline(4) then
+      min01234 := min0123;  -- min in window # 0, 1, 2, or 3 (older ones)
+    else
+      min01234 := 4;  -- min in window # 4 (newest, rightmost)
+    end if;
+
+    if min01234 = 4 then
+      abs_min := min_pipeline(4);  -- if the minimum is in the newest window, then it's the current_min
+    else
+      abs_min := min_pipeline(min01234);  -- otherwise, it's the minimum in the pipeline
+    end if;
+
+    min_in_center := (min01234 = 2);  -- if the minimum is in window #2
+
+    peak_found <= (min_in_center and abs_min < signed(thr));
+    
+  end if;
+
+end process;
+
+-- STATE MACHINE
  process ( clk_a )
   begin
     if ( clk_a'event and clk_a = '1' ) then
-        last_inwr <= inwr;
-        last_ibusy <= ibusy;
-
-         samples(0) <= samples(4);  -- oldest (t=12)
-         samples(1) <= samples(5);
-         samples(2) <= samples(6);
-         samples(3) <= samples(7);  -- slightly newer (t=9)
-
-         samples(4) <= inputs(0);  -- slightly older (latched version of datain_0)
-         samples(5) <= inputs(1);
-         samples(6) <= inputs(2);
-         samples(7) <= inputs(3);  -- newest (t=0), latched of what was the last to be appended
-
       if ( rst = '1' ) then
           event_number <= (others => '0');
           sum <= ( others => '0' );
@@ -355,7 +341,6 @@ begin
           sumstate <= Idle;
           thr <= ithr(15 downto 0);
       else
-
         case sumstate is
 
           when Idle =>
@@ -470,25 +455,20 @@ begin
                -- assume no peak. if a peak is found, this will be overwritten
                owr_peak_height <= '0';  -- signals "there is no peak"
 
-               -- loop from i = 4 to i = 7, running the three is_..._at()
-               for i in 4 to 7 loop
-                  if (check_peaks(i, samples_full, signed(thr), signed(maxdata)))  -- check for a peak
-                     then
-                           owr_peak_height <= '1';  -- signals "there is a peak", 
+               if peak_found then
+                  owr_peak_height <= '1';  -- signals "there is a peak", 
 
-                           -- Format: [2-bit peak_type ("01")] & [2-bit position] & [28-bit counter] & [16-bit padding] & [12-bit peak]
-                           dout_height <= 
-                              "01" &  -- this is always 01, not sure what it means, maybe it means it's a peak in the middle four peaks of the 12
-                              std_logic_vector(to_unsigned(i-4, 2)) &  -- this shows where in the middle four points is the peak
-                              std_logic_vector(to_unsigned((counter_64bit+1), 28)) &  -- a counter that just increments every clock cycle
-                              x"0000" &  -- idk what this is, maybe just padding, they ran out of things to put here
-                              std_logic_vector(samples_full(i));  -- the peak height
-
-                           minpeak <= std_logic_vector(samples_full(i));  -- the peak height (again)
-                           sum0_stop <= '1';  -- signals for this sumstate to end and move onto SendSum3
-                           exit;  -- exit the loop if you find a peak
-                     end if;
-               end loop;
+                  -- Format: [2-bit peak_type ("01")] & [2-bit position] & [28-bit counter] & [16-bit padding] & [12-bit peak]
+                  dout_height <= 
+                    "01" &  -- this is always 01, not sure what it means, maybe it means it's a peak in the middle four peaks of the 20
+                    std_logic_vector(to_unsigned(min_index_pipeline(1), 2)) &  -- this shows where in the middle four points is the peak
+                    std_logic_vector(to_unsigned((counter_64bit + 1), 28)) &  -- a counter that just increments every clock cycle
+                    x"0000" &  -- idk what this is, maybe just padding, they ran out of things to put here
+                    std_logic_vector(samples_full(4 + min_index_pipeline(1)));  -- the peak height
+                  
+                  minpeak <= std_logic_vector(samples_full(4 + min_index_pipeline(1)));  -- the peak height (again)
+                  sum0_stop <= '1';  -- signals for this sumstate to end and move onto SendSum3
+                end if;
 
                   --==================================================================
                   -- end
@@ -530,25 +510,24 @@ begin
                 owr_peak_height <= '0';
                 minpeak_stop <= '0';
 
-                -- loop from i = 4 to i = 7, running the three is_..._at()
-               for i in 4 to 7 loop
-                  if (check_peaks(i, samples_full, signed(thr), signed(maxdata)))  -- check for a peak
-                     then
-                           owr_peak_height <= '1';  -- signals "there is a peak", 
+               if peak_found then
+                  owr_peak_height <= '1';  -- signals "there is a peak", 
 
-                           -- Format: [2-bit peak_type ("01")] & [2-bit position] & [28-bit counter] & [16-bit padding] & [12-bit peak]
-                           dout_height <= 
-                              "01" &  -- this is always 01, not sure what it means, maybe it means it's a peak in the middle four peaks of the 12
-                              std_logic_vector(to_unsigned(i-4, 2)) &  -- this shows where in the middle four points is the peak
-                              std_logic_vector(to_unsigned((counter_64bit+1), 28)) &  -- a counter that just increments every clock cycle
-                              x"0000" &  -- idk what this is, maybe just padding, they ran out of things to put here
-                              std_logic_vector(samples_full(i));  -- the peak height
+                  -- Format: [2-bit peak_type ("01")] & [2-bit position] & [28-bit counter] & [16-bit padding] & [12-bit peak]
+                  dout_height <= 
+                    "01" &  -- this is always 01, not sure what it means, maybe it means it's a peak in the middle four peaks of the 12
+                    -- min_index_pipeline is an array of integers 0-3 showing where the mininum was in each of those windows
+                    -- min_index_pipeline(2) is the index of the minimum in the middle four samples (samples_full(8) to samples_full(11))
+                    std_logic_vector(to_unsigned(min_index_pipeline(1), 2)) &  -- this shows where in the middle four points is the peak
+                    std_logic_vector(to_unsigned((counter_64bit + 1), 28)) &  -- a counter that just increments every clock cycle
+                    x"0000" &  -- idk what this is, maybe just padding, they ran out of things to put here
 
-                           peak_data0_tmp <= std_logic_vector(samples_full(i));
-                           minpeak_stop <='1';
-                           exit;  -- exit the loop if you find a peak
-                     end if;
-               end loop;
+                    -- we want to pull the data out of the middle window, so samples_full(8) to samples_full(11)
+                    std_logic_vector(samples_full(4 + min_index_pipeline(1)));  -- the peak height
+
+                  peak_data0_tmp <= std_logic_vector(samples_full(4 + min_index_pipeline(1)));  -- the peak height (again)
+                  minpeak_stop <='1';
+                end if;
 
                   --==================================================================
                   -- end
@@ -642,9 +621,9 @@ begin
 
       end case;
 
-    end if;
+    end if;  -- ending "if ( rst = '1' ) then"
 
-   end if;
+    end if;  -- ending: if ( clk_a'event and clk_a = '1' )
 
   end process;
 

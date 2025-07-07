@@ -1,5 +1,6 @@
 import json
 from collections import deque
+from typing import Any
 import numpy as np
 
 from matplotlib import pyplot as plt
@@ -7,13 +8,13 @@ from matplotlib import pyplot as plt
 
 # --- Data Generation ---
 def generate_noisy_sine_wave(
-    num_points=1000,
-    points_per_period=100,
-    amplitude=500,
-    noise_level=10,
-    save_to_disk=False,
-    get_from_disk=False,
-):
+    num_points: int = 1000,
+    points_per_period: int = 100,
+    amplitude: int = 500,
+    noise_level: int = 10,
+    save_to_disk: bool = False,
+    get_from_disk: bool = False,
+) -> tuple[list[int], list[int], list[int]]:
     if get_from_disk:
         with open("sine_wave.csv", "r") as f:
             data = json.loads(f.read())
@@ -94,16 +95,49 @@ def peak_fn_unique_to_left(window) -> None | tuple[int, int]:
             break
     return None
 
-def five_window_queue(window: deque) -> None | tuple[int, int]:
+def min_in_window(window: list) -> tuple[int, int]:
+    """Returns the value of the minimum in the window."""
+    current_min = (0, window[0])
+    for i, val in enumerate(window):
+        if val < current_min[1]:
+            current_min = (i, val)
+    return current_min
+    
+
+def find_min(min_pipeline):
+    # Ensure min_pipeline is a list or array of at least 5 elements
+    assert len(min_pipeline) == 5
+
+    min01 = 0 if min_pipeline[0] <= min_pipeline[1] else 1
+    min23 = 2 if min_pipeline[2] <= min_pipeline[3] else 3
+    min0123 = min01 if min_pipeline[min01] <= min_pipeline[min23] else min23
+    min01234 = min0123 if min_pipeline[min0123] <= min_pipeline[4] else 4
+    abs_min = min_pipeline[min01234]
+    
+    return abs_min, min01234  # returning both the min value and its index
+
+def five_window_queue(data_queue: deque) -> None | tuple[int, int]:
     """This queue allows for five windows (20 points). Reimplement above algo"""
-    min_val = min(window)
-    for i in range(8, 12):
-        if window[i] == min_val:
-            left_window = list(window)[0:8]
-            if min_val not in left_window:
-                return i, window[i]
-            break
+    min_pipeline = deque(maxlen=5)
+    data_queue = list(data_queue)  # Convert deque to list for slicing
+    min_pipeline.append(min_in_window(data_queue[0:4])[1])
+    min_pipeline.append(min_in_window(data_queue[4:8])[1])
+    min_window_index, min_val = min_in_window(data_queue[8:12])
+    min_pipeline.append(min_val)
+    min_pipeline.append(min_in_window(data_queue[12:16])[1])
+    min_pipeline.append(min_in_window(data_queue[16:20])[1])
+    abs_min, min01234 = find_min(min_pipeline)
+    if min01234 == 2:
+        print(min_pipeline, abs_min, min01234)
+        return min_window_index, min_val
     return None
+    # for i in range(8, 12):
+    #     if window[i] == min_val:
+    #         left_window = list(window)[0:8]
+    #         if min_val not in left_window:
+    #             return i, window[i]
+    #         break
+    # return None
 
 
 # --- PeakFinder Engine ---
@@ -135,6 +169,7 @@ class PeakFinder:
     def process_window(self):
         # peakfinding algorithms will return an index in the window, along with the peak height
         result = self.peak_function(self.window)
+        print(self.current_index, result)
         if not result:
             return
         window_index = result[0]
@@ -180,9 +215,11 @@ def compare_peaks(peakfinder: PeakFinder, expected):   # , tolerance=2):
             # example, if peak_index is 6, start_of_peak_window is 4 (assuming [0 1 2 3] [4 5 6 7] [8 9 10 11])
             peak_index_in_window = peak_index % 4
             start_of_peak_window = peak_index - peak_index_in_window
+            prev_prev_window = peakfinder.data[start_of_peak_window - 8:start_of_peak_window - 4]
             previous_window = peakfinder.data[start_of_peak_window - 4:start_of_peak_window]
             current_window = peakfinder.data[start_of_peak_window:start_of_peak_window + 4]
             next_window = peakfinder.data[start_of_peak_window + 4:start_of_peak_window + 8]
+            next_next_window = peakfinder.data[start_of_peak_window + 8:start_of_peak_window + 12]
             
             # Print with formatting
             def fmt(window, highlight_idx=None):
@@ -192,9 +229,11 @@ def compare_peaks(peakfinder: PeakFinder, expected):   # , tolerance=2):
                 ) + "]"
             
             print("Nearby peak heights:", end=" ")
+            print(f"{prev_prev_window if prev_prev_window else '[]'},", end=" ")
             print(f"{previous_window if previous_window else '[]'},", end=" ")
             print(fmt(current_window, peak_index % 4) + ",", end=" ")
             print(f"{next_window if next_window else '[]'}")
+            print(f"{next_next_window if next_next_window else '[]'}")
             print()
             
         detected_last = peak_index
@@ -204,20 +243,20 @@ def compare_peaks(peakfinder: PeakFinder, expected):   # , tolerance=2):
 def main(x, wave, expected_peaks):
     # pf1 = PeakFinder(wave, peak_fn_middle_min)
     # pf2 = PeakFinder(wave, peak_fn_middle_min_unique)
-    pf3 = PeakFinder(wave, peak_fn_middle_min_lower_than_ends)
-    pf4 = PeakFinder(wave, peak_fn_unique_to_left)
+    # pf3 = PeakFinder(wave, peak_fn_middle_min_lower_than_ends)
+    # pf4 = PeakFinder(wave, peak_fn_unique_to_left)
     pf5 = PeakFinder(wave, five_window_queue, queue_length=20)
     
     # results1 = pf1.results
     # results2 = pf2.results
-    results3 = pf3.results
-    results4 = pf4.results
+    # results3 = pf3.results
+    # results4 = pf4.results
     results5 = pf5.results
     
     # compare_peaks(pf1, expected_peaks)
     # compare_peaks(pf2, expected_peaks)
     # compare_peaks(pf3, expected_peaks)
-    compare_peaks(pf4, expected_peaks)
+    # compare_peaks(pf4, expected_peaks)
     compare_peaks(pf5, expected_peaks)
     
     # comparison_df = pd.DataFrame([
@@ -254,17 +293,17 @@ def main(x, wave, expected_peaks):
         plt.yticks(list(set(wave_clip)))
         plt.grid(axis='y', color='gray', linestyle='--', linewidth=0.2, which='both')
         plt.show()
-    
-    print(1)
-
+        
+    breakpoint()
+        
 # Run example
 _x, _wave, _expected_peaks = generate_noisy_sine_wave(
     num_points=50000,
     points_per_period=100,
     amplitude=500,
-    noise_level=10,
+    noise_level=35,
     save_to_disk=False,
-    get_from_disk=False
+    get_from_disk=True
 )
 
 main(_x, _wave, _expected_peaks)

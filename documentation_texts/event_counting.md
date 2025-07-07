@@ -711,3 +711,80 @@ First event had 336 / 2 = 168 peaks.
 Total number of peaks is 1680, so perfectly 168 peaks per event.
 
 For peak area, it's
+
+--
+
+
+
+v20 bitfile
+Peakfinding Length: 1500
+Number of subevents: 1
+Raw Data Length: 100
+Peakfinding Threshold: -20000
+Peak height event count: 4
+Peak area event count: 12
+data_20250521_202901.dat
+
+<EventType 'begin_event', regex 'ffffffff'>: 1
+<EventType 'begin_sub_event', regex '00ffffff'>: 1
+<EventType 'byte_order', regex 'f4f3f2f1'>: 1
+<EventType 'fmc228_number', regex '..ccccfc'>: 1
+<EventType 'sub_event_number_evn', regex '........'>: 1
+<EventType 'event_number_evn', regex '........'>: 1
+<EventType 'begin_raw_data', regex 'fdfdfdfd'>: 1
+<EventType 'byte_order2', regex 'f4f3f2f1'>: 1
+<EventType 'event_number_evn2', regex '........'>: 1
+<EventType 'channel_header', regex 'fafa..fa'>: 4
+<EventType 'waveform', regex 'ffff....'>: 4
+<EventType 'fragment_trig_mask', regex '0000....'>: 4
+<EventType 'stat', regex '........'>: 4
+<EventType 'status_word', regex '........'>: 4
+<EventType 'bco_low', regex '........'>: 4
+<EventType 'bco_high', regex '........'>: 4
+<EventType 'data_length', regex '....aaff'>: 0
+<EventType 'raw_data', regex '........'>: 400
+<EventType 'end_of_channel', regex 'fbfbfbfb'>: 4
+<EventType 'end_raw_data', regex 'fefefefe'>: 1
+<EventType 'begin_peak_data', regex 'efefefef'>: 1
+<EventType 'channel_number', regex 'eeee..ee'>: 4
+<EventType 'peak_finding_header', regex 'aaaaaaaa'>: 4
+<EventType 'peak_height_header', regex 'cccccccc'>: 4
+<EventType 'peak_height_data_1', regex '....00..'>: 0
+<EventType 'peak_height_data_2', regex '........'>: 0
+<EventType 'peak_height_end', regex 'cececece'>: 4
+<EventType 'peak_area_header', regex 'dddddddd'>: 4
+<EventType 'peak_area_data_1', regex '....1111'>: 0
+<EventType 'peak_area_data_2', regex '........'>: 0
+<EventType 'peak_area_data_3', regex '........'>: 0
+<EventType 'peak_area_data_4', regex '......0.'>: 0
+<EventType 'peak_area_data_5', regex '......0.'>: 0
+<EventType 'peak_area_data_6', regex '......0.'>: 0
+<EventType 'peak_area_end', regex 'dededede'>: 4
+<EventType 'end_peak_data', regex 'bbbbbbbb'>: 4
+<EventType 'end_peak_channel', regex 'ecececec'>: 4
+<EventType 'end_peak_stream_data', regex 'edededed'>: 1
+<EventType 'end_sub_event', regex '00fcfcfc'>: 1
+<EventType 'end_event', regex 'fcfcfcfc'>: 1
+Used input file data_20250521_202901.dat
+
+
+
+Peakfinding Length: 20000
+Number of subevents: 1
+Raw Data Length: 100
+Peakfinding Threshold: -20000
+Peak height event count: 4
+Peak area event count: 12
+v20
+
+Still zero peak events
+
+
+
+Peakfinding Length: 20000
+Number of subevents: 1
+Raw Data Length: 100
+Peakfinding Threshold: -20000
+Peak height event count: 84
+Peak area event count: 252
+

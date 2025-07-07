@@ -279,7 +279,8 @@ class Event:
                             continue  # you got an event in raw data that just happened to look like end_of_channel
                 return matched, current_event_type
         
-        raise Exception(f"Failed to detect the kind of event for {self.hex} with previous event {self.previous_event} "
+        raise Exception(f"Failed to detect the kind of event for {self.hex} "
+                        f"with previous event {self.previous_event.type} "
                         f"and expected next events {next_event_candidates}.")
     
     def process_hex_raw_data(self, mode, hex_in: str = "") -> ADCTypes:
@@ -584,18 +585,24 @@ def find_data_file(desired_file_path) -> str:
         raise ValueError("No .dat files found in the current directory matching search")
     elif len(dat_files) > 1:
         print(f"Warning: Multiple .dat files found in the current directory. "
-              f"Picking the last one ({dat_files[-1]})")
+              f"Picking this one ({dat_files[-config.to_use_file_index]})")
         input_file_name = dat_files[-config.to_use_file_index]
     else:
         input_file_name = dat_files[0]  # only one result
     return input_file_name
 
 
-def read_data_file(dir_name, file_name) -> tuple[list[str], datetime]:
+def read_data_file(dir_name, file_name) -> tuple[list[str], datetime, list[str]]:
     # open binary file, get binary data and file creation date
+    headers = []
     assert os.path.exists(os.path.join(dir_name, "data", file_name)), "File does not exist."
     with open(os.path.join(dir_name, "data", file_name), "rb") as file:
-        binary_data = file.read()  # a "bytes" object
+        for line in file:
+            if line.startswith(b"#"):
+                headers.append(line.decode().strip())
+            else:
+                break
+        binary_data = line + file.read()  # a "bytes" object
         file_creation_date = datetime.fromtimestamp(os.path.getctime(file.name))
     
     # convert to hex, should be a single string containing the entire file starting with "ffffffffffffff00" etc
@@ -603,7 +610,7 @@ def read_data_file(dir_name, file_name) -> tuple[list[str], datetime]:
     assert len(hex_data) % 8 == 0, "Hex data length is not divisible by 8"
     hex_data_list = [hex_data[i:i + 8] for i in range(0, len(hex_data), 8)]
     
-    return hex_data_list, file_creation_date
+    return hex_data_list, file_creation_date, headers
 
 
 begin_event = EventType('ffffffff', ['begin_event', 'begin_sub_event'])

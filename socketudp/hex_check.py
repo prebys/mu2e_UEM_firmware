@@ -107,11 +107,12 @@ class HexCheck:
         self.peak_height_buffer: list[Peak] = []  # buffer of just peak height events
         self.raw_data_dataframe: Optional[pandas.DataFrame] = None  # buffer of raw data events in a pandas DataFrame
         self.peak_height_dataframe: Optional[pandas.DataFrame] = None  # buffer of peak height events in a DataFrame
+        self.headers = []  # list of headers from the data file
         
         if __name__ == "__main__":
             self.dir_name: str = os.path.dirname(os.path.realpath(__file__)).replace("\\", "/")  # Directory of the script
             self.file_name: str = find_data_file(config.desired_file_path)  # Name of the data file
-            self.full_hex_data, self.file_creation_date = read_data_file(self.dir_name, self.file_name)  # Full hex data and file creation date
+            self.full_hex_data, self.file_creation_date, self.headers = read_data_file(self.dir_name, self.file_name)  # Full hex data and file creation date
             self.date_str = self.file_creation_date.strftime('%Y.%m.%d_%H.%M.%S')
             self.folder_name = f"{self.date_str}_{self.file_name}"  # folder name inside /img directory
         
@@ -190,6 +191,8 @@ class HexCheck:
             print(f"{event_type}: {count}")
         
         print(f"Used input file {self.file_name}")
+        for header in self.headers:
+            print(header)
         print(f"Starting collection of data")
         
         # add raw data to the dataframe
