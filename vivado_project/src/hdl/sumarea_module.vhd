@@ -123,6 +123,27 @@ signal min_index_pipeline : min_index_pipeline_array; -- min index pipeline for 
 
 signal peak_found : boolean := false;  -- flag to indicate if a peak was found
 
+signal min_index : integer range 0 to 3 := 0;  -- index of the minimum value in the min_pipeline array
+signal new_min : signed(15 downto 0) := to_signed(0, 16);  -- initialize to zero
+
+
+signal comp01 : boolean;  -- comparison between min_pipeline(0) and min_pipeline(1)
+signal comp02 : boolean;  -- comparison between min_pipeline(0) and min_pipeline(2)
+signal comp03 : boolean;  -- comparison between min_pipeline(0) and min_pipeline(3)
+signal comp04 : boolean;  -- comparison between min_pipeline(0) and min_pipeline(4)
+signal comp12 : boolean;  -- comparison between min_pipeline(1) and min_pipeline(2)
+signal comp13 : boolean;  -- comparison between min_pipeline(1) and min_pipeline(3)
+signal comp14 : boolean;  -- comparison between min_pipeline(1) and min_pipeline(4)
+signal comp23 : boolean;  -- comparison between min_pipeline(2) and min_pipeline(3)
+signal comp24 : boolean;  -- comparison between min_pipeline(2) and min_pipeline(4)
+signal comp34 : boolean;  -- comparison between min_pipeline(3) and min_pipeline(4)
+
+signal comp_min_01 : boolean;  -- comparison between inputs(0) and inputs(1)
+signal comp_min_02 : boolean;  -- comparison between inputs(0) and inputs(2)
+signal comp_min_03 : boolean;  -- comparison between inputs(0) and inputs(3)
+signal comp_min_12 : boolean;  -- comparison between inputs(1) and inputs(2)
+signal comp_min_13 : boolean;  -- comparison between inputs(1) and inputs(3)
+signal comp_min_23 : boolean;  -- comparison between inputs(2) and inputs(3)
 
   type sumstate_t is ( Idle,
                     WaitCount,
@@ -199,16 +220,8 @@ begin
 
  -- SIGNAL PROCESSING
  process (clk_a) 
-  variable min01 : integer range 0 to 4;
-  variable min23 : integer range 0 to 4;
-  variable min0123 : integer range 0 to 4;
-  variable min01234 : integer range 0 to 4;
-  variable abs_min : signed(15 downto 0);
-
-  variable min_index : integer range 0 to 3;  -- index of the minimum value in the min_pipeline array
-  variable min_in_center : boolean;
-
   variable current_min : signed(15 downto 0) := to_signed(0, 16);  -- initialize to zero
+  
  begin
   if ( clk_a'event and clk_a = '1' ) then
 
@@ -235,17 +248,36 @@ begin
     -- samples (16 to 19) will be directly wired to inputs(0 to 3) in the current clock cycle
 
     -- PROCESS MIN VALUES
-    current_min := inputs(0);  -- start with current_min equal to value of samples_full(0)
-    min_index := 0;
-    for i in 1 to 3 loop
-      if (inputs(i) < current_min) then
-        current_min := inputs(i);
-        min_index := i;
-      end if;
-    end loop;
+    new_min <= inputs(0);  -- start with current_min equal to value of samples_full(0)
+
+    -- find the minimum value in the current four inputs (inputs(0) to inputs(3))
+    comp_min_01 <= (inputs(0) <= inputs(1));  -- comparison between inputs(0) and inputs(1)
+    comp_min_02 <= (inputs(0) <= inputs(2));  -- comparison between inputs(0) and inputs(2)
+    comp_min_03 <= (inputs(0) <= inputs(3));  -- comparison between inputs(0) and inputs(3)
+    comp_min_12 <= (inputs(1) <= inputs(2));  -- comparison between inputs(1) and inputs(2)
+    comp_min_13 <= (inputs(1) <= inputs(3));  -- comparison between inputs(1) and inputs(3)
+    comp_min_23 <= (inputs(2) <= inputs(3));  -- comparison between inputs(2) and inputs(3)
+    
+    -- these comparisons will be used to find the minimum value in the current four inputs
+    if (comp_min_01 and comp_min_02 and comp_min_03) then
+      new_min <= inputs(0);  -- inputs(0) is the minimum value
+      min_index <= 0;  -- index of the minimum value is 0
+    elsif (not comp_min_01 and comp_min_12 and comp_min_13) then
+      new_min <= inputs(1);  -- inputs(1) is the minimum value
+      min_index <= 1;  -- index of the minimum value is 1
+    elsif (not comp_min_01 and not comp_min_12 and comp_min_23) then
+      new_min <= inputs(2);  -- inputs(2) is the minimum value
+      min_index <= 2;  -- index of the minimum value is 2
+    elsif (not comp_min_01 and not comp_min_12 and not comp_min_23) then
+      new_min <= inputs(3);  -- inputs(3) is the minimum value
+      min_index <= 3;  -- index of the minimum value is 3
+    else
+      new_min <= current_min;  -- if all comparisons fail, keep the current minimum
+      min_index <= 0;  -- default index to 0
+    end if;
 
     -- min_pipeline is array of five min values, one for each window
-    min_pipeline(4) <= current_min;  -- min of samples_full(16 to 19)
+    min_pipeline(4) <= new_min;  -- min of samples_full(16 to 19)
     min_pipeline(3) <= min_pipeline(4); 
     min_pipeline(2) <= min_pipeline(3);
     min_pipeline(1) <= min_pipeline(2);
@@ -259,72 +291,55 @@ begin
     min_index_pipeline(1) <= min_index_pipeline(2);
     min_index_pipeline(0) <= min_index_pipeline(1);
 
-    -- FIND ABS MIN VALUE (comparison tree)
+    comp01 <= (min_pipeline(1) <= min_pipeline(2)); -- comparison between next clock's min_pipeline(0) and min_pipeline(1)
+    comp02 <= (min_pipeline(1) <= min_pipeline(3)); -- comparison between next clock's min_pipeline(0) and min_pipeline(2)
+    comp03 <= (min_pipeline(1) <= min_pipeline(4)); -- comparison between next clock's min_pipeline(0) and min_pipeline(3)
+    comp04 <= (min_pipeline(1) <= current_min);     -- comparison between next clock's min_pipeline(0) and min_pipeline(4)
+    comp12 <= (min_pipeline(2) <= min_pipeline(3)); -- comparison between next clock's min_pipeline(1) and min_pipeline(2)
+    comp13 <= (min_pipeline(2) <= min_pipeline(4)); -- comparison between next clock's min_pipeline(1) and min_pipeline(3)
+    comp14 <= (min_pipeline(2) <= current_min);     -- comparison between next clock's min_pipeline(1) and min_pipeline(3)
+    comp23 <= (min_pipeline(3) <= min_pipeline(4)); -- comparison between next clock's min_pipeline(2) and min_pipeline(3)
+    comp24 <= (min_pipeline(3) <= current_min);     -- comparison between next clock's min_pipeline(2) and min_pipeline(4)
+    comp34 <= (min_pipeline(4) <= current_min);     -- comparison between next clock's min_pipeline(3) and min_pipeline(4)
+
+  end if;
+
+end process;
+
+-- minimum calculation process
+process (clk_a)
+  variable min01234 : integer range 0 to 4;
+  variable abs_min : signed(15 downto 0);
+
+  variable min_in_center : boolean;
+
+
+begin
+  if (clk_a'event and clk_a = '1') then
+        -- FIND ABS MIN VALUE (comparison tree)
     -- these integer values specify which window # the minimum value is in
     -- it will output the position of the left-most minimum among the five windows
 
-    -- redo below code as priority encoder, will delete below code after finishing this
-    if min_pipeline(0) <= min_pipeline(1) and
-       min_pipeline(0) <= min_pipeline(2) and
-       min_pipeline(0) <= min_pipeline(3) and
-       min_pipeline(0) <= min_pipeline(4) then
+    -- below code is compiled into an efficient priority encoder (hopefully)
+    -- fpga should be able to calculate all the comparisons at once in parallel
+    if (comp01 and comp02 and comp03 and comp04) then
       min01234 := 0;  -- min in window # 0 (oldest, leftmost)
-    elsif min_pipeline(0) > min_pipeline(1) and
-          min_pipeline(1) <= min_pipeline(2) and
-          min_pipeline(1) <= min_pipeline(3) and
-          min_pipeline(1) <= min_pipeline(4) then
+    elsif (not comp01 and comp12 and comp13 and comp14) then
       min01234 := 1;  -- min in window # 1
-    elsif min_pipeline(0) > min_pipeline(1) and
-          min_pipeline(1) > min_pipeline(2) and
-          min_pipeline(2) <= min_pipeline(3) and
-          min_pipeline(2) <= min_pipeline(4) then
+    elsif (not comp01 and not comp12 and comp23 and comp24) then
       min01234 := 2;  -- min in window # 2
-    elsif min_pipeline(0) > min_pipeline(1) and
-          min_pipeline(1) > min_pipeline(2) and
-          min_pipeline(2) > min_pipeline(3) and
-          min_pipeline(3) <= min_pipeline(4) then
+    elsif (not comp01 and not comp12 and not comp23 and comp34) then
       min01234 := 3;  -- min in window # 3
     else
       min01234 := 4;  -- min in window # 4 (newest, rightmost)
     end if;
 
-    -- old code, tournament style binary tree
-    if min_pipeline(0) <= min_pipeline(1) then
-      min01 := 0;  -- min in window # 0 (oldest, leftmost)
-    else
-      min01 := 1;  -- min in window # 1
-    end if;
-
-    if min_pipeline(2) <= min_pipeline(3) then
-      min23 := 2;  -- min in window # 2
-    else
-      min23 := 3;  -- min in window # 3
-    end if;
-
-    if min_pipeline(min01) <= min_pipeline(min23) then
-      min0123 := min01;  -- min in window # 0 or 1
-    else
-      min0123 := min23;  -- min in window # 2 or 3
-    end if;
-
-    if min_pipeline(min0123) <= min_pipeline(4) then
-      min01234 := min0123;  -- min in window # 0, 1, 2, or 3 (older ones)
-    else
-      min01234 := 4;  -- min in window # 4 (newest, rightmost)
-    end if;
-
-    if min01234 = 4 then
-      abs_min := min_pipeline(4);  -- if the minimum is in the newest window, then it's the current_min
-    else
-      abs_min := min_pipeline(min01234);  -- otherwise, it's the minimum in the pipeline
-    end if;
+    abs_min := min_pipeline(min01234); 
 
     min_in_center := (min01234 = 2);  -- if the minimum is in window #2
 
     peak_found <= (min_in_center and abs_min < signed(thr));
-    
   end if;
-
 end process;
 
 -- STATE MACHINE
