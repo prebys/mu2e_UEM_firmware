@@ -53,11 +53,13 @@ class Config:
     show_plots: bool = True
     
     # plot raw data or peak height
-    plotting_mode = "raw_data"  # "raw_data" or "peak_height" or "both"
+    plotting_mode = "peak_separation"  # "raw_data" or "peak_height" or "both"
+    # or "peak_time" to plot a histogram of peak times for channel 4
+    # or "peak_separation" to plot a histogram of the separation between peaks in channel 4
     
     # set number of events and subevents
-    n_events: int = 1
-    n_subevents: int = 1
+    n_events: int = 1000
+    n_subevents: int = 10
 
     # search for cosmic events
     # set to True to only plot subevents where the voltage range in one of the three channels is greater than 0.5V
@@ -69,7 +71,7 @@ class Config:
     plotting_units: str = "volts"  # "volts" or "raw"
 
     # if True, will print all event types regardless of the "only_show" list below
-    show_all: bool = True
+    show_all: bool = False
 
     # if True, will print NO EVENTS regardless of the "only_show" list
     show_nothing: bool = False
@@ -82,7 +84,8 @@ class Config:
     n_logs_to_show = 10000
     
     # optional footnote below axes in plot
-    optional_note = "CH1: 100ns (10MHz) sine wave, CH2: Ext. Trig., trigger_delay = 1,000,000"
+    # optional_note = "CH1: 100ns (10MHz) sine wave, CH2: Ext. Trig., trigger_delay = 1,000,000"
+    optional_note = None
     
     def __post_init__(self):
         assert self.plotting_units in ["volts", "raw"], \
@@ -181,7 +184,8 @@ class HexCheck:
             
             if current_event.type.show and number_of_printed_logs < config.n_logs_to_show:
                 number_of_printed_logs += 1
-                print(current_event)
+                if current_event.channel_number != 5:
+                    print(current_event)
                 if number_of_printed_logs == config.n_logs_to_show:
                     print(f"[INFO] Printing of data has been "
                           f"limited to {config.n_logs_to_show} logs.")
@@ -208,6 +212,10 @@ class HexCheck:
             self.plot_raw_data()
         elif config.plotting_mode in ['peak_height', 'both']:
             self.plot_peak_height()
+        elif config.plotting_mode == 'peak_time':
+            self.plot_peak_time()
+        elif config.plotting_mode == 'peak_separation':
+            self.plot_peak_separation()
         else:
             raise ValueError("Invalid plotting mode. Please choose 'raw_data', 'peak_height', or 'both'.")
         
@@ -330,6 +338,7 @@ class HexCheck:
         plt.savefig(output_path)
         if config.show_plots:
             plt.show()
+        plt.close()
     
     def plot_raw_data(self):
         grouped = self.raw_data_dataframe.groupby(["internal_event_number", "sub_event_number"])
@@ -372,6 +381,64 @@ class HexCheck:
                                  "Peak Height - Event",
                                  "peak",
                                  t_data = t_arrays)
+            
+    def plot_peak_time(self):
+        """Plot histogram for times for the peaks in each channel summed across all events."""
+        grouped = self.peak_height_dataframe.groupby("channel_number")
+        for channel, group in grouped:
+            if channel != 4:
+                continue
+            
+            times = group["time_ns"].values % 100  # mod 100 to get times in the range of 0-99 ns
+            plt.figure(figsize=(10, 6))
+            plt.hist(times, bins=100, color='blue', alpha=0.7)
+            plt.title(f"Peak Times for Channel {channel}")
+            plt.xlabel("Time (ns)")
+            plt.ylabel("Frequency")
+            plt.grid(True)
+            output_path = f"img/{self.folder_name}/peak_time_channel_{channel}.png"
+            if not os.path.exists(f"img/{self.folder_name}"):
+                os.mkdir(f"img/{self.folder_name}")
+            plt.savefig(output_path)
+            if config.show_plots:
+                plt.show()
+            plt.close()
+            
+    def plot_peak_separation(self):
+        """Plot histogram for the separation between peaks in channel 4."""
+        grouped = self.peak_height_dataframe.groupby("channel_number")
+        for channel, group in grouped:
+            if channel != 4:
+                continue
+            
+            # Calculate the time differences between consecutive peaks
+            times = group["time_ns"].values
+            if len(times) < 2:
+                print(f"Not enough data to calculate peak separation for channel {channel}.")
+                continue
+            
+            # Calculate the differences (ignoring negative values)
+            separations = []
+            for i in range(1, len(times)):
+                separation = times[i] - times[i - 1]
+                if separation > 0:
+                    separations.append(separation)
+            
+            plt.figure(figsize=(10, 6))
+            plt.hist(separations, bins=100, color='green', alpha=0.7)
+            plt.title(f"Peak Separations for Channel {channel}")
+            plt.xlabel("Separation (ns)")
+            plt.ylabel("Frequency")
+            plt.grid(True)
+            output_path = f"img/{self.folder_name}/peak_separation_channel_{channel}.png"
+            if not os.path.exists(f"img/{self.folder_name}"):
+                os.mkdir(f"img/{self.folder_name}")
+            plt.savefig(output_path)
+            if config.show_plots:
+                plt.show()
+            plt.close()
+            
+        
 
 
 if __name__ == "__main__":
