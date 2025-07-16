@@ -562,7 +562,7 @@ def signed(value: int, width: int) -> int:
     return -(value & (1 << width)) | (value & ((1 << width) - 1))
 
 
-def find_data_file(desired_file_path) -> str:
+def find_data_file(desired_file_path, to_use_index_increment: int = 0) -> str:
     # get directory of the script
     
     # argv gets the command line arguments
@@ -585,9 +585,11 @@ def find_data_file(desired_file_path) -> str:
     if len(dat_files) == 0:
         raise ValueError("No .dat files found in the current directory matching search")
     elif len(dat_files) > 1:
+        input_file_name = dat_files[-config.to_use_file_index - to_use_index_increment]
+        if not input_file_name.startswith("data_202507"):
+            raise ValueError("Outside range of data_202507 files. Temporarily ignoring all other files.")
         print(f"Warning: Multiple .dat files found in the current directory. "
-              f"Picking this one ({dat_files[-config.to_use_file_index]})")
-        input_file_name = dat_files[-config.to_use_file_index]
+              f"Picking this one ({input_file_name})")
     else:
         input_file_name = dat_files[0]  # only one result
     return input_file_name
