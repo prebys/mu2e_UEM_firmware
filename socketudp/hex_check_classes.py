@@ -400,7 +400,8 @@ class Event:
         # 0x70, 0x60, 0x50, or 0x40
         first_word = (word & 0xF0000000) >> 28
         if first_word not in [0x7, 0x6, 0x5, 0x4]:
-            raise ValueError(f"Invalid first word: {hex(first_word)}. Expected one of [0x70, 0x60, 0x50, 0x40].")
+            raise ValueError(f"Invalid first word: {hex(first_word)} in {self.hex}. "
+                             f"Expected one of [0x70, 0x60, 0x50, 0x40].")
         peak_location = first_word & 0b0011  # get the last two bits of the first word
         counter = (word & 0x0FFFFFFF)  # 28-bit counter value
         time = counter * 4  # time in ns
@@ -607,7 +608,7 @@ def read_data_file(dir_name, file_name) -> tuple[list[str], datetime, list[str]]
     
     # convert to hex, should be a single string containing the entire file starting with "ffffffffffffff00" etc
     hex_data: str = binary_data.hex()
-    assert len(hex_data) % 8 == 0, "Hex data length is not divisible by 8"
+    assert len(hex_data) % 8 == 0, f"Hex data length is not divisible by 8 ({len(hex_data)})"
     hex_data_list = [hex_data[i:i + 8] for i in range(0, len(hex_data), 8)]
     
     return hex_data_list, file_creation_date, headers
@@ -637,7 +638,7 @@ begin_peak_data = EventType('efefefef', ['channel_number'])
 channel_number = EventType('eeee..ee', ['peak_finding_header'])
 peak_finding_header = EventType('aaaaaaaa', ['peak_height_header'])
 peak_height_header = EventType('cccccccc', ['peak_height_end', 'peak_height_data_1'])
-peak_height_data_1 = EventType('....00..', ['peak_height_data_2'])
+peak_height_data_1 = EventType('........', ['peak_height_data_2'])
 peak_height_data_2 = EventType('........', ['peak_height_end', 'peak_height_data_1'])
 peak_height_end = EventType('cececece', ['peak_area_header'])
 peak_area_header = EventType('dddddddd', ['peak_area_end', 'peak_area_data_1'])

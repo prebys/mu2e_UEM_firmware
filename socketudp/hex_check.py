@@ -6,8 +6,9 @@ from collections import Counter
 from dataclasses import field, dataclass
 from typing import Optional
 
+import numpy as np
 import pandas
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt, gridspec
 import pandas as pd
 
 from hex_check_classes import Event, EventType, convert_voltage, name_to_event, find_data_file, read_data_file, Peak
@@ -39,7 +40,7 @@ class Config:
 
     # set to "1" to use the newest file in the directory
     # "2" for example will use the second-newest file
-    to_use_file_index: int = 1
+    to_use_file_index: int = 9
 
     # data processing mode
     # s12: 12-bit signed integer (normal ADC operation, split 32-bits into two 16-bit values, take top 12-bits)
@@ -53,13 +54,13 @@ class Config:
     show_plots: bool = True
     
     # plot raw data or peak height
-    plotting_mode = "peak_separation"  # "raw_data" or "peak_height" or "both"
+    plotting_mode = "peak_time"  # "raw_data" or "peak_height" or "both"
     # or "peak_time" to plot a histogram of peak times for channel 4
     # or "peak_separation" to plot a histogram of the separation between peaks in channel 4
     
     # set number of events and subevents
     n_events: int = 1000
-    n_subevents: int = 10
+    n_subevents: int = 50
 
     # search for cosmic events
     # set to True to only plot subevents where the voltage range in one of the three channels is greater than 0.5V
@@ -71,7 +72,7 @@ class Config:
     plotting_units: str = "volts"  # "volts" or "raw"
 
     # if True, will print all event types regardless of the "only_show" list below
-    show_all: bool = False
+    show_all: bool = True
 
     # if True, will print NO EVENTS regardless of the "only_show" list
     show_nothing: bool = False
@@ -81,7 +82,7 @@ class Config:
     # set to empty list [] to use the "show" attribute of the name_to_event dictionary
     
     # maximum number of logs to show
-    n_logs_to_show = 10000
+    n_logs_to_show = float('inf')
     
     # optional footnote below axes in plot
     # optional_note = "CH1: 100ns (10MHz) sine wave, CH2: Ext. Trig., trigger_delay = 1,000,000"
@@ -144,10 +145,16 @@ class HexCheck:
         print("\n\nStart printing of data")
         for current_event_hex in self.full_hex_data:
             # detect current event type
-            current_event = Event(
-                new_hex=current_event_hex,
-                previous_event=current_event  # this "current_event" is the event from the previous loop
-            )
+            try:
+                current_event = Event(
+                    new_hex=current_event_hex,
+                    previous_event=current_event  # this "current_event" is the event from the previous loop
+                )
+            except Exception as e:
+                if "Failed to detect the kind of event" in str(e):
+                    print(f"Error: {current_event_hex} (unknown event). "
+                          f"Will continue searching for first recognizable event.")
+                    raise e
             
             # end file processing if the event number and subevent number
             # are greater than the configured values
@@ -244,13 +251,17 @@ class HexCheck:
     def make_peak_height_dataframe(self):
         panda_entry = []
         for peak in self.peak_height_buffer:
+            if peak.channel_number == 4:
+                continue
             panda_entry.append((peak.internal_event_number,
                                 peak.channel_number,
+                                peak.sub_event_number,
                                 peak.time_ns,
                                 peak.height))
         panda_frame = pd.DataFrame(self.peak_height_buffer,
                                    columns=["internal_event_number",
                                             "channel_number",
+                                            "sub_event_number",
                                             "time_ns",
                                             "height"])
         return panda_frame
@@ -381,29 +392,118 @@ class HexCheck:
                                  "Peak Height - Event",
                                  "peak",
                                  t_data = t_arrays)
+    
+    def plot_peak_time(self, merge_events = True):
+        """Generate one 2x2 histogram grid per event, showing peak times for each channel."""
+        
+        if merge_events:
+            self.histogram_grid(self.peak_height_dataframe, None)
+        else:
+            grouped_by_event = self.peak_height_dataframe.groupby("internal_event_number")
+            for internal_event, group in grouped_by_event:
+                internal_event: int
+                if internal_event > config.n_events:
+                    continue
+                self.histogram_grid(group, internal_event)
+    
+    def histogram_grid(self, group, internal_event):
+        fig, axes = plt.subplots(3, 1, figsize=(10, 8))
+        # fig = plt.figure(figsize=(10, 8))
+        # gs = gridspec.GridSpec(2, 4, height_ratios=[1, 1])
+        #
+        # # Top row
+        # ax1 = fig.add_subplot(gs[0, :2])  # Channel 1
+        # ax2 = fig.add_subplot(gs[0, 2:])  # Channel 2
+        # # Bottom row: single axis in middle
+        # ax3 = fig.add_subplot(gs[1, 1:3])  # Channel 3 (centered)
+        #
+        # axes = [ax1, ax2, ax3]
+        
+        if internal_event is not None:
+            title = f"Peak Times - Event {internal_event}"
+            n_events = 1
+        else:
+            title = "Peak Times - Merged Events"
+            n_events = group["internal_event_number"].nunique()
+        
+        if config.integer_mode != 's12':
+            title += f" (Mode: {config.integer_mode})"
+        time_str = self.file_creation_date.strftime("%Y-%m-%d %H:%M:%S")
+        title += f"\n{self.file_name} ({time_str})"
+        fig.suptitle(title, fontsize=14)
+        
+        scale_down = 1e6
+        times_all = group[group['channel_number'] != 4]["time_ns"].values / scale_down  # all times in μs
+        min_time = np.min(times_all) - 2
+        max_time = np.max(times_all) + 2
+        print(times_all)
+        print(min_time)
+        print(max_time)
+        # bin_edges = np.linspace(min_time, max_time, 101)  # 100 bins = 101 edges
+        
+        for i, ch in enumerate([1, 2, 3]):
+            ax = axes[i]
+            ch_data = group[group["channel_number"] == ch]
             
-    def plot_peak_time(self):
-        """Plot histogram for times for the peaks in each channel summed across all events."""
-        grouped = self.peak_height_dataframe.groupby("channel_number")
-        for channel, group in grouped:
-            if channel != 4:
-                continue
-            
-            times = group["time_ns"].values % 100  # mod 100 to get times in the range of 0-99 ns
-            plt.figure(figsize=(10, 6))
-            plt.hist(times, bins=100, color='blue', alpha=0.7)
-            plt.title(f"Peak Times for Channel {channel}")
-            plt.xlabel("Time (ns)")
-            plt.ylabel("Frequency")
-            plt.grid(True)
-            output_path = f"img/{self.folder_name}/peak_time_channel_{channel}.png"
-            if not os.path.exists(f"img/{self.folder_name}"):
-                os.mkdir(f"img/{self.folder_name}")
-            plt.savefig(output_path)
-            if config.show_plots:
-                plt.show()
-            plt.close()
-            
+            if not ch_data.empty:
+                times = ch_data["time_ns"].values / scale_down  # convert to μs
+                print(f"Channel {i} unique time values:", len(np.unique(times)))
+                log_scale = True
+                ax.hist(times, bins=101, color='blue', alpha=0.7, log=log_scale)
+                ax_title = f"Channel {ch}"
+                if log_scale:
+                    ax_title += " (log scale)"
+                ax.set_title(ax_title)
+                if scale_down == 1:
+                    ax.set_xlabel("Time (ns)")
+                elif scale_down == 1e3:
+                    ax.set_xlabel("Time (us)")
+                elif scale_down == 1e6:
+                    ax.set_xlabel("Time (ms)")
+                else:
+                    ax.set_xlabel("Time")
+
+                ax.set_ylabel("Counts")
+                ax.grid(True)
+                ax.set_xlim(min_time, max_time)
+                
+                # Add box with stats
+                num_points = len(times)
+                stats_text = f"{num_points} peaks\n{n_events} event{'s' if n_events > 1 else ''}"
+                ax.text(0.98, 0.95, stats_text, transform=ax.transAxes,
+                        fontsize=10, ha='right', va='top',
+                        bbox=dict(boxstyle="round,pad=0.3", edgecolor='black', facecolor='white',
+                                  alpha=0.7))
+            else:
+                ax.text(0.5, 0.5, "No Data", fontsize=12, ha="center", va="center")
+                ax.set_title(f"Channel {ch}")
+        
+        plt.tight_layout(rect=(0, 0.03, 1, 0.95))
+        
+        if internal_event is not None:
+            output_path = f"img/{self.folder_name}/peak_time_event_{internal_event}.png"
+        else:
+            output_path = f"img/{self.folder_name}/peak_time_merged.png"
+        
+        if not os.path.exists(f"img/{self.folder_name}"):
+            os.mkdir(f"img/{self.folder_name}")
+        
+        # Standardize x-limits
+        # min_xlim = float('inf')
+        # max_xlim = float('-inf')
+        # for ax in axes:
+        #     xlim = ax.get_xlim()
+        #     min_xlim = min(min_xlim, xlim[0])
+        #     max_xlim = max(max_xlim, xlim[1])
+        # for ax in axes.flatten()[:3]:
+        #     ax.set_xlim(min_xlim, max_xlim)
+        # #     # ax.set_xlim(80, 85)
+        
+        plt.savefig(output_path)
+        if config.show_plots:
+            plt.show()
+        plt.close()
+        
     def plot_peak_separation(self):
         """Plot histogram for the separation between peaks in channel 4."""
         grouped = self.peak_height_dataframe.groupby("channel_number")
@@ -456,4 +556,28 @@ if __name__ == "__main__":
     else:
         print("\nTests failed. Exiting.")
         exit()
+
+    df = hex_check.peak_height_dataframe
     
+    result = (
+        df.groupby(['internal_event_number', 'channel_number', 'sub_event_number'])['time_ns']
+        .agg(min_time='min', max_time='max')
+        .reset_index()
+    )
+    
+    # Convert to µs and format with commas
+    result['min_time_us'] = (result['min_time'] / 1_000).map('{:,.1f}'.format)
+    result['max_time_us'] = (result['max_time'] / 1_000).map('{:,.1f}'.format)
+    
+    # Drop raw ns columns if you only want µs
+    result = result.drop(columns=['min_time', 'max_time'])
+    
+    pd.set_option('display.max_rows', None)
+    
+    print(result)
+    
+    min_height = df['height'].min()
+    max_height = df['height'].max()
+    
+    print(f"Min height: {min_height}")
+    print(f"Max height: {max_height}")
