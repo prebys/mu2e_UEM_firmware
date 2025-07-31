@@ -8,6 +8,7 @@ from dataclasses import field, dataclass
 from datetime import datetime
 
 from typing import NamedTuple, Optional, Union
+from hex_check_config import config
 
 PeakHeader = NamedTuple("PeakHeader", [("position", int), ("time_ns", int)])
 PeakHeight = NamedTuple("PeakHeight", [("height", int)])
@@ -659,12 +660,12 @@ end_event = EventType('fcfcfcfc', ['begin_event'])
 name_to_event = {name: event for name, event in globals().items() if isinstance(event, EventType)}
 
 
-def set_config():
-    """Set the configuration for the hex_check module."""
-    from hex_check import Config
-    return Config()
+# def set_config():
+#     """Set the configuration for the hex_check module."""
+#
+#     return Config()
 
 hex_check_state = {}  # hex_check.py will put hex_check in here as hex_check_state["hex_check"]
 # it will eventually be used in the Event class
 
-config = set_config()
+# config = set_config()

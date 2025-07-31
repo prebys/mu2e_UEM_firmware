@@ -12,6 +12,7 @@ import pandas
 from matplotlib import pyplot as plt, gridspec
 import pandas as pd
 
+from hex_check_config import config
 from hex_check_classes import Event, EventType, convert_voltage, name_to_event, find_data_file, read_data_file, Peak
 
 file_path = os.path.dirname(os.path.realpath(__file__))
@@ -31,67 +32,7 @@ os.chdir(file_path)
 # #############################################################################
 # #############################################################################
 
-@dataclass
-class Config:
-    # set "desired_file_path" to None to use the most recent data file in the directory
-    # setting to a name will search for any files with that name in the directory
-    # consider searching for the names 'diag_0x1', 'diag_0x2', 'diag_0x3', 'diag_0x5', 'diag_0x9', 'diag_0xF'
-    # desired_file_path = "test20241112_145129.dat"
-    desired_file_path: Optional[str] = "data_20250710_233404.dat"
 
-    # set to "1" to use the newest file in the directory
-    # "2" for example will use the second-newest file
-    to_use_file_index: int = 9
-
-    # data processing mode
-    # s12: 12-bit signed integer (normal ADC operation, split 32-bits into two 16-bit values, take top 12-bits)
-    # s16: 16-bit signed integer (split 32-bits into two 16-bit values, take all 16-bits)
-    # s32: 32-bit signed integer (take all 32-bits as one data point)
-    integer_mode: str = 's12'
-
-    # show plots
-    # set to True to visually display plots as they are created, or False to just save them and not display them
-    # in an SSH client, "False" is recommended
-    show_plots: bool = True
-    
-    # plot raw data or peak height
-    plotting_mode = "peak_time"  # "raw_data" or "peak_height" or "both"
-    # or "peak_time" to plot a histogram of peak times for channel 4
-    # or "peak_separation" to plot a histogram of the separation between peaks in channel 4
-    
-    # set number of events and subevents
-    n_events: int = 1000
-    n_subevents: int = 100
-
-    # search for cosmic events
-    # set to True to only plot subevents where the voltage range in one of the three channels is greater than 0.5V
-    search_for_cosmics: bool = False
-
-    # plotting units
-    # volts: standard operation, plot data in volts (convert from raw values)
-    # raw: plot data in raw values (no conversion)
-    plotting_units: str = "volts"  # "volts" or "raw"
-
-    # if True, will print all event types regardless of the "only_show" list below
-    show_all: bool = False
-
-    # if True, will print NO EVENTS regardless of the "only_show" list
-    show_nothing: bool = True
-
-    # if this contains entries, then this code will only print the events in this list
-    only_show: list[str] = field(default_factory=lambda: ['peak_height_data', 'peak_area_data'])  # ["peak_height_data_1"])  # , "event_number_evn", etc.
-    # set to empty list [] to use the "show" attribute of the name_to_event dictionary
-    
-    # maximum number of logs to show
-    n_logs_to_show = float('inf')
-    
-    # optional footnote below axes in plot
-    # optional_note = "CH1: 100ns (10MHz) sine wave, CH2: Ext. Trig., trigger_delay = 1,000,000"
-    optional_note = None
-    
-    def __post_init__(self):
-        assert self.plotting_units in ["volts", "raw"], \
-            "Invalid plotting_units. Please choose 'volts' or 'raw'."
 
 # #############################################################################
 # #############################################################################
@@ -101,7 +42,7 @@ class Config:
 # #############################################################################
 # #############################################################################
 
-config = Config()
+
 
 class HexCheck:
     def __init__(self, to_use_index_increment: int = 0):
@@ -114,12 +55,13 @@ class HexCheck:
         self.peak_height_dataframe: Optional[pandas.DataFrame] = None  # buffer of peak height events in a DataFrame
         self.headers = []  # list of headers from the data file
         
-        if __name__ == "__main__":
-            self.dir_name: str = os.path.dirname(os.path.realpath(__file__)).replace("\\", "/")  # Directory of the script
-            self.file_name: str = find_data_file(config.desired_file_path, to_use_index_increment)  # Name of the data file
-            self.full_hex_data, self.file_creation_date, self.headers = read_data_file(self.dir_name, self.file_name)  # Full hex data and file creation date
-            self.date_str = self.file_creation_date.strftime('%Y.%m.%d_%H.%M.%S')
-            self.folder_name = f"{self.date_str}_{self.file_name}"  # folder name inside /img directory
+        # if __name__ == "__main__":
+        self.dir_name: str = os.path.dirname(os.path.realpath(__file__)).replace("\\", "/")  # Directory of the script
+        self.file_name: str = find_data_file(config.desired_file_path, to_use_index_increment)  # Name of the data file
+        self.full_hex_data, self.file_creation_date, self.headers = read_data_file(self.dir_name, self.file_name)  # Full hex data and file creation date
+        self.date_str = self.file_creation_date.strftime('%Y.%m.%d_%H.%M.%S')
+        self.folder_name = f"{self.date_str}_{self.file_name}"  # folder name inside /img directory
+        # end commented if statement
         
         # value of how many raw data points are remaining to be sent in current run of raw data
         # will only have value for raw_data event types
@@ -223,6 +165,8 @@ class HexCheck:
             self.plot_peak_time()
         elif config.plotting_mode == 'peak_separation':
             self.plot_peak_separation()
+        elif config.plotting_mode is None:
+            print("No plotting mode specified. Skipping plotting.")
         else:
             raise ValueError("Invalid plotting mode. Please choose 'raw_data', 'peak_height', or 'both'.")
         
@@ -264,6 +208,14 @@ class HexCheck:
                                             "sub_event_number",
                                             "time_ns",
                                             "height"])
+        
+        # save peak height data to CSV file
+        output_path = f"img/{self.folder_name}/peak_height_data_{self.file_name}.csv"
+        if not os.path.exists(f"img/{self.folder_name}"):
+            os.makedirs(f"img/{self.folder_name}")
+        panda_frame.to_csv(output_path, index=False)
+        print(f"Peak height data saved to {output_path}")
+        
         return panda_frame
     
     def plot_event_grid(self,
@@ -272,7 +224,8 @@ class HexCheck:
                         title_prefix: str = '',
                         file_prefix: str = '',
                         sub_event: int = None,
-                        t_data: list[list[float]] = None):
+                        t_data: list[list[float]] = None
+                        ):
         """
         Plots a 2x2 grid using the grouped data.
 
@@ -443,10 +396,13 @@ class HexCheck:
             scale_down *= 1e3
             min_time /= 1e3
             max_time /= 1e3
-        min_time = 31
-        max_time = 32.25
+        bin_width = 400e-6  # 400 ns bin width
+        # min_time = 10
+        # max_time = 15 + bin_width
 
-        bin_edges = np.linspace(min_time - 2, max_time + 2, 6000)  # 100 bins = 101 edges
+        # bin_edges = np.linspace(min_time, max_time, 6000)  # 100 bins = 101 edges
+        bin_edges = np.arange(min_time, max_time, bin_width)  # assuming ms, 4e-6 is 4ns
+        print(f"Bin width: {bin_width * 1e6} ns")
         
         for i, ch in enumerate([1, 2, 3]):
             ax = axes[i]
@@ -456,7 +412,9 @@ class HexCheck:
                 times = ch_data["time_ns"].values / scale_down  # convert to μs
                 # print(f"Channel {i} unique time values:", len(np.unique(times)))
                 log_scale = False
-                ax.hist(times, bins=bin_edges, color='blue', alpha=0.7, log=log_scale)
+                ax.hist(times, bins=bin_edges,
+                        color='blue', alpha=0.7, log=log_scale,
+                        width=15*bin_width)
                 ax_title = f"Channel {ch}"
                 if log_scale:
                     ax_title += " (log scale)"
@@ -475,7 +433,7 @@ class HexCheck:
                 ax.set_xlim(min_time, max_time)
                 
                 # Add box with stats
-                num_points = len(times)
+                num_points = len([i for i in times if min_time < i < max_time])
                 stats_text = f"{num_points} peaks\n{n_events} event{'s' if n_events > 1 else ''}"
                 ax.text(0.98, 0.95, stats_text, transform=ax.transAxes,
                         fontsize=10, ha='right', va='top',
@@ -510,9 +468,10 @@ class HexCheck:
         if config.show_plots:
             plt.show()
         plt.close()
+        
 
         # plot ffts, get counts and bin width from each axis in axes
-        self.fft(axes)
+        # self.fft(axes)
         # for i, ax in enumerate(axes):
         #     counts = [patch.get_height() for patch in ax.patches]
         #     bin_width = ax.patches[0].get_x() + ax.patches[0].get_width() - ax.patches[0].get_x()
@@ -555,20 +514,21 @@ class HexCheck:
 
     def fft(self, axes_in):
         """Perform FFT on the histogram counts and plot the result."""
-        fig, axes = plt.subplots(3, 1, figsize=(10, 8))
+        num_plots = len(axes_in)
+        fig, axes = plt.subplots(num_plots, 1, figsize=(10, 8))
         fig.suptitle(f"FFT of Histogram Counts\n{self.file_name}", fontsize=14)
-        for i in range(3):
+        for i in range(num_plots):
             ax = axes[i]
             # Get the counts and bin edges from the histogram
             counts = [patch.get_height() for patch in axes_in[i].patches]
-            bin_edges = [patch.get_x() for patch in axes_in[i].patches]
+            bin_edges = [round(patch.get_x(), 10) for patch in axes_in[i].patches]
             bin_edges.append(axes_in[i].patches[-1].get_x() + axes_in[i].patches[-1].get_width())
             if not counts or len(bin_edges) < 2:
                 print(f"No data to perform FFT on channel {i + 1}.")
                 continue
 
             # Calculate the bin width
-            bin_width = bin_edges[1] - bin_edges[0]
+            bin_width = round(bin_edges[1] - bin_edges[0], 10)
 
             # Perform FFT on the counts
             fft_result = np.fft.fft(counts)
@@ -578,43 +538,90 @@ class HexCheck:
             positive_freqs = fft_freq[:len(fft_freq) // 2]
             positive_magnitudes = np.abs(fft_result[:len(fft_result) // 2])
 
-            # Skip first 100 bins to remove DC component
-            positive_freqs = positive_freqs[100:]
-            positive_magnitudes = positive_magnitudes[100:]
+            # Skip first bins to remove DC component
+            mask = positive_freqs > 10  # remove frequencies below 10 kHz
+            positive_freqs = positive_freqs[mask]
+            positive_magnitudes = positive_magnitudes[mask]
+            print(len(positive_freqs))
 
-            # # Convert x-axis to us instead of MHz
-            # periods_us = 1 / positive_freqs
-            # sorted_indices = np.argsort(periods_us)
-            # periods_us = periods_us[sorted_indices]
-            # positive_magnitudes = positive_magnitudes[sorted_indices]
+            # # Convert x-axis to us instead of kHz
+            periods_us = 1e3 / positive_freqs  # kHz --> us
+            
+            # Filter out very large or invalid periods
+            mask = np.isfinite(periods_us) & (periods_us < 10)  # remove inf, NaN, etc
+            # periods_us = periods_us[mask]
+            # positive_magnitudes = positive_magnitudes[mask]
+            
+            # Sort by period (for clean bar display)
+            sorted_indices = np.argsort(periods_us)
+            # above is a list of indices that would sort periods_us
+            sorted_periods_us = periods_us[sorted_indices]  # apply indices to sort
+            sorted_positive_magnitudes = positive_magnitudes[sorted_indices]  # sort mags in the same order
 
             # print value of max frequency peak (excluding DC)
-            if len(positive_magnitudes) > 1:
-                max_index = np.argmax(positive_magnitudes)
+            if len(sorted_positive_magnitudes) > 1:
+                max_index = np.argmax(sorted_positive_magnitudes)
                 # max_period_us = periods_us[max_index]
                 # max_freq_hz = 1e3 / max_period_us  # convert back to Hz
                 # max_freq_mhz = max_freq_hz / 1e3
-                max_magnitude = positive_magnitudes[max_index]
-                max_freq_mhz = positive_freqs[max_index] / 1e6  # convert to MHz
-                max_period_us = 1 / positive_freqs[max_index] * 1e6  # convert to us
-                print(f"Max frequency peak (excluding DC): {max_freq_mhz:.2f} MHz, "
+                max_magnitude = sorted_positive_magnitudes[max_index]
+                max_period_us = sorted_periods_us[max_index]
+                max_freq_khz = 1e3 / max_period_us  # convert to khz
+                print(f"Max frequency peak (excluding DC): {max_freq_khz:.2f} kHz, "
                       f"period: {max_period_us:.4f} us, magnitude: {max_magnitude:.2f}")
+
+            # print top 10 frequency peaks
+            top_indices = np.argsort(positive_magnitudes)[-30:][::-1]
+            top_frequencies = positive_freqs[top_indices]
+            top_magnitudes = positive_magnitudes[top_indices]
+            print("Top 10 frequency peaks (sorted by magnitude):")
+            for freq, mag in zip(top_frequencies, top_magnitudes):
+                print(f"  Frequency: {freq:.4f} kHz, Period: {1e3 / freq:.4f} us, "
+                      f"Magnitude: {mag:.2f}")
 
             # Plot the FFT result
             ax.bar(positive_freqs, positive_magnitudes,
-                   width=positive_freqs[1] - positive_freqs[0],
-                   # width=np.diff(periods_us, append=periods_us[-1] + 1),
-                   color='blue', alpha=0.7)
-            ax.set_xlabel("Period (kHz)")
+                   width=15 * (positive_freqs[1] - positive_freqs[0]),
+                   # width=0.005,
+                   color='blue', alpha=1.0)
+            ax.set_xlabel("Frequency (kHz)")
             ax.set_ylabel("Magnitude")
             ax.grid(True)
-            ax.set_xlim(500, 575)
+            # ax.set_xlim(550, 650)
+            ax.set_title(f"CH {i+1}")
+            
+            # Create second x-axis with periods in µs
+            ax2 = ax.twiny()
+            ax2.set_xlim(ax.get_xlim())  # Match the main axis limits (in kHz)
+            ax2.set_xlabel("Period (µs)")
+            ax2.xaxis.set_ticks_position('bottom')
+            ax2.xaxis.set_label_position('bottom')
+            ax2.spines['bottom'].set_position(('outward', 44))
+
+            # Compute tick locations for ax (freq) and their labels for ax2 (period)
+            freq_ticks = ax.get_xticks()
+            freq_ticks = [f for f in freq_ticks if ax.get_xlim()[0] < f and f < ax.get_xlim()[1]]
+            with np.errstate(divide='ignore'):
+                period_labels = [f"{1e3 / f:.2f}" if f > 0 else "" for f in freq_ticks]
+            ax2.set_xticks(freq_ticks)
+            ax2.set_xticklabels(period_labels)
 
             # remove x-ticks for all but the last plot
-            if i != 2:
+            if i != (num_plots - 1):
                 # ax.set_xticks([])
                 ax.set_xlabel("")
-
+                ax2.set_xlabel("")
+                ax2.set_xticks([])  # remove x-ticks for the second x-axis
+                # completely hide the ax2
+                ax2.spines['bottom'].set_visible(False)
+                
+        # margin space
+        plt.tight_layout(rect=(0, 0.03, 1, 0.95))
+        
+        # set y-axes to be equal
+        y_max = max(ax.get_ylim()[1] for ax in axes)
+        for ax in axes:
+            ax.set_ylim(0, y_max)
 
         output_path = f"img/{self.folder_name}/fft_histogram_{self.file_name}.png"
         if not os.path.exists(f"img/{self.folder_name}"):
@@ -623,39 +630,71 @@ class HexCheck:
         if config.show_plots:
             plt.show()
         plt.close()
-
-
         
-
+        # assuming Nyquist frequency is 1250 kHz, sampling freq 2500 kHz
+        # and incoming signal is delta comb / train of pulses at 590 kHz
+        # one would expect a peak at 590 kHz, then peaks at every integer harmonic
+        # peaks are produced at:
+        # 590 kHz: the main peak (1695 ns)
+        # 1180 kHz: the second harmonic
+        # 1770 kHz: the third harmonic
+        #   reflected back since max freq is 1250 kHz, so
+        #   it becomes 2500 - 1770 = 730 kHz
+        # 520 kHz: 1250 - 730 kHz
+        
+        
+def main():
+    try:
+        hex_check = HexCheck()
+    except Exception as e:
+        print(f"Error initializing HexCheck: {e}")
+        traceback.print_exc()
+    else:
+        hex_check.get_event_types(name_to_event)
+        
+        # make hex_check available in hex_check_classes.py
+        from hex_check_classes import hex_check_state
+        hex_check_state[
+            "hex_check"] = hex_check  # set global variable to the current instance of HexCheck
+        
+        try:
+            hex_check.main(plot=True)
+        except Exception as e:
+            print(f"Error processing file {hex_check.file_name}: {e}")
+            raise
+        
+        return hex_check
 
 if __name__ == "__main__":
-    for i in range(1):
+    try:
+        hex_check: HexCheck = HexCheck()
+    except Exception as e:
+        print(f"Error initializing HexCheck: {e}")
+        traceback.print_exc()
+    else:
+        hex_check.get_event_types(name_to_event)
+        
+        # make hex_check available in hex_check_classes.py
+        from hex_check_classes import hex_check_state
+        
+        hex_check_state[
+            "hex_check"] = hex_check  # set global variable to the current instance of HexCheck
+        
         try:
-            hex_check = HexCheck(i)
+            hex_check.main(plot=True)
         except Exception as e:
-            print(f"Error initializing HexCheck with index {i}: {e}")
-            # traceback.print_exc()
-            continue
-        else:
-            hex_check.get_event_types(name_to_event)
-
-            # make hex_check available in hex_check_classes.py
-            from hex_check_classes import hex_check_state
-            hex_check_state["hex_check"] = hex_check  # set global variable to the current instance of HexCheck
-
-            try:
-                hex_check.main(plot=True)
-            except Exception as e:
-                print(f"Error processing file {hex_check.file_name}: {e}")
-                continue
-        # result = unittest.TextTestRunner().run(unittest.defaultTestLoader.discover("tests"))
-        #
-        # if result.wasSuccessful():
-        #     print("\nAll tests passed. Running hex_check...")
-        #     hex_check.main(plot=True)
-        # else:
-        #     print("\nTests failed. Exiting.")
-        #     exit()
+            print(f"Error processing file {hex_check.file_name}: {e}")
+            raise
+        
+        # return hex_check
+    # result = unittest.TextTestRunner().run(unittest.defaultTestLoader.discover("tests"))
+    #
+    # if result.wasSuccessful():
+    #     print("\nAll tests passed. Running hex_check...")
+    #     hex_check.main(plot=True)
+    # else:
+    #     print("\nTests failed. Exiting.")
+    #     exit()
 
     # df = hex_check.peak_height_dataframe
     #
@@ -681,3 +720,6 @@ if __name__ == "__main__":
     #
     # print(f"Min height: {min_height}")
     # print(f"Max height: {max_height}")
+    
+else:
+    hex_check: HexCheck = main()
