@@ -279,6 +279,17 @@ class Event:
                         else:
                             continue  # you got an event in raw data that just happened to look like end_of_channel
                 return matched, current_event_type
+
+        for potential_event_type in next_event_candidates:
+            if potential_event_type.name.startswith("peak_area_data_"):
+                # peak area data, but there's some error in the format so it wasn't detected.
+                # return just the necessary elements of the data point, but with the other things "zero"
+                matched = True
+                current_event_type = potential_event_type
+                print(f"Event {self} ({self.internal_event_number}-{self.sub_event_number}-{self.channel_number}): "
+                      f"forcing through invalid {potential_event_type} with hex {self.hex}.")
+                self.hex = potential_event_type.regex_pattern.replace('.', '0')  # replace all dots with zeros
+                return matched, current_event_type
         
         raise Exception(f"Failed to detect the kind of event for {self.hex} "
                         f"with previous event {self.previous_event.type} "

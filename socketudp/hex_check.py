@@ -396,7 +396,7 @@ class HexCheck:
             scale_down *= 1e3
             min_time /= 1e3
             max_time /= 1e3
-        bin_width = 400e-6  # 400 ns bin width
+        bin_width = 1200e-6  # 400 ns bin width
         # min_time = 10
         # max_time = 15 + bin_width
 
@@ -665,9 +665,13 @@ def main():
         
         return hex_check
 
+
+# hex_check = None
+
+
 if __name__ == "__main__":
     try:
-        hex_check: HexCheck = HexCheck()
+        hex_check: Optional[HexCheck] = HexCheck()
     except Exception as e:
         print(f"Error initializing HexCheck: {e}")
         traceback.print_exc()
@@ -723,3 +727,5 @@ if __name__ == "__main__":
     
 else:
     hex_check: HexCheck = main()
+
+print()
