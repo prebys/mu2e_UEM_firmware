@@ -228,3 +228,49 @@ print(f"Interpolated phase: {interp_phase_deg:.2f}° ± {sigma_phi_deg:.2f}° (1
 
 plt.show()
 print()
+
+
+def old_code_from_main_file():
+    # inside here is a bunch of code copied from main file just to get it out
+    # angles
+    max_indices = np.argsort(mini_fft_abs)[::-1]  # Get indices of the top 10 max values
+    mini_fft_angles = np.angle(mini_fft_result, deg=False)
+    angle_mask = mini_fft_abs > mini_fft_abs[max_indices[3]]
+    mini_fft_angles = mini_fft_angles[angle_mask]  # set everything outside of top 10 amplitudes to NaN
+    mini_fft_angles = np.unwrap(mini_fft_angles)
+    mini_fft_angle_freqs = mini_fft_freqs[angle_mask]
+
+    # # plot angles
+    # plt.figure(figsize=(10, 5))
+    # plt.scatter(mini_fft_angle_freqs, mini_fft_angles, 5, color='orange', label='Phase Angles')
+    # plt.title(f"Phase Angles of FFT Result\n{common_title_text}")
+    # plt.xlabel("Frequency (kHz)")
+    # plt.ylabel("Phase Angle (radians)")
+    # plt.legend()
+    # plt.show()
+
+    # get freq vs phase angles for linear regression fit
+    # fit a linear function to the phase angles
+    # do linear interpolation
+    slope, intercept, r, p, se = linregress(mini_fft_angle_freqs, np.rad2deg(mini_fft_angles))
+    # calculate phase at interpolated frequency
+    interp_phase_linear_deg = slope * detected_frequency + intercept
+    while interp_phase_linear_deg < -180:
+        interp_phase_linear_deg += 360
+    print(f"Interpolated phase (linear): {interp_phase_linear_deg:.2f} ± {se:.2f} degrees")
+
+    # propagate both slope error (se) and frequency uncertainty (f_rms) into angle error
+    slope_term = se  # uncertainty in phase slope calculation assuming correct f_0
+    freq_term = slope * f_rms  # from uncertainty in frequency
+    angle_rms_total = np.sqrt(slope_term ** 2 + freq_term ** 2)
+    phase_ns = (interp_phase_linear_deg / 360) * detected_period  # convert phase to ns
+    angle_rms_ns = (angle_rms_total / 360) * detected_period  # convert angle uncertainty to ns
+    print(f"Interpolated phase: {interp_phase_linear_deg:.2f} ± {angle_rms_total:.2f} degrees "
+          f"(1σ total)")
+    print(f"Interpolated phase (ns): {phase_ns:.2f} ± {angle_rms_ns:.2f} ns (1σ total)")
+
+
+    # shift delta_train by phase shift interp_phase_linear_deg
+    # a positive phase shift means the signal is delayed, so we add the phase shift
+    # shifted_delta_train = delta_train + (interp_phase_linear_deg / 360) * detected_period
+    # normalize the delta train to the detected period
