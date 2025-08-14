@@ -25,3 +25,12 @@ Testing the scopes
 2. Plug signal generator output into oscilloscope. We expect 50mV or 1V depending on our choice, but it's important to see what the signal generator shows. Maybe we'll be outputting 1V for example but the signal generator shows something very small, like 10mV or something.
 3. Try changing the signal generator setting from "HighZ" to "50 Ohm" or something like that, see then if the oscilloscope reading matches the voltage you're giving it.
 4. Once you've figured that out, put the signal back into the uTCA crate. Most likely, 50 ohm is what you want. Start out with small voltages (don't put anything above 1V into the uTCA crate to start). Plot the data that the uTCA crate receives, and see if it matches what you expect. If my suspicion is correct, the scaling will now be off and it'll read *higher* than what we're expecting. That's just an error in my Python code. Matthew seems to imply that the uTCA crate in reality only accepts signals within 1V.
+
+
+# To-Do
+
+Further Ideas for Progress
+- Feeding a known wave into the FPGA and verify the efficiency of the peak detection algorithm.
+- Plot a spectrogram of the Fourier frequency over a spill to see if there's any observable and real dependence on event time in the frequency.
+- Plot a 2D histogram of Fourier frequencies per event to verify the cross-event stability of the signal and trigger.
+- After a delta comb of three-fold coincidence events alone has been generated, re-run the entire Fourier transform and data analysis chain on that three-coincidence-only list and see what kind of result is obtained.
