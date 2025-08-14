@@ -728,4 +728,6 @@ if __name__ == "__main__":
 else:
     hex_check: HexCheck = main()
 
+hex_check: HexCheck
+
 print()

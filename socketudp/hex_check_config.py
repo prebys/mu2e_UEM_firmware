@@ -8,8 +8,9 @@ class Config:
     # setting to a name will search for any files with that name in the directory
     # consider searching for the names 'diag_0x1', 'diag_0x2', 'diag_0x3', 'diag_0x5', 'diag_0x9', 'diag_0xF'
     # desired_file_path = "test20241112_145129.dat"
-    # desired_file_path: Optional[str] = "data_20250711_023734.dat"  # 8000 events,
-    desired_file_path: Optional[str] = "data_20250711_023300.dat"
+    # desired_file_path: Optional[str] = "data_20250711_023734.dat"  # 8000 hits,
+    # desired_file_path: Optional[str] = "data_20250711_023300.dat"  # 7000 hits
+    desired_file_path: Optional[str] = "data_20250711_024604.dat"  # 8MB, 80,000 hits, # cut off at 40ms
 
     # set to "1" to use the newest file in the directory
     # "2" for example will use the second-newest file

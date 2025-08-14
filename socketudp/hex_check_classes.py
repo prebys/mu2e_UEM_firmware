@@ -581,8 +581,14 @@ def find_data_file(desired_file_path, to_use_index_increment: int = 0) -> str:
     # ex: `python3 hex_check.py path_to_data_file.dat`
     # argv[0] = hex_check.py, argv[1] = path_to_data_file.dat
     # args = [sys.argv[0], file_name]
-    if len(sys.argv) > 1:
-        desired_file_path = sys.argv[1]
+
+    # jupyter notebooks add three args
+    if 'ipykernel' in sys.argv[0]:
+        args = sys.argv[3:]
+    else:
+        args = sys.argv
+    if len(args) > 1:
+        desired_file_path = args[1]
     
     if desired_file_path is None:
         desired_file_path = ""
