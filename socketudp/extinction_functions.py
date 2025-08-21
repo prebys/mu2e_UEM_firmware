@@ -218,9 +218,49 @@ def get_delta_trains_from_hex(hex_check, channel, fft_time_range_ns) -> np.ndarr
     time_mask = (fft_time_range_ns[0] <= delta_train) & (delta_train <= fft_time_range_ns[1])
     # time_mask = (0 <= delta_train) & (delta_train <= 5e6)
     delta_train = delta_train[time_mask]
-    print(f"[CH{channel}] After time mask, {np.sum(time_mask)} events remain in the time range "
-          f"{delta_train[0]:.2f} to {delta_train[-1]:.2f} ms")
+    # print(f"[CH{channel}] After time mask, {np.sum(time_mask)} events remain in the time range "
+    #       f"{delta_train[0]:.2f} to {delta_train[-1]:.2f} ms")
     return delta_train, fft_time_range_ns
+
+
+def get_delta_trains_per_event_from_hex(hex_check, channel, fft_time_range_ns, units='ns'):
+    peak_height_dataframe = hex_check.peak_height_dataframe
+    grouped = peak_height_dataframe[peak_height_dataframe['channel_number'] == channel] \
+                .groupby('internal_event_number')
+
+    delta_trains = []
+    start_ns, end_ns = fft_time_range_ns  # don’t mutate the caller’s tuple
+    for event_number, group in grouped:
+        arr = np.sort(group.time_ns.values)
+        if units == 'ms':
+            arr = arr / 1e6
+        elif units == 'us':
+            arr = arr / 1e3
+        print(f"[CH{channel}] Event {event_number}: {len(arr)} events.")
+        if arr.size == 0:
+            continue
+
+        if start_ns is None: start_ns = arr[0]
+        if end_ns   is None: end_ns   = arr[-1]
+
+        mask = (start_ns <= arr) & (arr <= end_ns)
+        arr = arr[mask]
+
+        if arr.size > 0:
+            # print AFTER confirming nonempty; also fix the units in the text
+            # print(f"[CH{channel}] After time mask, {arr.size} events remain in "
+            #       f"{(arr[0]/1e6):.2f}–{(arr[-1]/1e6):.2f} ms")
+            delta_trains.append(arr)
+        else:
+            pass
+            # print(f"[CH{channel}] No events left after time mask for event {event_number}, skipping.")
+
+    if not delta_trains:
+        # print(f"[CH{channel}] No events found for channel {channel} in the specified time range.")
+        return np.array([], dtype=object), (start_ns, end_ns)
+
+    # print(f"[CH{channel}] Found {len(delta_trains)} events for channel {channel}.")
+    return np.array(delta_trains, dtype=object), (start_ns, end_ns)
 
 
 def lorentzian(_f, A, f0, sigma, offset):
@@ -269,7 +309,7 @@ def report_results_with_error(fft_freqs, fft_abs, unpadded_df, mini_fft_abs, max
 
 def get_three_fold_coincidence_points(delta_trains: list[np.ndarray]):
     # Parameters
-    coincidence_window_ns = 100  # events within this window are considered coincident
+    coincidence_window_ns = 300  # events within this window are considered coincident
 
     # Get the three channels
     ch1: np.ndarray = np.array(delta_trains[0])

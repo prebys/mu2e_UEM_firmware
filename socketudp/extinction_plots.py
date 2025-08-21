@@ -592,6 +592,102 @@ def plot_2d_histogram_delta_train_compare(
         ax.text(0.97, 0.97 - 0.16, f"Window: ±125 ns",
                 transform=ax.transAxes, va="top", ha="right", fontsize=9,
                 bbox=dict(facecolor="white", alpha=0.9, boxstyle="round,pad=0.25"))
+        
+        
+def plot_2d_histogram_time_vs_event_number(
+    delta_trains: np.ndarray,
+    bin_width=50,
+    common_title_text="",
+    channel: Optional[int] = None,
+    figsize=(8, 6),
+    cmap="viridis",
+    log_scale=True,
+    file_name: Optional[str] = None,
+    title: Optional[str] = None,
+    units = "ns"
+):
+    """
+    Plot a 2D histogram of absolute hit times vs event number.
+
+    Parameters
+    ----------
+    delta_trains : list[np.ndarray]
+        List of per-event time arrays (ragged).
+    bin_width : int
+        Width of histogram bins in time (see "units" variable) (x-axis resolution).
+    common_title_text : str
+        Common title text prefix.
+    channel : int, optional
+        Channel number to display in title.
+    figsize : tuple
+        Figure size.
+    cmap : str
+        Colormap for imshow.
+    log_scale : bool
+        If True, apply logarithmic color normalization.
+    file_name : str, optional
+        If provided, save the figure.
+    title : str, optional
+        Custom plot title.
+    """
+    # if not delta_trains.any() or all(len(ev) == 0 for ev in delta_trains):
+    #     print("Empty delta_trains; nothing to plot.")
+    #     return
+
+    # Flatten to find global time range
+    all_times = np.concatenate([ev for ev in delta_trains if len(ev) > 0])
+    tmin, tmax = all_times.min(), all_times.max()
+    bins = np.arange(tmin, tmax + bin_width, bin_width)
+
+    # Build histogram: rows = events, cols = bins
+    H = np.zeros((len(delta_trains), len(bins) - 1), dtype=int)
+    for i, ev in enumerate(delta_trains):
+        if len(ev) == 0:
+            continue
+        counts, _ = np.histogram(ev, bins=bins)
+        H[i, :] = counts
+
+    extent = [bins[0], bins[-1], 0, len(delta_trains)]  # x_min, x_max, y_min, y_max
+
+    fig, ax = plt.subplots(figsize=figsize)
+    if log_scale:
+        norm = LogNorm(vmin=1, vmax=np.max(H))
+    else:
+        norm = None
+    im = ax.imshow(
+        H,
+        extent=extent,
+        aspect="auto",
+        origin="lower",
+        cmap=cmap,
+        norm=norm,
+        interpolation="nearest"
+    )
+
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="3%", pad=0.05)
+    cbar = fig.colorbar(im, cax=cax)
+    cbar.set_label("Counts" + (" (log)" if log_scale else ""))
+
+    ax.set_xlabel("Time (ns)")
+    if units == "ms":
+        ax.set_xlabel("Time (ms)")
+    ax.set_ylabel("Event Number")
+
+    if not title:
+        if channel:
+            title = f"{common_title_text}\nCH {channel}: Time vs Event Number"
+        else:
+            title = f"{common_title_text}\nTime vs Event Number"
+    ax.set_title(title)
+
+    plt.tight_layout()
+    if file_name:
+        file_type = file_name.split('.')[-1]
+        plt.savefig(file_name, format=file_type, dpi=300,
+                    bbox_inches="tight", pad_inches=0)
+    plt.show()
+
 
 
 if __name__ == "__main__":
