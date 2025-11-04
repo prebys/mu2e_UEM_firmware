@@ -23,11 +23,14 @@ def center_pulses(delta_trains, period):
     :param period: The period averaged between the three delta trains.
     :return: A new array of three delta trains, and a new period.
     """
-    sss = np.concat(delta_trains)  # all three lists are concatenated into one array
+    sss = np.concatenate(delta_trains)  # all three lists are concatenated into one array
     sss_norm = symmetric_mod(sss, period)  # the normalized version of above
+    
+    individual_means = np.array([np.mean(symmetric_mod(train, period)) for train in delta_trains])
+    print(f"Initial means for each of the three trains: {individual_means} ns")
 
     normalized_delta_train = symmetric_mod(sss_norm, period)
-    print(f"Delta train mean value: {np.mean(normalized_delta_train):.2f} ns")
+    print(f"Delta train mean value (combined channels): {np.mean(normalized_delta_train):.2f} ns")
 
     # (1 - Period)
     # calculate new period based on the shift of the mean value,
@@ -55,15 +58,16 @@ def center_pulses(delta_trains, period):
     print(f"Total correction on the mean: {delta_correction} ns")
     delta_trains = [train + delta_correction for train in delta_trains]
 
-
     # Fix individual delta means just one time
     for i, train in enumerate(delta_trains):
         train, _ = subtract_mean(train, period, focus_middle=True, focus_beginning=False)
         delta_trains[i] = train
 
     means = [np.mean(train) for train in delta_trains]
-    print(f"New means for each of the three trains: {means[0] * 1e-6:.2f} ms, {means[1] * 1e-6:.2f} ms, "
-          f"{means[2] * 1e-6:.2f} ms")
+    print(f"New means for each of the three trains:", end="")
+    for mean in means:
+        print(f"{mean * 1e-6:.2f} ms, ", end="")
+    print()
 
     return delta_trains, period
 
@@ -102,6 +106,8 @@ def correct_period(delta_train: np.ndarray,
     # calculate the mean of the first and last 5% of the normalized delta train
     starting_mean = np.mean(normalized_deltas[:five_percent])
     ending_mean = np.mean(normalized_deltas[-five_percent:])
+    print(f"Starting first {five_percent}/{len(normalized_deltas)} points: {normalized_deltas[:five_percent]}")
+    print(f"Ending last {five_percent}/{len(normalized_deltas)} points: {normalized_deltas[-five_percent:]}")
 
     # number of cycles in the delta train (with the period error, but should be fine)
     n_cycles = (delta_train[-1] - delta_train[0]) / period
@@ -113,6 +119,7 @@ def correct_period(delta_train: np.ndarray,
           f"Error: {error:.4f} ns, Old Period: {period:.4f} ns, "
           f"New Period: {period + error:.4f} ns")
 
+    breakpoint()
     return period + error, symmetric_mod(delta_train, period + error)
 
 
@@ -133,7 +140,7 @@ def subtract_mean(deltas: np.ndarray, period: float, focus_middle=False, focus_b
     delta_window = deltas
     if focus_beginning:
         delta_range = deltas[-1] - deltas[0]
-        five_p = int(delta_range * 0.1)
+        five_p = deltas[0] + int(delta_range * 0.1)
         delta_window = deltas[deltas < five_p]  # first five percent of the delta points
 
     # initial normalization
@@ -143,6 +150,9 @@ def subtract_mean(deltas: np.ndarray, period: float, focus_middle=False, focus_b
     if focus_middle:
         normalized_delta_window = normalized_delta_window[np.abs(normalized_delta_window) < 150]
 
+    if not normalized_delta_window.size > 0:
+        print("Warning: Not enough data to calculate mean, aborting mean subtraction.")
+        return deltas, 0
     correction = -round(np.mean(normalized_delta_window))  # make the correction be the opposite of whatever the mean is
     centered = " (center of) " if focus_middle else " "
     print(f"Correcting phase of{centered}delta train by {correction} ns, "
@@ -203,9 +213,14 @@ def simulate_delta_train(signal_period, phase_offset_deg, arrival_jitter_ns,
     return np.array(sorted(delta_train))
 
 
-def get_delta_trains_from_hex(hex_check, channel, fft_time_range_ns) -> np.ndarray:
+def get_delta_trains_from_hex(hex_check, channel,
+                              fft_time_range_ns: tuple[float, float]
+                              ) -> tuple[np.ndarray, tuple[float, float]]:
     peak_height_dataframe = hex_check.peak_height_dataframe
     delta_train = peak_height_dataframe[peak_height_dataframe['channel_number'] == channel].time_ns.values
+    if delta_train.size == 0:
+        print(f"[CH{channel}] No events found for channel {channel}.")
+        return np.array([]), fft_time_range_ns
     print(f"[CH{channel}] Using real data from channel {channel} with {len(delta_train)} events.")
     print(f"[CH{channel}] First event time: {delta_train[0]:.2f} ns, ")
     delta_train = np.sort(delta_train)
@@ -236,7 +251,6 @@ def get_delta_trains_per_event_from_hex(hex_check, channel, fft_time_range_ns, u
             arr = arr / 1e6
         elif units == 'us':
             arr = arr / 1e3
-        print(f"[CH{channel}] Event {event_number}: {len(arr)} events.")
         if arr.size == 0:
             continue
 
@@ -244,13 +258,15 @@ def get_delta_trains_per_event_from_hex(hex_check, channel, fft_time_range_ns, u
         if end_ns   is None: end_ns   = arr[-1]
 
         mask = (start_ns <= arr) & (arr <= end_ns)
-        arr = arr[mask]
+        new_arr = arr[mask]
+        print(f"[CH{channel}] Event {event_number}: {len(arr)} events "
+              f"({len(new_arr)} from t = {start_ns} to {end_ns} ns).")
 
-        if arr.size > 0:
+        if new_arr.size > 0:
             # print AFTER confirming nonempty; also fix the units in the text
-            # print(f"[CH{channel}] After time mask, {arr.size} events remain in "
-            #       f"{(arr[0]/1e6):.2f}–{(arr[-1]/1e6):.2f} ms")
-            delta_trains.append(arr)
+            # print(f"[CH{channel}] After time mask, {new_arr.size} events remain in "
+            #       f"{(new_arr[0]/1e6):.2f}–{(new_arr[-1]/1e6):.2f} ms")
+            delta_trains.append(new_arr)
         else:
             pass
             # print(f"[CH{channel}] No events left after time mask for event {event_number}, skipping.")
@@ -388,13 +404,25 @@ def get_three_fold_coincidence_points(delta_trains: list[np.ndarray]):
 
 
 def combine_periods(mean_value: float, periods: list[float], errors: list[float]) -> tuple[float, float]:
+    """
+    Combine multiple period measurements with their associated errors into a single
+    weighted mean period and error.
+    Uses the Birge ratio to scale the error if the measurements are inconsistent.
+    :param mean_value: The initial mean value to report alongside the weighted mean.
+    :param periods: List of measured periods.
+    :param errors: List of associated errors for each measured period.
+    :return: A tuple containing the weighted mean period and its final error.
+    """
     # Convert to numpy arrays
+    if len(periods) < 2:
+        print("Not enough period measurements to combine.")
+        return periods[0], errors[0]
     periods = np.array(periods, dtype=float)
     errors = np.array(errors, dtype=float)
 
     # Compute weights
     weights = 1.0 / errors ** 2
-
+    
     # Weighted mean
     weighted_mean = np.sum(weights * periods) / np.sum(weights)
 

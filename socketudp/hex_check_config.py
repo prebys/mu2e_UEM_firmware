@@ -9,8 +9,11 @@ class Config:
     # consider searching for the names 'diag_0x1', 'diag_0x2', 'diag_0x3', 'diag_0x5', 'diag_0x9', 'diag_0xF'
     # desired_file_path = "test20241112_145129.dat"
     # desired_file_path: Optional[str] = "data_20250711_023734.dat"  # 8000 hits,
-    # desired_file_path: Optional[str] = "data_20250711_023300.dat"  # 7000 hits
-    desired_file_path: Optional[str] = "data_20250711_024604.dat"  # 8MB, 80,000 hits, # cut off at 40ms
+    desired_file_path: Optional[str] = "data_20250711_023300.dat"  # 7000 hits
+    # desired_file_path: Optional[str] = "data_20250711_024604.dat"  # 8MB, 80,000 hits, # cut this off at 40ms
+    
+    # desired_file_path: Optional[str] = "data_20250710_212356.dat"  # potential high intensity #1
+    # desired_file_path = None
 
     # set to "1" to use the newest file in the directory
     # "2" for example will use the second-newest file
@@ -33,7 +36,7 @@ class Config:
     # or "peak_separation" to plot a histogram of the separation between peaks in channel 4
     
     # set number of events and subevents
-    n_events: int = 1000
+    n_events: int = 100
     n_subevents: int = 100
     
     # search for cosmic events
@@ -46,18 +49,23 @@ class Config:
     plotting_units: str = "volts"  # "volts" or "raw"
     
     # if True, will print all event types regardless of the "only_show" list below
-    show_all: bool = False
+    show_all: bool = True
     
     # if True, will print NO EVENTS regardless of the "only_show" list
-    show_nothing: bool = True
+    show_nothing: bool = False
     
     # if this contains entries, then this code will only print the events in this list
-    only_show: list[str] = field(default_factory=lambda: ['peak_height_data',
-                                                          'peak_area_data'])  # ["peak_height_data_1"])  # , "event_number_evn", etc.
+    only_show: list[str] = field(default_factory=lambda: ['begin_event', 'end_event',
+                                                          'begin_sub_event',
+                                                          'event_number',
+                                                          'sub_event_number',
+                                                          'end_sub_event',
+                                                          'peak_area_data'])
     # set to empty list [] to use the "show" attribute of the name_to_event dictionary
     
     # maximum number of logs to show
-    n_logs_to_show = float('inf')
+    # n_logs_to_show = float('inf')
+    n_logs_to_show = 2000 * 10
     
     # optional footnote below axes in plot
     # optional_note = "CH1: 100ns (10MHz) sine wave, CH2: Ext. Trig., trigger_delay = 1,000,000"

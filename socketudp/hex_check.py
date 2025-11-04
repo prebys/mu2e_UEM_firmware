@@ -1,5 +1,6 @@
 #!/usr/bin python3
 import os
+import re
 import traceback
 import unittest
 
@@ -13,7 +14,8 @@ from matplotlib import pyplot as plt, gridspec
 import pandas as pd
 
 from hex_check_config import config
-from hex_check_classes import Event, EventType, convert_voltage, name_to_event, find_data_file, read_data_file, Peak
+from hex_check_classes import (Event, EventType, convert_voltage, name_to_event, find_data_file,
+                               read_data_file, Peak, NewEvent)
 
 file_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(file_path)
@@ -43,7 +45,6 @@ os.chdir(file_path)
 # #############################################################################
 
 
-
 class HexCheck:
     def __init__(self, to_use_index_increment: int = 0):
         self.name_to_event: dict[str, EventType] = {}
@@ -61,6 +62,8 @@ class HexCheck:
         self.full_hex_data, self.file_creation_date, self.headers = read_data_file(self.dir_name, self.file_name)  # Full hex data and file creation date
         self.date_str = self.file_creation_date.strftime('%Y.%m.%d_%H.%M.%S')
         self.folder_name = f"{self.date_str}_{self.file_name}"  # folder name inside /img directory
+        if not os.path.exists(f"img/{self.folder_name}"):
+            os.makedirs(f"img/{self.folder_name}")
         # end commented if statement
         
         # value of how many raw data points are remaining to be sent in current run of raw data
@@ -80,7 +83,64 @@ class HexCheck:
         and store them in the name_to_event dictionary."""
         self.name_to_event = _name_to_event
 
-    
+
+    def new_main(self):
+        print(f"Using input file {self.file_name}")
+        for header in self.headers:
+            print(header)
+        number_of_printed_logs = 0
+        hex_reg = []
+        for i, current_event_hex in enumerate(self.full_hex_data):
+            if current_event_hex == "ffffffff":
+                # discard all data before the first 0xffffffff
+                self.full_hex_data = self.full_hex_data[i:]
+                break
+            else:
+                print(f"Found {current_event_hex} before 0xffffffff, ignoring.")
+                continue
+        
+        r = (r'('
+             r'ffffffff'
+             r'00ffffff'
+             r'.*?'
+             r'edededed'
+             r'00fcfcfc'
+             r'(?:fcfcfcfc)?'
+             r')'
+             r'(?=ffffffff|$)')
+        events = re.findall(r, ''.join(self.full_hex_data))
+        print(f"Found {len(events)} events in the file.")
+
+        events: list[NewEvent] = [NewEvent(i+1, data_str) for i, data_str in enumerate(events)]
+        print(events)
+        
+        raw_data_panda = []
+        peak_height_panda = []
+        for event in events:
+            for sub_event in event.sub_events:
+                for c in sub_event.channels:
+                    for data in c.raw_data:
+                        raw_data_panda.append((c.internal_event_number, c.sub_event_number,
+                                              c.channel_number, data))
+                        
+                    for peak in c.peak_heights:
+                        peak_height_panda.append((c.internal_event_number, c.channel_number,
+                                                  c.sub_event_number, peak.time_ns, peak.height))
+                                
+        self.raw_data_dataframe = pd.DataFrame(raw_data_panda,
+                                   columns=["internal_event_number",
+                                            "sub_event_number",
+                                            "channel_number",
+                                            "data"])
+        
+        self.peak_height_dataframe = pd.DataFrame(peak_height_panda,
+                                                  columns=["internal_event_number",
+                                                           "channel_number",
+                                                           "sub_event_number",
+                                                           "time_ns",
+                                                           "height"])
+                
+                
     def main(self, plot=True):
         number_of_printed_logs = 0
         current_event = None
@@ -97,6 +157,11 @@ class HexCheck:
                     # print(f"Error: {current_event_hex} (unknown event). "
                     #       f"Will continue searching for first recognizable event.")
                     raise e
+            
+            # if current_event_hex == "ffffffff":
+            #     print(f"Found 0xffffffff, current event type: {current_event.type}, "
+            #           f"event number: {current_event.event_number}, "
+            #           f"sub-event number: {current_event.sub_event_number}, ")
             
             # end file processing if the event number and subevent number
             # are greater than the configured values
@@ -115,8 +180,8 @@ class HexCheck:
             # - current_event.data: the data of the current event
             
             if not current_event.matched:
-                # print(f"Error: {current_event.hex} (unknown event). "
-                #       f"Will continue searching for first recognizable event.")
+                print(f"Error: {current_event.hex} (unknown event). "
+                      f"Will continue searching for first recognizable event.")
                 continue
             
             self.event_counts[current_event.type] += 1
@@ -134,7 +199,7 @@ class HexCheck:
             if current_event.type.show and number_of_printed_logs < config.n_logs_to_show:
                 number_of_printed_logs += 1
                 if current_event.channel_number != 5:
-                    print(current_event)
+                    print(current_event_hex, current_event)
                 if number_of_printed_logs == config.n_logs_to_show:
                     print(f"[INFO] Printing of data has been "
                           f"limited to {config.n_logs_to_show} logs.")
@@ -144,8 +209,8 @@ class HexCheck:
             # print(f"{event_type}: {count}")
         
         print(f"Used input file {self.file_name}")
-        # for header in self.headers:
-            # print(header)
+        for header in self.headers:
+            print(header)
         # print(f"Starting collection of data")
         
         # add raw data to the dataframe
@@ -314,9 +379,9 @@ class HexCheck:
                 ch_data = group[group["channel_number"] == ch]["data"].values
                 y_vals = convert_voltage(ch_data) if config.plotting_units == "volts" else ch_data
                 channel_arrays.append(y_vals.tolist())
-            self.plot_event_grid(channel_arrays, 
-                                 internal_event, 
-                                 "Raw Data - Event", 
+            self.plot_event_grid(channel_arrays,
+                                 internal_event,
+                                 "Raw Data - Event",
                                  "raw",
                                  sub_event=sub_event)
     
@@ -685,7 +750,8 @@ if __name__ == "__main__":
             "hex_check"] = hex_check  # set global variable to the current instance of HexCheck
         
         try:
-            hex_check.main(plot=True)
+            # hex_check.main(plot=True)
+            hex_check.new_main()
         except Exception as e:
             print(f"Error processing file {hex_check.file_name}: {e}")
             raise
@@ -725,8 +791,21 @@ if __name__ == "__main__":
     # print(f"Min height: {min_height}")
     # print(f"Max height: {max_height}")
     
-else:
-    hex_check: HexCheck = main()
+
+def build_hex_check(to_use_index_increment: int = 0, *, plot: bool = False, new=False) -> "HexCheck":
+    hc = HexCheck(to_use_index_increment)
+    hc.get_event_types(name_to_event)
+
+    # publish to hex_check_classes if you still need that global bridge
+    from hex_check_classes import hex_check_state
+    hex_check_state["hex_check"] = hc
+
+    if new:
+        hc.new_main()
+    else:
+        hc.main(plot=plot)
+    return hc
+
 
 hex_check: HexCheck
 

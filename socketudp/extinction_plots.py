@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import re
 from typing import Optional
 
@@ -6,6 +8,7 @@ from IPython.core.display_functions import clear_output
 from matplotlib import pyplot as plt, cm
 
 from matplotlib.colors import LogNorm, SymLogNorm, TwoSlopeNorm
+from matplotlib.ticker import FixedLocator, FixedFormatter
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from extinction_functions import lorentzian, symmetric_mod, get_delta_trains_from_hex
@@ -44,10 +47,27 @@ def plot_2d_histogram_delta_train(delta_train,
     # detected_period_ns = 1 / 589.9801 * 1e6  # convert kHz to ns, use real theoretical value
 
     # adjust timing window if specified (defaults to zero to inf)
-    delta_train = delta_train[(delta_train >= t_range[0]) & (delta_train <= t_range[1])]
+    new_delta_train = delta_train[(delta_train >= t_range[0]) & (delta_train <= t_range[1])]
+    
+    if len(new_delta_train) == 0:
+        # display "No Data" on fig_ax variable, the axis variable from subplots
+        _, ax = fig_ax
+        ax.clear()
+        ax.text(0.5, 0.5, "No Data in selected t_range", ha="center", va="center",
+                transform=ax.transAxes, fontsize=12,
+                bbox=dict(facecolor='white', alpha=0.8))
+        ax.set_xticks([])
+        ax.set_yticks([])
+        
+        
+        print(f"Original delta_train length: {len(delta_train)}, "
+              f"range: {delta_train[0]} to {delta_train[-1]}")
+        print(f"After applying t_range {t_range}, new length: {len(new_delta_train)}")
+        print("No data in specified t_range; nothing to plot.")
+        return
 
     # Setup slicing parameters
-    total_duration_ns = delta_train[-1] - delta_train[0]
+    total_duration_ns = new_delta_train[-1] - new_delta_train[0]
     slice_duration_ns = total_duration_ns / n_slices
     num_slices = int(np.ceil(total_duration_ns / slice_duration_ns))
 
@@ -59,12 +79,12 @@ def plot_2d_histogram_delta_train(delta_train,
     means = []
 
     # Create normalized deltas
-    normalized_delta_train = symmetric_mod(delta_train, detected_period_ns)
+    normalized_delta_train = symmetric_mod(new_delta_train, detected_period_ns)
 
     for i in range(num_slices):
-        t_start = delta_train[0] + i * slice_duration_ns
+        t_start = new_delta_train[0] + i * slice_duration_ns
         t_end = t_start + slice_duration_ns
-        mask = (delta_train >= t_start) & (delta_train < t_end)
+        mask = (new_delta_train >= t_start) & (new_delta_train < t_end)
         delta_slice = normalized_delta_train[mask]
         if delta_slice.any():
             means.append(np.mean(delta_slice))
@@ -77,7 +97,8 @@ def plot_2d_histogram_delta_train(delta_train,
         all_histograms.append(counts)
 
     all_histograms = np.array(all_histograms)
-
+    all_histograms_log = np.log10(all_histograms)
+    
     # Plot as 2D histogram
     for color in colors:
         if fig_ax is None:
@@ -85,14 +106,14 @@ def plot_2d_histogram_delta_train(delta_train,
         else:
             fig_ax: tuple[plt.Figure, plt.Axes]
             fig, ax = fig_ax
-        extent = [bins[0], bins[-1], delta_train[0] / 1e6, delta_train[-1] / 1e6]  # [x_min, x_max, y_min, y_max]
+        extent = [bins[0], bins[-1], new_delta_train[0] / 1e6, new_delta_train[-1] / 1e6]  # [x_min, x_max, y_min, y_max]
         aspect = 'auto'
 
         # noinspection PyTypeChecker
-        im = ax.imshow(all_histograms,  # +1e-3 to prevent log(0) errors
+        im = ax.imshow(all_histograms_log,  # +1e-3 to prevent log(0) errors
                        extent=extent, origin='lower', alpha=alpha,
-                       interpolation='nearest', aspect=aspect, cmap=color,
-                       norm=LogNorm(vmin=1, vmax=np.max(all_histograms)))
+                       interpolation='nearest', aspect=aspect, cmap=color,)
+                       # norm=LogNorm(vmin=1, vmax=np.max(all_histograms)))
 
         divider = make_axes_locatable(ax)
         if subplot_no == 2:
@@ -113,7 +134,7 @@ def plot_2d_histogram_delta_train(delta_train,
             extinction_ratio = out_of_time_counts / total
 
         # Add box showing (1) number of points, (2) detected period, and (3) extinction ratio
-        box_text = (f"{len(delta_train)} points\n"
+        box_text = (f"{len(new_delta_train)} points\n"
                     f"Detected Period: {detected_period_ns:.3f} ns\n"
                     f"In/Out Particles: {in_time_counts}/{out_of_time_counts}\n"
                     f"Extinction Ratio: {extinction_ratio:.2e}")
@@ -164,18 +185,17 @@ def plot_2d_histogram_delta_train(delta_train,
 def plot_1d_histogram(data_lists: list[np.ndarray], sample_period: float = 0,
                       common_title_text: str = "", include_sample_peaks=False, title: Optional[str] = None,
                       units: Optional[str] = None,   # 'ns' or 'ms'
+                      hist_range: Optional[tuple] = None,
+                      log: Optional[bool] = None,
+                      loc: Optional[str] = None,
+                      alpha: Optional[float] = 0.5,
+                      bin_size_ns: Optional[int] = 40,  # default bin size in ms
+                      fig_size: tuple[int, int] = (10, 6),  # default figure width in inches
+                      legend: bool = True,
+                      file_name: str = "histogram_plot.svg",
+                      sample_offset: int = 0,  # offset for sample peaks
                       **kwargs):
     """Plot a 1D histogram of multiple data lists."""
-    hist_range: Optional[tuple] = kwargs.pop("hist_range", None)
-    log: Optional[bool] = kwargs.pop("log", None)
-    loc: Optional[str] = kwargs.pop("loc", None)
-    alpha: Optional[float] = kwargs.pop("alpha", 0.5)
-    bin_size_ns: Optional[int] = kwargs.pop("bin_size_ns", None)  # default bin size in ms
-    fig_size: tuple[int, int] = kwargs.pop("fig_size", (10, 6))  # default figure width in inches
-    legend: bool = kwargs.pop("legend", True)
-    file_name: str = kwargs.pop("file_name", "histogram_plot.svg")
-    sample_offset: int = kwargs.pop("sample_offset", 0)  # offset for sample peaks
-
     fig, ax = plt.subplots(figsize=fig_size)
 
     # check for empty data lists
@@ -248,7 +268,7 @@ def plot_1d_histogram(data_lists: list[np.ndarray], sample_period: float = 0,
             ax.hist(data, bins=bins, histtype='stepfilled', alpha=alpha, label=label, **kwargs)
 
     if log:
-        ax.set_yscale('symlog', linthresh=150)
+        ax.set_yscale('symlog', linthresh=5)
         ax.set_ylim(bottom=1e-3)
 
     if units == 'ns':
@@ -595,7 +615,7 @@ def plot_2d_histogram_delta_train_compare(
         
         
 def plot_2d_histogram_time_vs_event_number(
-    delta_trains: np.ndarray,
+    delta_trains: list[np.ndarray],
     bin_width=50,
     common_title_text="",
     channel: Optional[int] = None,
@@ -604,7 +624,8 @@ def plot_2d_histogram_time_vs_event_number(
     log_scale=True,
     file_name: Optional[str] = None,
     title: Optional[str] = None,
-    units = "ns"
+    units = "ns",
+    t_range=(0, np.inf),
 ):
     """
     Plot a 2D histogram of absolute hit times vs event number.
@@ -613,7 +634,7 @@ def plot_2d_histogram_time_vs_event_number(
     ----------
     delta_trains : list[np.ndarray]
         List of per-event time arrays (ragged).
-    bin_width : int
+    bin_width : float | int
         Width of histogram bins in time (see "units" variable) (x-axis resolution).
     common_title_text : str
         Common title text prefix.
@@ -630,15 +651,50 @@ def plot_2d_histogram_time_vs_event_number(
     title : str, optional
         Custom plot title.
     """
-    # if not delta_trains.any() or all(len(ev) == 0 for ev in delta_trains):
-    #     print("Empty delta_trains; nothing to plot.")
-    #     return
-
+    if t_range:
+        # mask delta_trains to new time range
+        new_delta_trains = []
+        for delta_train in delta_trains:
+            mask = (delta_train >= t_range[0]) & (delta_train <= t_range[1])
+            masked_delta_train = delta_train[mask]
+            new_delta_trains.append(masked_delta_train)
+        delta_trains = new_delta_trains
+        
+    at_least_one_train = False
+    for train in delta_trains:
+        if len(train) > 0:
+            at_least_one_train = True
+            break
+    if not at_least_one_train:
+        print("No data in specified t_range; nothing to plot.")
+        return
+    
     # Flatten to find global time range
     all_times = np.concatenate([ev for ev in delta_trains if len(ev) > 0])
     tmin, tmax = all_times.min(), all_times.max()
+    
+    # potentially convert data between ns and ms
+    if units == "ms":
+        if tmax - tmin > 1e6:
+            # delta_trains is a list of delta_train np.arrays
+            print("Converting data from ns to ms for histogram plot.")
+            delta_trains = [ev / 1e6 for ev in delta_trains]
+            tmin /= 1e6
+            tmax /= 1e6
+    elif units == "ns":
+        if tmax - tmin < 40:
+            # convert ms to ns
+            print("Converting data from ms to ns for histogram plot.")
+            delta_trains = [ev * 1e6 for ev in delta_trains]
+            tmin *= 1e6
+            tmax *= 1e6
+    
     bins = np.arange(tmin, tmax + bin_width, bin_width)
-
+    if len(bins) > 1000000:
+        print(f"Warning: Too many histogram bins, reduce bin_width or remove this warning. "
+              f"({len(bins)} bins from {tmin} to {tmax} with width {bin_width})")
+        return
+    
     # Build histogram: rows = events, cols = bins
     H = np.zeros((len(delta_trains), len(bins) - 1), dtype=int)
     for i, ev in enumerate(delta_trains):
@@ -646,12 +702,14 @@ def plot_2d_histogram_time_vs_event_number(
             continue
         counts, _ = np.histogram(ev, bins=bins)
         H[i, :] = counts
-
+    
     extent = [bins[0], bins[-1], 0, len(delta_trains)]  # x_min, x_max, y_min, y_max
-
+    
     fig, ax = plt.subplots(figsize=figsize)
     if log_scale:
-        norm = LogNorm(vmin=1, vmax=np.max(H))
+        # norm = LogNorm(vmin=1, vmax=np.max(H))
+        H = np.log10(H + 1)  # log10(counts + 1) to avoid log(0)
+        norm = None
     else:
         norm = None
     im = ax.imshow(
@@ -663,24 +721,24 @@ def plot_2d_histogram_time_vs_event_number(
         norm=norm,
         interpolation="nearest"
     )
-
+    
     divider = make_axes_locatable(ax)
     cax = divider.append_axes("right", size="3%", pad=0.05)
     cbar = fig.colorbar(im, cax=cax)
     cbar.set_label("Counts" + (" (log)" if log_scale else ""))
-
+    
     ax.set_xlabel("Time (ns)")
     if units == "ms":
         ax.set_xlabel("Time (ms)")
     ax.set_ylabel("Event Number")
-
+    
     if not title:
         if channel:
             title = f"{common_title_text}\nCH {channel}: Time vs Event Number"
         else:
             title = f"{common_title_text}\nTime vs Event Number"
     ax.set_title(title)
-
+    
     plt.tight_layout()
     if file_name:
         file_type = file_name.split('.')[-1]

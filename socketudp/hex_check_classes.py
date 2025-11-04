@@ -7,7 +7,7 @@ import sys
 from dataclasses import field, dataclass
 from datetime import datetime
 
-from typing import NamedTuple, Optional, Union
+from typing import NamedTuple, Optional, Union, Any
 from hex_check_config import config
 
 PeakHeader = NamedTuple("PeakHeader", [("position", int), ("time_ns", int)])
@@ -489,6 +489,221 @@ class Event:
         return ret
 
 
+def chunk(s: str, size: int = 8):
+    """Yield 8-char packets from s."""
+    for i in range(0, len(s), size):
+        yield s[i:i + size]
+
+
+def parse_raw_data_channel(block: str) -> list[int]:
+    """Strip headers/trailer, convert packets to Events, flatten 2-word raw_data."""
+    # inside each raw_data_channel, it starts with seven packets of headers
+    # then raw data for unspecified length starting at the eight packet (i[8*7:])
+    # then one packet (fbfbfbfb) of end_of_channel (skipped by i[:-8*1])
+    # remove 7 header packets at start and 1 trailer packet at end
+    payload = block[8 * 7: -8 * 1]
+    assert len(payload) % 8 == 0, f"Payload length {len(payload)} is not a multiple of 8."
+    out = []
+    for h in chunk(payload, size=8):
+        evt = Event(h[:8], None, raw_data)
+        # evt.raw_data is a 2-tuple/list -> extend both words
+        out.append(evt.raw_data[0])
+        out.append(evt.raw_data[1])
+    return out
+
+
+def parse_peak_height_channel(block: str) -> list["Peak"]:
+    """Strip headers/trailer, convert packets to Events, flatten 2-word peak_height_data."""
+    payload: str = re.findall(r'aaaacccccccc(.*?)cecececedddd', block)[0]
+    assert len(payload) % 16 == 0, f"Payload length {len(payload)} is not a multiple of 16."
+    out = []
+    
+    # make placeholder to take advantage of Event's regex matching on peak format
+    # Event checks format if the "previous" arg is filled and "current" is not
+    evt2 = Event("", None, peak_height_data_2)  # placeholder
+    for h in chunk(payload, size=16):
+        evt1 = Event(h[:8], evt2)
+        evt2 = Event(h[8:], evt1)
+        # evt.raw_data is a 2-tuple/list -> extend both words
+        peak = Peak.from_event(evt1)
+        peak.height = evt2.peak_height
+        out.append(peak)
+    return out
+
+
+def parse_peak_area_channel(block: str) -> list["PeakArea"]:
+    """Strip headers/trailer, convert packets to Events, flatten 5-word peak_area_data."""
+    payload: str = re.findall(r'aaaa....dddd(.*?)ececececedddd', block)[0]
+    assert len(payload) % 40 == 0, f"Payload length {len(payload)} is not a multiple of 40."
+    out = []
+    
+    # make placeholder to take advantage of Event's regex matching on peak format
+    data6 = Event("", None, peak_area_data_6)  # placeholder
+    
+    for h in chunk(payload, size=48):
+        data1 = Event(h[0:8], data6, peak_area_data_1)
+        data2 = Event(h[8:16], data1, peak_area_data_2)
+        data3 = Event(h[16:24], data2, peak_area_data_3)
+        data4 = Event(h[24:32], data3, peak_area_data_4)
+        data5 = Event(h[32:40], data4, peak_area_data_5)
+        data6 = Event(h[40:48], data5, peak_area_data_6)
+        peak_area = NewPeakArea.from_events(data1, data2, data3, data4, data5, data6)
+        out.append(peak_area)
+        
+    return out
+
+
+class HasEventNumber:
+    parent: Any
+    
+    @property
+    def event_number(self) -> int:
+        return self.parent.event_number
+    
+    @property
+    def internal_event_number(self) -> int:
+        return self.parent.internal_event_number
+
+
+class HasSubEventNumber(HasEventNumber):
+    @property
+    def sub_event_number(self) -> int:
+        return self.parent.sub_event_number
+
+
+class HasChannelNumber(HasSubEventNumber):
+    @property
+    def channel_number(self) -> int:
+        return self.parent.channel_number
+
+
+class NewEvent:
+    """Recreation of the Event class with a new method of storing previous event to save memory.
+    
+    This "Event" will be one Event in a data file, starting with 0xffffffff and ending with either
+    0x00fcfcfc (end_sub_event) or 0xfcfcfcfc (end_event)"""
+    
+    def __init__(self, internal_event_number, data_str):
+        self.event_number_obj = Event(data_str[8*5:8*6], None, event_number_evn)
+        self.event_number = self.event_number_obj.event_number
+        self.internal_event_number: int = internal_event_number
+        
+        # get sub events
+        r = (r'00ffffff'
+             r'f4f3f2f1'
+             r'.*?'
+             r'edededed'
+             r'00fcfcfc')
+        sub_events = re.findall(r, data_str)
+        print(f"Event {self.event_number}-{self.internal_event_number} has {len(sub_events)} "
+              f"sub-events.")
+        self.sub_events = [NewSubEvent(self, sub_event) for sub_event in sub_events]
+
+
+class NewSubEvent(HasEventNumber):
+    def __init__(self, event: NewEvent, data_str: str):
+        self.parent: NewEvent = event
+        # self.sub_event_number: int = None
+        self.sub_event_number_obj = Event(data_str[8*3:8*4], None, sub_event_number_evn)
+        self.sub_event_number = self.sub_event_number_obj.sub_event_number
+        
+        # RAW DATA
+        raw_data_channels = re.findall(r'fafa....ffff.*?fbfbfbfb(?=fafa|fefe)', data_str)  # four items
+        self.raw_data_list = [parse_raw_data_channel(b) for b in raw_data_channels]
+        raw_data_lengths = [len(raw_data) for raw_data in self.raw_data_list]
+        # print(self.raw_data_list)
+        print(f"Sub-event {self.event_number}-{self.internal_event_number}-{self.sub_event_number} "
+              f"has {len(raw_data_channels)} raw data channels with lengths {raw_data_lengths}.")
+        
+        # PEAK HEIGHT
+        peak_channels = re.findall(r'eeee....aaaa.*?bbbbbbbbecececec', data_str)  # list of four items, for each of the channels
+        # peak_height starts with aaaacccccccc and ends with cecececedddd
+        self.peak_height_list = [parse_peak_height_channel(b) for b in peak_channels]  # four lists of Peak objects
+        height_counts = [len(peaks) for peaks in self.peak_height_list]
+        print(f"Sub-event {self.event_number}-{self.internal_event_number}-{self.sub_event_number} "
+              f"has {len(peak_channels)} peak channels with lengths {height_counts}.")
+        # print(self.peak_height_list)
+        
+        self.channels: list[NewChannelData] = []
+        for i in range(4):
+            channel_num = 4 - i  # starts with channel 4 and counts down to channel 1
+            channel = NewChannelData(channel_num, self.raw_data_list[i], self.peak_height_list[i], self)
+            self.channels.append(channel)
+        self.channels = self.channels[::-1]  # reverse order so channel 1 is first
+
+        
+class NewChannelData(HasSubEventNumber):
+    def __init__(self, channel_num: int,
+                 raw_data_list: list[int],
+                 peak_height_list: list["Peak"],
+                 sub_event: NewSubEvent):
+        self.parent = sub_event
+        self.channel_number = channel_num
+        self.raw_data = raw_data_list  # list of ADC values
+        self.peak_heights = peak_height_list  # list of Peak objects
+        # self.peak_areas: list[NewPeakArea] = None
+        
+
+# class NewRawData:
+#     def __init__(self, channel):
+#         self.channel: NewChannelData = channel
+#         self.value: int = None
+#
+#
+# class NewPeakHeight:
+#     def __init__(self, channel):
+#         self.channel: NewChannelData = channel
+#         self.position: int = None  # 0-3
+#         self.time_ns: int = None
+#         self.height: int = None  # ADC value
+#
+#
+@dataclass()
+class NewPeakArea:
+    channel: NewChannelData = None
+    max_peak: int = None
+    area_begin_to_max: int = None
+    area_total: int = None
+    time_trig_to_max: int = None
+    time_trig_to_begin: int = None
+    time_trig_to_end: int = None
+        
+    @classmethod
+    def from_events(cls,
+                    data1: Event,
+                    data2: Event,
+                    data3: Event,
+                    data4: Event,
+                    data5: Event,
+                    data6: Event) -> "NewPeakArea":
+        peak_area = cls()
+        peak_area.max_peak = data1.data
+        peak_area.area_begin_to_max = data2.data
+        peak_area.area_total = data3.data
+        peak_area.time_trig_to_max = data4.data
+        peak_area.time_trig_to_begin = data5.data
+        peak_area.time_trig_to_end = data6.data
+        return peak_area
+    
+    def __repr__(self):
+        return (f"<PeakArea max_peak={self.max_peak}, "
+                f"\narea_begin_to_max={self.area_begin_to_max}, "
+                f"\narea_total={self.area_total}, "
+                f"\ntime_trig_to_max={self.time_trig_to_max}, "
+                f"\ntime_trig_to_begin={self.time_trig_to_begin}, "
+                f"\ntime_trig_to_end={self.time_trig_to_end}>")
+
+#
+# class SingleHex:
+#     def __init__(self, hex_str: str):
+#         self.hex: str = hex_str
+#         self.event_type: EventType = None
+#         self.data: int = None
+#         self.next_hex: "SingleHex" = None  # link to next SingleHex object
+#         self.prev_hex: "SingleHex" = None  # link to previous SingleHex object
+
+
+
 class PrevEvent:
     """This class will maintain just the important information about the previous event, to prevent every
     event from having a chain to all previous events."""
@@ -604,8 +819,8 @@ def find_data_file(desired_file_path, to_use_index_increment: int = 0) -> str:
         raise ValueError("No .dat files found in the current directory matching search")
     elif len(dat_files) > 1:
         input_file_name = dat_files[-config.to_use_file_index - to_use_index_increment]
-        if not input_file_name.startswith("data_202507"):
-            raise ValueError("Outside range of data_202507 files. Temporarily ignoring all other files.")
+        # if not input_file_name.startswith("data_202507"):
+        #     raise ValueError("Outside range of data_202507 files. Temporarily ignoring all other files.")
         print(f"Warning: Multiple .dat files found in the current directory. "
               f"Picking this one ({input_file_name})")
     else:
@@ -658,8 +873,8 @@ begin_peak_data = EventType('efefefef', ['channel_number'])
 channel_number = EventType('eeee..ee', ['peak_finding_header'])
 peak_finding_header = EventType('aaaaaaaa', ['peak_height_header'])
 peak_height_header = EventType('cccccccc', ['peak_height_end', 'peak_height_data_1'])
-peak_height_data_1 = EventType('........', ['peak_height_data_2'])
-peak_height_data_2 = EventType('........', ['peak_height_end', 'peak_height_data_1'])
+peak_height_data_1 = EventType('......[4567].', ['peak_height_data_2'])
+peak_height_data_2 = EventType('....0000', ['peak_height_end', 'peak_height_data_1'])
 peak_height_end = EventType('cececece', ['peak_area_header'])
 peak_area_header = EventType('dddddddd', ['peak_area_end', 'peak_area_data_1'])
 peak_area_data_1 = EventType('....1111', ['peak_area_data_2'])
