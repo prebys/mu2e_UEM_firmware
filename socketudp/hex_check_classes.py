@@ -514,6 +514,10 @@ def parse_raw_data_channel(block: str) -> list[int]:
 
 def parse_peak_height_channel(block: str) -> list["Peak"]:
     """Strip headers/trailer, convert packets to Events, flatten 2-word peak_height_data."""
+    # aaaa is second half of overall peak_finding_header
+    # cccc_cccc is peak height header
+    # cece_cece = peak height end
+    # dddd = first half of peak area header
     payload: str = re.findall(r'aaaacccccccc(.*?)cecececedddd', block)[0]
     assert len(payload) % 16 == 0, f"Payload length {len(payload)} is not a multiple of 16."
     out = []
@@ -533,9 +537,19 @@ def parse_peak_height_channel(block: str) -> list["Peak"]:
 
 def parse_peak_area_channel(block: str) -> list["PeakArea"]:
     """Strip headers/trailer, convert packets to Events, flatten 5-word peak_area_data."""
-    payload: str = re.findall(r'aaaa....dddd(.*?)ececececedddd', block)[0]
-    assert len(payload) % 40 == 0, f"Payload length {len(payload)} is not a multiple of 40."
+    # cece = peak height end
+    # dddd_dddd = peak area header
+    # dede_dede = peak area end
+    # bbbb = first half of end peak data
+    
     out = []
+    payload: str = re.findall(r'cecedddddddd(.*?)dedededebbbb', block)[0]
+    try:
+        assert len(payload) % 48 == 0, f"Payload length {len(payload)} ({block} -> {payload}) is not a multiple of 48."
+    except AssertionError as e:
+        print(e)
+        peak_area = NewPeakArea()
+        out.append(peak_area)
     
     # make placeholder to take advantage of Event's regex matching on peak format
     data6 = Event("", None, peak_area_data_6)  # placeholder
@@ -612,17 +626,48 @@ class NewSubEvent(HasEventNumber):
         self.raw_data_list = [parse_raw_data_channel(b) for b in raw_data_channels]
         raw_data_lengths = [len(raw_data) for raw_data in self.raw_data_list]
         # print(self.raw_data_list)
-        print(f"Sub-event {self.event_number}-{self.internal_event_number}-{self.sub_event_number} "
-              f"has {len(raw_data_channels)} raw data channels with lengths {raw_data_lengths}.")
+        print()
+        print(f"[{self.event_number}-{self.internal_event_number}-{self.sub_event_number}] "
+              f"[RAW_DATA] {len(raw_data_channels)} channels, lengths {raw_data_lengths}.")
+        
+        # Channel number      x x x x e e e e
+        # Peak finding header a a a a a a a a
+        # Peak height header  c c c c c c c c
+        # Peak height data    x x x x x x x x (4)
+        # Peak height end     c e c e c e c e
+        # Peak area header    d d d d d d d d
+        # Peak area data      x x x x x x x x (5)
+        # Peak area end       d e d e d e d e
+        # End Peak data       b b b b b b b b
+        # End Peak channel    e c e c e c e c
+        # NOTE: The values in data_str are swapped in order, so f1f2f3f4-->f4f3f2f1 (little-endian)
+        # All this above data is contained in each list element of peak_channels
+        
+        # xxxxeeee comes through as eeeexxxx, with xxxx being the channel number
+        # aaaa = first half of overall peak_finding_header
+        # bbbb_bbbb = end peak data
+        # ecec_ecec = end peak channel
+        peak_channels = re.findall(r'eeee....aaaa.*?bbbbbbbbecececec', data_str)  # list of four items, for each of the channels
+        print('\n'.join(peak_channels))
         
         # PEAK HEIGHT
-        peak_channels = re.findall(r'eeee....aaaa.*?bbbbbbbbecececec', data_str)  # list of four items, for each of the channels
-        # peak_height starts with aaaacccccccc and ends with cecececedddd
+        # peak_height starts with aaaa cccc_cccc and ends with cece_cece dddd
+        # above regex will get just the first half of "peak height header: aaaa_aaaa"
+        # second half is matched in parse_peak_height_channel()
         self.peak_height_list = [parse_peak_height_channel(b) for b in peak_channels]  # four lists of Peak objects
         height_counts = [len(peaks) for peaks in self.peak_height_list]
-        print(f"Sub-event {self.event_number}-{self.internal_event_number}-{self.sub_event_number} "
-              f"has {len(peak_channels)} peak channels with lengths {height_counts}.")
+        print(f"[{self.event_number}-{self.internal_event_number}-{self.sub_event_number}] "
+              f"[PEAK_HEIGHT] {len(peak_channels)} channels, lengths {height_counts}.")
         # print(self.peak_height_list)
+        
+        # PEAK AREA
+        self.peak_area_list = [parse_peak_area_channel(b) for b in peak_channels]  # four lists of PeakArea objects
+        area_counts = [len(areas) for areas in self.peak_area_list]
+        print(f"[{self.event_number}-{self.internal_event_number}-{self.sub_event_number}] "
+                f"[PEAK_AREA] {len(peak_channels)} channels, lengths {area_counts}.")
+        
+        
+        
         
         self.channels: list[NewChannelData] = []
         for i in range(4):
