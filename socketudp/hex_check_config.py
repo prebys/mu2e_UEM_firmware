@@ -15,11 +15,12 @@ class Config:
     # desired_file_path = "data_20250710_172837.dat"  # short, about 180us, < 1000 hits per channel
     # desired_file_path = "data_20250711_024604.dat"  # 8MB, 80,000 hits, # cut this off at 40ms
 
-    # desired_file_path = "data_20250708_200524.dat"  # 36 events, 15 sub events, 200 ns raw data, v21
-    desired_file_path = "data_20250708_202121.dat"  # 5 events, 10 sub events, 200 ns raw data, all clean events, v21
+    # desired_file_path = "data_20250708_202121.dat"  # 5 events, 10 sub events, 200 ns raw data, all clean events, v21
+    # desired_file_path = "data_20250707_140601.dat"  # self-trigger datafile with 164 events, 1 subevent
+    # desired_file_path = "data_20250708_200524.dat"  # self-trigger datafile with 36 events, 15 subevents, 200 ns raw data, v21
 
     # v24: new peakfinding alg:
-    # desired_file_path = "data_20250709_185455.dat"  # just testing raw data vs function generator in single channel
+    desired_file_path = "data_20250709_185455.dat"  # just testing raw data vs function generator in single channel
 
     # desired_file_path: Optional[str] = "data_20250710_212356.dat"  # potential high intensity #1
     # desired_file_path = None

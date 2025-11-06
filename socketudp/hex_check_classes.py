@@ -23,6 +23,36 @@ if __name__ == "__main__":
     raise ImportError("This module is not meant to be run directly. Please use it as a library.")
 
 
+def endian_conversion(hex_str: str) -> int:
+    """Convert f4f3f2f1 to f1f2f3f4"""
+    if len(hex_str) % 2 != 0:
+        raise ValueError("Hex string length must be even.")
+    
+    # Step 1: Convert the hex string to bytes
+    # Each pair of characters in the hex string represents a byte.
+    # Use `bytes.fromhex` to parse the string.
+    byte_data = bytes.fromhex(hex_str)
+    
+    # Step 2: Reconstruct the 32-bit word in little-endian order
+    # Use the unpack function from the struct module to interpret the bytes in little-endian format.
+    try:
+        # '<' = little-endian, 'f4f3f2f1' would first get converted to 'f1f2f3f4' before being converted to int
+        # 'I' = unsigned integer (4-byte, 8 hex chars), 'i' = signed int (4-byte, 8 hex chars)
+        # 'H' = unsigned short (2-byte, 4 hex chars), 'h' = signed short (2-byte, 4 hex chars)
+        # https://docs.python.org/3/library/struct.html#format-characters
+        word: int = struct.unpack('<I', byte_data)[0]  # unpack() returns tuple, here with one element only
+        # word is the signed interpretation of the full 32-bit word, f1f2f3f4 --> -235736076, NOT simply -0xf1f2f3f4
+        # given f1f2f3f4, the least significant byte is f4, the most significant byte is f1
+        # it's natural that the ADC will fill data in starting at the least significant byte
+        # so f3f4 **is the older data** and f1f2 **is the newer data**
+    except struct.error:
+        print(f"Error: {hex_str} could not be converted to a 32-bit word.")
+        raise
+    
+    return word
+
+
+
 class EventType:
     """Class describing an event type, for example, begin_event or raw_data"""
     
@@ -211,6 +241,16 @@ class Event:
             raise ValueError("This event is not a peak_height_data event.")
     
     @functools.cached_property
+    def peak_area_data(self):
+        """Returns the peak area data as an integer, processed by process_peak_area"""
+        if self.type.name.startswith("peak_area_data_"):
+            res = self.process_peak_area()
+            # print(f"[{self.type.name}] {self.hex} -> {res}")
+            return res
+        else:
+            raise ValueError("This event is not a peak_area_data event.")
+    
+    @functools.cached_property
     def peak_height_position(self) -> int:
         """Returns the peak height position as an integer (0-3)"""
         if self.type == peak_height_data_1:
@@ -312,6 +352,9 @@ class Event:
             hex_in = self.hex
         
         # Input: Hexadecimal string
+        # Step 1: Convert hex string to bytes
+        # Step 2: Reconstruct the 32-bit word in little-endian order
+        word: int = endian_conversion(hex_in)
         
         # MODES:
         # s12: 12-bit signed integer (normal ADC operation, split 32-bits into two 16-bit values, take top 12-bits)
@@ -319,27 +362,6 @@ class Event:
         # s32: 32-bit signed integer (take all 32-bits as one data point)
         if mode not in ["s12", "s16", "s32"]:
             raise ValueError("Invalid mode. Please choose 's12', 's16', or 's32'.")
-        
-        # Step 1: Convert the hex string to bytes
-        # Each pair of characters in the hex string represents a byte.
-        # Use `bytes.fromhex` to parse the string.
-        byte_data = bytes.fromhex(hex_in)
-        
-        # Step 2: Reconstruct the 32-bit word in little-endian order
-        # Use the unpack function from the struct module to interpret the bytes in little-endian format.
-        try:
-            # '<' = little-endian, 'f4f3f2f1' would first get converted to 'f1f2f3f4' before being converted to int
-            # 'I' = unsigned integer (4-byte, 8 hex chars), 'i' = signed int (4-byte, 8 hex chars)
-            # 'H' = unsigned short (2-byte, 4 hex chars), 'h' = signed short (2-byte, 4 hex chars)
-            # https://docs.python.org/3/library/struct.html#format-characters
-            word: int = struct.unpack('<I', byte_data)[0]  # unpack() returns tuple, here with one element only
-            # word is the signed interpretation of the full 32-bit word, f1f2f3f4 --> -235736076, NOT simply -0xf1f2f3f4
-            # given f1f2f3f4, the least significant byte is f4, the most significant byte is f1
-            # it's natural that the ADC will fill data in starting at the least significant byte
-            # so f3f4 **is the older data** and f1f2 **is the newer data**
-        except struct.error:
-            print(f"Error: {self.hex} could not be converted to a 32-bit word.")
-            raise
         
         if mode == 's12':
             # start with word =0xf1f2f3f4, LSB is f4, MSB is f1
@@ -400,13 +422,7 @@ class Event:
             - MSB nibble is always one of: 0x7, 0x6, 0x5, 0x4
         """
         assert self.type == peak_height_data_1, f"Expected peak_height_data_1, got {self.type}"
-        byte_data = bytes.fromhex(self.hex)
-        try:
-            # unpack data in little-endian format, so f4f3f2f1 becomes f1f2f3f4
-            word: int = struct.unpack('<I', byte_data)[0]
-        except struct.error:
-            print(f"Error: {self.hex} could not be converted to a 32-bit word.")
-            raise
+        word = endian_conversion(self.hex)
         
         # first word
         # 0x70, 0x60, 0x50, or 0x40
@@ -436,13 +452,7 @@ class Event:
             - Final byte is always 0x00 (lower 16 bits = 0x0000)
         """
         assert self.type == peak_height_data_2, f"Expected peak_height_data_2, got {self.type}"
-        byte_data = bytes.fromhex(self.hex)
-        try:
-            # unpack data in little-endian format, so f4f3f2f1 becomes f1f2f3f4
-            word: int = struct.unpack('<I', byte_data)[0]
-        except struct.error:
-            print(f"Error: {self.hex} could not be converted to a 32-bit word.")
-            raise
+        word = endian_conversion(self.hex)
         
         # top 16 bits are always 0x0000
         if (word & 0xFFFF0000) != 0:
@@ -456,6 +466,50 @@ class Event:
             0]  # convert to signed 12-bit
         self.hex_check.second_peak_height = False
         return PeakHeight(proper_height)
+    
+    def process_peak_area(self):
+        """
+        Peak area data structure with one FMC228 card.
+        +------------------+----------+--------------------------------------------------------------+
+        | Bits field       | Bits     | Meaning                                                      |
+        +------------------+----------+--------------------------------------------------------------+
+        | 16-bit x"1111"   | 16 bits  | 16-bit word shows the maximum peak in the pulse.             |
+        |           32 bits           | 32-bit word shows the area value from the beginning of the   |
+        |                  |          | pulse to the maximum peak in the pulse.                      |
+        |           32 bits           | 32-bit word shows the total area value of the pulse.         |
+        | 4-bit x"0"       | 28 bits  | 28-bit word shows the time from the trigger to the maximum   |
+        |                  |          | peak in the pulse.                                           |
+        | 4-bit x"0"       | 28 bits  | 28-bit word shows the time from the trigger to the beginning |
+        |                  |          | of the pulse.                                                |
+        | 4-bit x"0"       | 28 bits  | 28-bit word shows the time from the trigger to the end of    |
+        |                  |          | the pulse.                                                   |
+        +------------------+----------+--------------------------------------------------------------+
+        """
+        word = endian_conversion(self.hex)
+        if self.type.name == "peak_area_data_1":
+            # examples before conversions: c7e51111, bee51111, cbe51111
+            peak_area_1 = word & 0x0000FFFF
+            return peak_area_1
+        elif self.type.name == "peak_area_data_2":
+            # examples before conversions: 2c8bf9ff, c089f9ff, b48ef9ff
+            return word
+        elif self.type.name == "peak_area_data_3":
+            # examples before conversions: b089fdff, b821fdff
+            return word
+        elif self.type.name == "peak_area_data_4":
+            # examples before conversions: 45170000, 78170000, db170000
+            time_to_peak = (word & 0x0FFFFFFF) * 4  # multiply to convert clock counter to ns
+            return time_to_peak
+        elif self.type.name == "peak_area_data_5":
+            # examples before conversions: 89180000, b5110000, d2110000
+            time_to_start = (word & 0x0FFFFFFF) * 4
+            return time_to_start
+        elif self.type.name == "peak_area_data_6":
+            # examples before conversions: d4c0a000, e2c0a000, f0c0a000
+            time_to_end = (word & 0x0FFFFFFF) * 4
+            return time_to_end
+        else:
+            raise ValueError(f"Invalid peak area data type: {self.type}")
     
     def __eq__(self, other: "Event"):
         return self.__hash__() == other.__hash__()
@@ -525,7 +579,9 @@ def parse_peak_height_channel(block: str) -> list["Peak"]:
     # make placeholder to take advantage of Event's regex matching on peak format
     # Event checks format if the "previous" arg is filled and "current" is not
     evt2 = Event("", None, peak_height_data_2)  # placeholder
-    for h in chunk(payload, size=16):
+    chunks = list(chunk(payload, size=16))
+    # print(chunks)
+    for h in chunks:
         evt1 = Event(h[:8], evt2)
         evt2 = Event(h[8:], evt1)
         # evt.raw_data is a 2-tuple/list -> extend both words
@@ -553,14 +609,16 @@ def parse_peak_area_channel(block: str) -> list["PeakArea"]:
     # make placeholder to take advantage of Event's regex matching on peak format
     data6 = Event("", None, peak_area_data_6)  # placeholder
     
-    for h in chunk(payload, size=48):
+    chunks = list(chunk(payload, size=48))
+    # print(chunks)
+    for h in chunks:
         data1 = Event(h[0:8], data6, peak_area_data_1)
         data2 = Event(h[8:16], data1, peak_area_data_2)
         data3 = Event(h[16:24], data2, peak_area_data_3)
         data4 = Event(h[24:32], data3, peak_area_data_4)
         data5 = Event(h[32:40], data4, peak_area_data_5)
         data6 = Event(h[40:48], data5, peak_area_data_6)
-        peak_area = NewPeakArea.from_events(data1, data2, data3, data4, data5, data6)
+        peak_area = PeakArea.from_events(data1, data2, data3, data4, data5, data6)
         out.append(peak_area)
         
     return out
@@ -650,7 +708,7 @@ class NewSubEvent(HasEventNumber):
         # bbbb_bbbb = end peak data
         # ecec_ecec = end peak channel
         peak_channels = re.findall(r'eeee....aaaa.*?bbbbbbbbecececec', data_str)  # list of four items, for each of the channels
-        # print('\n'.join(peak_channels))
+        print('\n'.join(peak_channels))
         
         # PEAK HEIGHT
         # peak_height starts with aaaa cccc_cccc and ends with cece_cece dddd
@@ -708,7 +766,7 @@ class NewChannelData(HasSubEventNumber):
 #
 #
 @dataclass()
-class NewPeakArea:
+class PeakArea:
     channel: NewChannelData = None
     max_peak: int = None
     area_begin_to_max: int = None
@@ -716,6 +774,14 @@ class NewPeakArea:
     time_trig_to_max: int = None
     time_trig_to_begin: int = None
     time_trig_to_end: int = None
+    
+    @property
+    def peak_width(self) -> Optional[int]:
+        """Calculate peak width as time from begin to end, in ns."""
+        if self.time_trig_to_end is not None and self.time_trig_to_begin is not None:
+            return self.time_trig_to_end - self.time_trig_to_begin
+        else:
+            return None
         
     @classmethod
     def from_events(cls,
@@ -724,14 +790,14 @@ class NewPeakArea:
                     data3: Event,
                     data4: Event,
                     data5: Event,
-                    data6: Event) -> "NewPeakArea":
+                    data6: Event) -> "PeakArea":
         peak_area = cls()
-        peak_area.max_peak = data1.data
-        peak_area.area_begin_to_max = data2.data
-        peak_area.area_total = data3.data
-        peak_area.time_trig_to_max = data4.data
-        peak_area.time_trig_to_begin = data5.data
-        peak_area.time_trig_to_end = data6.data
+        peak_area.max_peak = data1.peak_area_data
+        peak_area.area_begin_to_max = data2.peak_area_data
+        peak_area.area_total = data3.peak_area_data
+        peak_area.time_trig_to_max = data4.peak_area_data
+        peak_area.time_trig_to_begin = data5.peak_area_data
+        peak_area.time_trig_to_end = data6.peak_area_data
         return peak_area
     
     def __repr__(self):

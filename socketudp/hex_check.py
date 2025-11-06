@@ -49,7 +49,7 @@ class HexCheck:
     def __init__(self, to_use_index_increment: int = 0):
         self.name_to_event: dict[str, EventType] = {}
         self.event_counts: dict[EventType, int] = Counter()
-        self.event_buffer: list[Event] = []  # buffer of all events
+        self.event_buffer: list[Event] | list[NewEvent] = []  # buffer of all events
         self.raw_data_buffer: list[Event] = []  # buffer of just raw data events
         self.peak_height_buffer: list[Peak] = []  # buffer of just peak height events
         self.raw_data_dataframe: Optional[pandas.DataFrame] = None  # buffer of raw data events in a pandas DataFrame
@@ -112,6 +112,7 @@ class HexCheck:
         print(f"Found {len(events)} events in the file.")
 
         events: list[NewEvent] = [NewEvent(i+1, data_str) for i, data_str in enumerate(events)]
+        self.event_buffer = events
         print(events)
 
         raw_data_panda = []
