@@ -734,9 +734,9 @@ def plot_2d_histogram_time_vs_event_number(
     
     if not title:
         if channel:
-            title = f"{common_title_text}\nCH {channel}: Time vs Event Number"
+            title = f"{common_title_text}\nCH {channel}: Peak Time vs Event Number"
         else:
-            title = f"{common_title_text}\nTime vs Event Number"
+            title = f"{common_title_text}\nPeak Time vs Event Number"
     ax.set_title(title)
     
     plt.tight_layout()

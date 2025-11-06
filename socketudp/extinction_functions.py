@@ -239,9 +239,12 @@ def get_delta_trains_from_hex(hex_check, channel,
 
 
 def get_delta_trains_per_event_from_hex(hex_check, channel, fft_time_range_ns, units='ns'):
+    assert channel != 0, "Channel 0 is invalid, this function assumes channel numbers 1-4."
     peak_height_dataframe = hex_check.peak_height_dataframe
     grouped = peak_height_dataframe[peak_height_dataframe['channel_number'] == channel] \
                 .groupby('internal_event_number')
+
+    # grouped is a dataframe with length equal to # of events, even if some of those
 
     delta_trains = []
     start_ns, end_ns = fft_time_range_ns  # don’t mutate the caller’s tuple
@@ -259,10 +262,11 @@ def get_delta_trains_per_event_from_hex(hex_check, channel, fft_time_range_ns, u
 
         mask = (start_ns <= arr) & (arr <= end_ns)
         new_arr = arr[mask]
-        print(f"[CH{channel}] Event {event_number}: {len(arr)} events "
+        print(f"[CH{channel}] Event {event_number}: {len(arr)} peaks heights"
               f"({len(new_arr)} from t = {start_ns} to {end_ns} ns).")
 
-        if new_arr.size > 0:
+        # change below comparison to ">" to ignore empty events
+        if new_arr.size >= 0:
             # print AFTER confirming nonempty; also fix the units in the text
             # print(f"[CH{channel}] After time mask, {new_arr.size} events remain in "
             #       f"{(new_arr[0]/1e6):.2f}–{(new_arr[-1]/1e6):.2f} ms")

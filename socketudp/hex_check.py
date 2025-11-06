@@ -113,11 +113,12 @@ class HexCheck:
 
         events: list[NewEvent] = [NewEvent(i+1, data_str) for i, data_str in enumerate(events)]
         print(events)
-        
+
         raw_data_panda = []
         peak_height_panda = []
         for event in events:
             for sub_event in event.sub_events:
+                print(event, sub_event)
                 for c in sub_event.channels:
                     for data in c.raw_data:
                         raw_data_panda.append((c.internal_event_number, c.sub_event_number,
@@ -727,7 +728,8 @@ def main():
         except Exception as e:
             print(f"Error processing file {hex_check.file_name}: {e}")
             raise
-        
+
+
         return hex_check
 
 

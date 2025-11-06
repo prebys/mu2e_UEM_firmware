@@ -548,8 +548,7 @@ def parse_peak_area_channel(block: str) -> list["PeakArea"]:
         assert len(payload) % 48 == 0, f"Payload length {len(payload)} ({block} -> {payload}) is not a multiple of 48."
     except AssertionError as e:
         print(e)
-        peak_area = NewPeakArea()
-        out.append(peak_area)
+        return out
     
     # make placeholder to take advantage of Event's regex matching on peak format
     data6 = Event("", None, peak_area_data_6)  # placeholder
@@ -613,6 +612,9 @@ class NewEvent:
               f"sub-events.")
         self.sub_events = [NewSubEvent(self, sub_event) for sub_event in sub_events]
 
+    def __repr__(self):
+        return f"<NewEvent #{self.event_number}-{self.internal_event_number}, {len(self.sub_events)} sub-events>"
+
 
 class NewSubEvent(HasEventNumber):
     def __init__(self, event: NewEvent, data_str: str):
@@ -625,8 +627,8 @@ class NewSubEvent(HasEventNumber):
         raw_data_channels = re.findall(r'fafa....ffff.*?fbfbfbfb(?=fafa|fefe)', data_str)  # four items
         self.raw_data_list = [parse_raw_data_channel(b) for b in raw_data_channels]
         raw_data_lengths = [len(raw_data) for raw_data in self.raw_data_list]
-        # print(self.raw_data_list)
         print()
+        print(self.raw_data_list)
         print(f"[{self.event_number}-{self.internal_event_number}-{self.sub_event_number}] "
               f"[RAW_DATA] {len(raw_data_channels)} channels, lengths {raw_data_lengths}.")
         
@@ -648,7 +650,7 @@ class NewSubEvent(HasEventNumber):
         # bbbb_bbbb = end peak data
         # ecec_ecec = end peak channel
         peak_channels = re.findall(r'eeee....aaaa.*?bbbbbbbbecececec', data_str)  # list of four items, for each of the channels
-        print('\n'.join(peak_channels))
+        # print('\n'.join(peak_channels))
         
         # PEAK HEIGHT
         # peak_height starts with aaaa cccc_cccc and ends with cece_cece dddd
@@ -658,16 +660,14 @@ class NewSubEvent(HasEventNumber):
         height_counts = [len(peaks) for peaks in self.peak_height_list]
         print(f"[{self.event_number}-{self.internal_event_number}-{self.sub_event_number}] "
               f"[PEAK_HEIGHT] {len(peak_channels)} channels, lengths {height_counts}.")
-        # print(self.peak_height_list)
+        print(self.peak_height_list)
         
         # PEAK AREA
         self.peak_area_list = [parse_peak_area_channel(b) for b in peak_channels]  # four lists of PeakArea objects
         area_counts = [len(areas) for areas in self.peak_area_list]
         print(f"[{self.event_number}-{self.internal_event_number}-{self.sub_event_number}] "
                 f"[PEAK_AREA] {len(peak_channels)} channels, lengths {area_counts}.")
-        
-        
-        
+        print(self.peak_area_list)
         
         self.channels: list[NewChannelData] = []
         for i in range(4):
@@ -675,6 +675,10 @@ class NewSubEvent(HasEventNumber):
             channel = NewChannelData(channel_num, self.raw_data_list[i], self.peak_height_list[i], self)
             self.channels.append(channel)
         self.channels = self.channels[::-1]  # reverse order so channel 1 is first
+
+    def __repr__(self):
+        return f"<NewSubEvent #{self.event_number}-{self.internal_event_number}-{self.sub_event_number}, " \
+               f"{len(self.channels)} channels>"
 
         
 class NewChannelData(HasSubEventNumber):
@@ -732,11 +736,11 @@ class NewPeakArea:
     
     def __repr__(self):
         return (f"<PeakArea max_peak={self.max_peak}, "
-                f"\narea_begin_to_max={self.area_begin_to_max}, "
-                f"\narea_total={self.area_total}, "
-                f"\ntime_trig_to_max={self.time_trig_to_max}, "
-                f"\ntime_trig_to_begin={self.time_trig_to_begin}, "
-                f"\ntime_trig_to_end={self.time_trig_to_end}>")
+                f"area_begin_to_max={self.area_begin_to_max}, "
+                f"area_total={self.area_total}, "
+                f"time_trig_to_max={self.time_trig_to_max}, "
+                f"time_trig_to_begin={self.time_trig_to_begin}, "
+                f"time_trig_to_end={self.time_trig_to_end}>")
 
 #
 # class SingleHex:
@@ -793,6 +797,10 @@ class Peak:
         else:
             raise ValueError("Event type is not a peak height header data event.")
 
+    def __repr__(self):
+        return (f"<Peak #{self.event_number}-{self.internal_event_number}-{self.sub_event_number}-"
+                f"{self.channel_number} pos={self.position}, time={self.time_ns} ns, "
+                f"height={self.height} ({convert_voltage(self.height, 3) if self.height is not None else 'N/A'} V)>")
 
 
 def convert_voltage(v, round_n=None):
