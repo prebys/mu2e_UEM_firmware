@@ -85,27 +85,41 @@ architecture RTL of adc_trigger is
     "00001111"    -- 1111
   );
 
+  signal trig_req_d1   : std_logic := '0';  -- trigger request previous cycle
+
 begin
 
   outevn_number <= std_logic_vector(evn_number);
 
+  -- process for trigger algorithm
   process ( clk)
     variable alg : std_logic_vector(7 downto 0);
+    variable current_cycle_trig : std_logic := '0';
   begin
     if ( clk'event and clk = '1' ) then
       last_trig_out <= trig_out;
-      if ( triggered = '0' ) then
-        alg := trigger_lookup(to_integer(unsigned(adc_fd))) and not mask;
-        alg(7) := ext_trig and not mask(7);
-        if ( alg /= "00000000" ) then
-          triggered <= '1';
-          algorithm <= alg;
-          trig_out <= '1';
-        end if;
+
+      -- a '1' in the mask means "ignore this bit" -- "don't trigger on this bit"
+      -- all '0' in "mask" would mean "trigger on anything" 
+      alg := trigger_lookup(to_integer(unsigned(adc_fd))) and not mask;
+      alg(7) := ext_trig and not mask(7);  -- '1' if external trigger unmasked and high
+
+      if (alg /= "00000000") then
+        current_cycle_trig := '1';
+      else
+        current_cycle_trig := '0';
+      end if;
+
+      trig_req_d1 <= current_cycle_trig;
+
+      if (triggered = '0' and trig_req_d1 = '1' and current_cycle_trig = '1') then
+        triggered <= '1';
+        algorithm <= alg;
+        trig_out <= '1';
       else
         trig_out <= '0';
-        alg := trigger_lookup(to_integer(unsigned(adc_fd))) and not mask;
-        alg(7) := ext_trig and not mask(7);
+
+        -- only reset triggered when no trigger condition present
         if ( alg = "00000000" ) then
           triggered <= '0';
         else
@@ -126,6 +140,7 @@ begin
     end if;
   end process;
 
+  -- process for delay and trigger generation
   process ( clk ) begin
     if ( clk'event and clk = '1' ) then
       case delay_state is

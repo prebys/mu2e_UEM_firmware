@@ -10,12 +10,12 @@
     <Option Name="Part" Val="xc7k420tffg1156-2"/>
     <Option Name="CompiledLibDir" Val="$PCACHEDIR/compile_simlib"/>
     <Option Name="CompiledLibDirXSim" Val=""/>
-    <Option Name="CompiledLibDirModelSim" Val="C:/Users/ryry0/Documents/FPGAs/mu2e_UEM_firmware/vivado_project/project_dir/mu2e_UEM_firmware.cache/compile_simlib/modelsim"/>
-    <Option Name="CompiledLibDirQuesta" Val="C:/Users/ryry0/Documents/FPGAs/mu2e_UEM_firmware/vivado_project/project_dir/mu2e_UEM_firmware.cache/compile_simlib/questa"/>
-    <Option Name="CompiledLibDirIES" Val="C:/Users/ryry0/Documents/FPGAs/mu2e_UEM_firmware/vivado_project/project_dir/mu2e_UEM_firmware.cache/compile_simlib/ies"/>
-    <Option Name="CompiledLibDirVCS" Val="C:/Users/ryry0/Documents/FPGAs/mu2e_UEM_firmware/vivado_project/project_dir/mu2e_UEM_firmware.cache/compile_simlib/vcs"/>
-    <Option Name="CompiledLibDirRiviera" Val="C:/Users/ryry0/Documents/FPGAs/mu2e_UEM_firmware/vivado_project/project_dir/mu2e_UEM_firmware.cache/compile_simlib/riviera"/>
-    <Option Name="CompiledLibDirActivehdl" Val="C:/Users/ryry0/Documents/FPGAs/mu2e_UEM_firmware/vivado_project/project_dir/mu2e_UEM_firmware.cache/compile_simlib/activehdl"/>
+    <Option Name="CompiledLibDirModelSim" Val="$PCACHEDIR/compile_simlib/modelsim"/>
+    <Option Name="CompiledLibDirQuesta" Val="$PCACHEDIR/compile_simlib/questa"/>
+    <Option Name="CompiledLibDirIES" Val="$PCACHEDIR/compile_simlib/ies"/>
+    <Option Name="CompiledLibDirVCS" Val="$PCACHEDIR/compile_simlib/vcs"/>
+    <Option Name="CompiledLibDirRiviera" Val="$PCACHEDIR/compile_simlib/riviera"/>
+    <Option Name="CompiledLibDirActivehdl" Val="$PCACHEDIR/compile_simlib/activehdl"/>
     <Option Name="TargetLanguage" Val="VHDL"/>
     <Option Name="BoardPart" Val=""/>
     <Option Name="ActiveSimSet" Val="sim_2"/>
@@ -1386,20 +1386,14 @@
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
-        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_2/bd_fc5c_ilmb_0.xci">
-          <Proxy FileSetName="bd_fc5c_ilmb_0"/>
+        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_5/bd_fc5c_ilmb_cntlr_0.xci">
+          <Proxy FileSetName="bd_fc5c_ilmb_cntlr_0"/>
         </CompFileExtendedInfo>
-        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_0/bd_fc5c_microblaze_I_0.xci">
-          <Proxy FileSetName="bd_fc5c_microblaze_I_0"/>
+        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_1/bd_fc5c_rst_0_0.xci">
+          <Proxy FileSetName="bd_fc5c_rst_0_0"/>
         </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_7/bd_fc5c_iomodule_0_0.xci">
           <Proxy FileSetName="bd_fc5c_iomodule_0_0"/>
-        </CompFileExtendedInfo>
-        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_6/bd_fc5c_lmb_bram_I_0.xci">
-          <Proxy FileSetName="bd_fc5c_lmb_bram_I_0"/>
-        </CompFileExtendedInfo>
-        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_5/bd_fc5c_ilmb_cntlr_0.xci">
-          <Proxy FileSetName="bd_fc5c_ilmb_cntlr_0"/>
         </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_4/bd_fc5c_dlmb_cntlr_0.xci">
           <Proxy FileSetName="bd_fc5c_dlmb_cntlr_0"/>
@@ -1407,8 +1401,14 @@
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_3/bd_fc5c_dlmb_0.xci">
           <Proxy FileSetName="bd_fc5c_dlmb_0"/>
         </CompFileExtendedInfo>
-        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_1/bd_fc5c_rst_0_0.xci">
-          <Proxy FileSetName="bd_fc5c_rst_0_0"/>
+        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_0/bd_fc5c_microblaze_I_0.xci">
+          <Proxy FileSetName="bd_fc5c_microblaze_I_0"/>
+        </CompFileExtendedInfo>
+        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_6/bd_fc5c_lmb_bram_I_0.xci">
+          <Proxy FileSetName="bd_fc5c_lmb_bram_I_0"/>
+        </CompFileExtendedInfo>
+        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_2/bd_fc5c_ilmb_0.xci">
+          <Proxy FileSetName="bd_fc5c_ilmb_0"/>
         </CompFileExtendedInfo>
       </File>
       <Config>
@@ -1692,7 +1692,7 @@
     </Simulator>
   </Simulators>
   <Runs Version="1" Minor="10">
-    <Run Id="synth_1" Type="Ft3:Synth" SrcSet="sources_1" Part="xc7k420tffg1156-2" ConstrsSet="constrs_fmc228_pcie" Description="Higher performance designs, resource sharing is turned off, the global fanout guide is set to a lower number, FSM extraction forced to one-hot, LUT combining is disabled, equivalent registers are preserved, SRL are inferred  with a larger threshold" State="current" IncludeInArchive="true">
+    <Run Id="synth_1" Type="Ft3:Synth" SrcSet="sources_1" Part="xc7k420tffg1156-2" ConstrsSet="constrs_fmc228_pcie" Description="Higher performance designs, resource sharing is turned off, the global fanout guide is set to a lower number, FSM extraction forced to one-hot, LUT combining is disabled, equivalent registers are preserved, SRL are inferred  with a larger threshold" State="current" Dir="$PRUNDIR/synth_1" IncludeInArchive="true">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Flow_PerfOptimized_high" Flow="Vivado Synthesis 2016"/>
         <Step Id="synth_design">
@@ -1704,6 +1704,7 @@
           <Option Id="ShregMinSize">5</Option>
         </Step>
       </Strategy>
+      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
     </Run>
     <Run Id="gig_ethernet_pcs_pma_0_synth_1" Type="Ft3:Synth" SrcSet="gig_ethernet_pcs_pma_0" Part="xc7k420tffg1156-2" ConstrsSet="gig_ethernet_pcs_pma_0" Description="Vivado Synthesis Defaults" Dir="$PRUNDIR/gig_ethernet_pcs_pma_0_synth_1" IncludeInArchive="true">
       <Strategy Version="1" Minor="2">
@@ -1833,7 +1834,7 @@
       </Strategy>
       <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
     </Run>
-    <Run Id="impl_1" Type="Ft2:EntireDesign" Part="xc7k420tffg1156-2" ConstrsSet="constrs_fmc228_pcie" Description="Default settings for Implementation." State="current" SynthRun="synth_1" IncludeInArchive="true">
+    <Run Id="impl_1" Type="Ft2:EntireDesign" Part="xc7k420tffg1156-2" ConstrsSet="constrs_fmc228_pcie" Description="Default settings for Implementation." State="current" Dir="$PRUNDIR/impl_1" SynthRun="synth_1" IncludeInArchive="true">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2016"/>
         <Step Id="init_design"/>
@@ -1846,6 +1847,7 @@
         <Step Id="post_route_phys_opt_design"/>
         <Step Id="write_bitstream"/>
       </Strategy>
+      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
     </Run>
     <Run Id="gig_ethernet_pcs_pma_0_impl_1" Type="Ft2:EntireDesign" Part="xc7k420tffg1156-2" ConstrsSet="gig_ethernet_pcs_pma_0" Description="Default settings for Implementation." SynthRun="gig_ethernet_pcs_pma_0_synth_1" IncludeInArchive="false">
       <Strategy Version="1" Minor="2">
