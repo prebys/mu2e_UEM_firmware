@@ -11,7 +11,7 @@ from matplotlib.colors import LogNorm, SymLogNorm, TwoSlopeNorm
 from matplotlib.ticker import FixedLocator, FixedFormatter
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-from extinction_functions import lorentzian, symmetric_mod, get_delta_trains_from_hex
+from extinction_functions import (lorentzian, symmetric_mod, get_delta_trains_from_hex)
 
 
 def plot_2d_histogram_delta_train(delta_train,
@@ -122,6 +122,11 @@ def plot_2d_histogram_delta_train(delta_train,
         else:
             cax = divider.append_axes("right", size="3%", pad=0.01)
             fig.colorbar(im, cax=cax, label='Counts (Log Scale)')
+            
+            # disable x-axis labels, ticks, etc., everything on plot #1
+            # ax.set_xticks([])
+            # ax.set_xlabel("")
+            
 
         # quick extinction measurement, divide particles within +/- 125ns over particles outside of that window
         in_time_counts = np.sum(np.abs(normalized_delta_train) <= 125)
@@ -141,8 +146,8 @@ def plot_2d_histogram_delta_train(delta_train,
         if total == in_time_counts:
             box_text += "\n(Add 1 OOT particle for calc.)"
         if textbox:
-            ax.text(0.95, 0.95, box_text, transform=ax.transAxes, fontsize=10,
-                    verticalalignment='top', horizontalalignment='right', bbox=dict(facecolor='white', alpha=0.8))
+            ax.text(0.05, 0.95, box_text, transform=ax.transAxes, fontsize=10,
+                    verticalalignment='top', horizontalalignment='left', bbox=dict(facecolor='white', alpha=0.8))
         else:
             print(box_text)
 
@@ -159,10 +164,6 @@ def plot_2d_histogram_delta_train(delta_train,
         if subplot_no != 1:
             ax.set_xlabel("Modulo Time (ns)")
         ax.set_ylabel("Time (ms)")
-
-        # if subplot_no == 1:
-        #     # don't show x-ticks
-        #     ax.set_xticks([])
 
         if subplot_no != 2:
             if title:
@@ -182,14 +183,17 @@ def plot_2d_histogram_delta_train(delta_train,
             plt.show()
 
 
-def plot_1d_histogram(data_lists: list[np.ndarray], sample_period: float = 0,
-                      common_title_text: str = "", include_sample_peaks=False, title: Optional[str] = None,
+def plot_1d_histogram(data_lists: list[np.ndarray],
+                      sample_period: float = 0,
+                      common_title_text: str = "",
+                      include_sample_peaks=False,
+                      title: Optional[str] = None,
                       units: Optional[str] = None,   # 'ns' or 'ms'
                       hist_range: Optional[tuple] = None,
                       log: Optional[bool] = None,
                       loc: Optional[str] = None,
                       alpha: Optional[float] = 0.5,
-                      bin_size_ns: Optional[int] = 40,  # default bin size in ms
+                      bin_size_ns: Optional[int | float] = 40,  # default bin size in ms
                       fig_size: tuple[int, int] = (10, 6),  # default figure width in inches
                       legend: bool = True,
                       file_name: str = "histogram_plot.svg",
@@ -251,9 +255,10 @@ def plot_1d_histogram(data_lists: list[np.ndarray], sample_period: float = 0,
 
     # plot data
     for i, data in enumerate(data_lists):
+        
         if log:
             # Avoid log(0) by ensuring no bin has zero height
-            data = np.clip(data, 1e-3, None)
+            data = np.clip(data, 1e-2, None)
 
         if i == 3:
             for j, x in enumerate(data):
@@ -268,7 +273,7 @@ def plot_1d_histogram(data_lists: list[np.ndarray], sample_period: float = 0,
             ax.hist(data, bins=bins, histtype='stepfilled', alpha=alpha, label=label, **kwargs)
 
     if log:
-        ax.set_yscale('symlog', linthresh=5)
+        ax.set_yscale('symlog', linthresh=99)
         ax.set_ylim(bottom=1e-3)
 
     if units == 'ns':
@@ -350,7 +355,8 @@ def plot_fft_peak(mini_fft_freqs, mini_fft_abs, freq_window, amp_window, popt, a
 def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, normalized=False, file_name: str = None,
                               figsize=(6, 6),
                               log: bool = False,
-                              title: str = None):
+                              title: str = None,
+                              bin_count: int = 100):
     """Plot all three normalized delta trains together as histograms with normalized amplitudes"""
     fig, ax = plt.subplots(1, 1, figsize=figsize)
 
@@ -363,11 +369,11 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
     min_x = min(train.min() for train in normalized_delta_trains)
     max_x = max(train.max() for train in normalized_delta_trains)
     for j, train in enumerate(normalized_delta_trains):
-        counts, bins = np.histogram(train, bins=100, range=(min_x, max_x))
+        counts, bins = np.histogram(train, bins=bin_count, range=(min_x, max_x))
         if normalized:
             counts = counts / counts.max()  # normalize amplitude
         bin_centers = (bins[:-1] + bins[1:]) / 2
-        ax.hist(bin_centers, bins=100, weights=counts,
+        ax.hist(bin_centers, bins=bin_count, weights=counts,
                 alpha=0.7, label=f'Ch. {j + 1} ({len(train)} counts)')
 
 
@@ -626,6 +632,7 @@ def plot_2d_histogram_time_vs_event_number(
     title: Optional[str] = None,
     units = "ns",
     t_range=(0, np.inf),
+    binrange=None
 ):
     """
     Plot a 2D histogram of absolute hit times vs event number.
@@ -689,6 +696,8 @@ def plot_2d_histogram_time_vs_event_number(
             tmin *= 1e6
             tmax *= 1e6
     
+    if binrange:
+        tmin, tmax = binrange[0], binrange[1]
     bins = np.arange(tmin, tmax + bin_width, bin_width)
     if len(bins) > 1000000:
         print(f"Warning: Too many histogram bins, reduce bin_width or remove this warning. "

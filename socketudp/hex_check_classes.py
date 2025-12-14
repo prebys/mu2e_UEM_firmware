@@ -685,10 +685,10 @@ class NewSubEvent(HasEventNumber):
         raw_data_channels = re.findall(r'fafa....ffff.*?fbfbfbfb(?=fafa|fefe)', data_str)  # four items
         self.raw_data_list = [parse_raw_data_channel(b) for b in raw_data_channels]
         raw_data_lengths = [len(raw_data) for raw_data in self.raw_data_list]
-        print()
-        print(self.raw_data_list)
-        print(f"[{self.event_number}-{self.internal_event_number}-{self.sub_event_number}] "
-              f"[RAW_DATA] {len(raw_data_channels)} channels, lengths {raw_data_lengths}.")
+        # print()
+        # print(self.raw_data_list)
+        # print(f"[{self.event_number}-{self.internal_event_number}-{self.sub_event_number}] "
+        #       f"[RAW_DATA] {len(raw_data_channels)} channels, lengths {raw_data_lengths}.")
         
         # Channel number      x x x x e e e e
         # Peak finding header a a a a a a a a
@@ -708,7 +708,7 @@ class NewSubEvent(HasEventNumber):
         # bbbb_bbbb = end peak data
         # ecec_ecec = end peak channel
         peak_channels = re.findall(r'eeee....aaaa.*?bbbbbbbbecececec', data_str)  # list of four items, for each of the channels
-        print('\n'.join(peak_channels))
+        # print('\n'.join(peak_channels))
         
         # PEAK HEIGHT
         # peak_height starts with aaaa cccc_cccc and ends with cece_cece dddd
@@ -716,16 +716,16 @@ class NewSubEvent(HasEventNumber):
         # second half is matched in parse_peak_height_channel()
         self.peak_height_list = [parse_peak_height_channel(b) for b in peak_channels]  # four lists of Peak objects
         height_counts = [len(peaks) for peaks in self.peak_height_list]
-        print(f"[{self.event_number}-{self.internal_event_number}-{self.sub_event_number}] "
-              f"[PEAK_HEIGHT] {len(peak_channels)} channels, lengths {height_counts}.")
-        print(self.peak_height_list)
+        # print(f"[{self.event_number}-{self.internal_event_number}-{self.sub_event_number}] "
+        #       f"[PEAK_HEIGHT] {len(peak_channels)} channels, lengths {height_counts}.")
+        # print(self.peak_height_list)
         
         # PEAK AREA
         self.peak_area_list = [parse_peak_area_channel(b) for b in peak_channels]  # four lists of PeakArea objects
         area_counts = [len(areas) for areas in self.peak_area_list]
-        print(f"[{self.event_number}-{self.internal_event_number}-{self.sub_event_number}] "
-                f"[PEAK_AREA] {len(peak_channels)} channels, lengths {area_counts}.")
-        print(self.peak_area_list)
+        # print(f"[{self.event_number}-{self.internal_event_number}-{self.sub_event_number}] "
+        #         f"[PEAK_AREA] {len(peak_channels)} channels, lengths {area_counts}.")
+        # print(self.peak_area_list)
         
         self.channels: list[NewChannelData] = []
         for i in range(4):

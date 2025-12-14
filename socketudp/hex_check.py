@@ -111,15 +111,21 @@ class HexCheck:
         events = re.findall(r, ''.join(self.full_hex_data))
         print(f"Found {len(events)} events in the file.")
 
-        events: list[NewEvent] = [NewEvent(i+1, data_str) for i, data_str in enumerate(events)]
-        self.event_buffer = events
-        print(events)
+        # events: list[NewEvent] = [NewEvent(i+1, data_str) for i, data_str in enumerate(events)]
+        self.event_buffer: list[NewEvent] = []
+        for i, data_str in enumerate(events):
+            if i >= config.n_events:
+                break
+            event = NewEvent(i + 1, data_str)
+            self.event_buffer.append(event)
+        # print(events)
 
         raw_data_panda = []
         peak_height_panda = []
-        for event in events:
-            for sub_event in event.sub_events:
-                print(event, sub_event)
+        for event in self.event_buffer:
+            for i, sub_event in enumerate(event.sub_events):
+                if i >= config.n_subevents:
+                    break
                 for c in sub_event.channels:
                     for data in c.raw_data:
                         raw_data_panda.append((c.internal_event_number, c.sub_event_number,

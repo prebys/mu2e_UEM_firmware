@@ -23,6 +23,7 @@ def center_pulses(delta_trains, period):
     :param period: The period averaged between the three delta trains.
     :return: A new array of three delta trains, and a new period.
     """
+    starting_period = period
     sss = np.concatenate(delta_trains)  # all three lists are concatenated into one array
     sss_norm = symmetric_mod(sss, period)  # the normalized version of above
     
@@ -53,14 +54,14 @@ def center_pulses(delta_trains, period):
     # (5 - Mean, Middle Focus)
     delta_train, new_delta_correction = subtract_mean(delta_train, period, focus_middle=True, focus_beginning=True)
     delta_correction += new_delta_correction
-
+    
     # Report result
     print(f"Total correction on the mean: {delta_correction} ns")
     delta_trains = [train + delta_correction for train in delta_trains]
-
+    
     # Fix individual delta means just one time
     for i, train in enumerate(delta_trains):
-        train, _ = subtract_mean(train, period, focus_middle=True, focus_beginning=False)
+        train, correction = subtract_mean(train, period, focus_middle=True, focus_beginning=False)
         delta_trains[i] = train
 
     means = [np.mean(train) for train in delta_trains]
@@ -119,7 +120,6 @@ def correct_period(delta_train: np.ndarray,
           f"Error: {error:.4f} ns, Old Period: {period:.4f} ns, "
           f"New Period: {period + error:.4f} ns")
 
-    breakpoint()
     return period + error, symmetric_mod(delta_train, period + error)
 
 
@@ -146,9 +146,9 @@ def subtract_mean(deltas: np.ndarray, period: float, focus_middle=False, focus_b
     # initial normalization
     normalized_delta_window = symmetric_mod(delta_window, period)
 
-    # potentially, focus on just the middle +/- 150 ns of the normalized delta train
+    # potentially, focus on just the middle +/- 250 ns of the normalized delta train
     if focus_middle:
-        normalized_delta_window = normalized_delta_window[np.abs(normalized_delta_window) < 150]
+        normalized_delta_window = normalized_delta_window[np.abs(normalized_delta_window) < 250]
 
     if not normalized_delta_window.size > 0:
         print("Warning: Not enough data to calculate mean, aborting mean subtraction.")
@@ -238,7 +238,8 @@ def get_delta_trains_from_hex(hex_check, channel,
     return delta_train, fft_time_range_ns
 
 
-def get_delta_trains_per_event_from_hex(hex_check, channel, fft_time_range_ns, units='ns'):
+def get_delta_trains_per_event_from_hex(hex_check, channel, fft_time_range_ns, period=None,
+                                        units='ns'):
     assert channel != 0, "Channel 0 is invalid, this function assumes channel numbers 1-4."
     peak_height_dataframe = hex_check.peak_height_dataframe
     grouped = peak_height_dataframe[peak_height_dataframe['channel_number'] == channel] \
@@ -270,6 +271,8 @@ def get_delta_trains_per_event_from_hex(hex_check, channel, fft_time_range_ns, u
             # print AFTER confirming nonempty; also fix the units in the text
             # print(f"[CH{channel}] After time mask, {new_arr.size} events remain in "
             #       f"{(new_arr[0]/1e6):.2f}–{(new_arr[-1]/1e6):.2f} ms")
+            if period:
+                new_arr = symmetric_mod(new_arr, period)
             delta_trains.append(new_arr)
         else:
             pass
