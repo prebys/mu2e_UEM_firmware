@@ -149,3 +149,14 @@ socketudp/__pycache__/__init__.cpython-310.pyc
 socketudp/__pycache__/hex_check_classes.cpython-310.pyc
 socketudp/__pycache__/hex_check.cpython-310.pyc
 socketudp/tests/__pycache__/*
+socketudp/__pycache__/__init__.cpython-313.pyc
+socketudp/__pycache__/extinction_functions.cpython-310.pyc
+socketudp/__pycache__/extinction_functions.cpython-313.pyc
+socketudp/__pycache__/extinction_plots.cpython-310.pyc
+socketudp/__pycache__/extinction_plots.cpython-313.pyc
+socketudp/__pycache__/hex_check_classes.cpython-313.pyc
+socketudp/__pycache__/hex_check_config.cpython-310.pyc
+socketudp/__pycache__/hex_check_config.cpython-313.pyc
+socketudp/__pycache__/hex_check.cpython-313.pyc
+socketudp/__pycache__/histogram_2d.cpython-310.pyc
+socketudp/__pycache__/waterfall_plot.cpython-310.pyc

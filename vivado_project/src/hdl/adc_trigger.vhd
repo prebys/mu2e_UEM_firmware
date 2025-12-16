@@ -38,7 +38,8 @@ entity adc_trigger is
     outrst : out std_logic;
     ibusy : in std_logic; 
     outevn_number : out std_logic_vector(31 downto 0);
-    algorithm : out std_logic_vector(7 downto 0)
+    algorithm : out std_logic_vector(7 downto 0);
+    trigger_counter_out : out unsigned(15 downto 0)
   );
 end adc_trigger;
 
@@ -85,18 +86,20 @@ architecture RTL of adc_trigger is
     "00001111"    -- 1111
   );
 
-  signal trig_req_d1   : std_logic := '0';  -- trigger request previous cycle
+  -- signal trig_req_d1   : std_logic := '0';  -- trigger request previous cycle
+  signal trigger_counter : unsigned(15 downto 0) := ( others => '0' );
 
 begin
 
   outevn_number <= std_logic_vector(evn_number);
+  trigger_counter_out <= trigger_counter;
 
   -- process for trigger algorithm
   process ( clk)
     variable alg : std_logic_vector(7 downto 0);
-    variable current_cycle_trig : std_logic := '0';
+    -- variable current_cycle_trig : std_logic := '0';
   begin
-    if ( clk'event and clk = '1' ) then
+    if rising_edge(clk) then
       last_trig_out <= trig_out;
 
       -- a '1' in the mask means "ignore this bit" -- "don't trigger on this bit"
@@ -104,26 +107,28 @@ begin
       alg := trigger_lookup(to_integer(unsigned(adc_fd))) and not mask;
       alg(7) := ext_trig and not mask(7);  -- '1' if external trigger unmasked and high
 
-      if (alg /= "00000000") then
-        current_cycle_trig := '1';
-      else
-        current_cycle_trig := '0';
-      end if;
+      -- if (alg /= "00000000") then
+      --   current_cycle_trig := '1';
+      -- else
+      --   current_cycle_trig := '0';
+      -- end if;
 
-      trig_req_d1 <= current_cycle_trig;
+      -- trig_req_d1 <= current_cycle_trig;
 
-      if (triggered = '0' and trig_req_d1 = '1' and current_cycle_trig = '1') then
+      -- if (triggered = '0' and trig_req_d1 = '1' and current_cycle_trig = '1') then
+      if (triggered = '0' and alg /= (alg'range => '0')) then
         triggered <= '1';
         algorithm <= alg;
         trig_out <= '1';
+        trigger_counter <= trigger_counter + 1;
       else
-        trig_out <= '0';
+        trig_out <= '0';  -- only send trig_out once per trigger event
 
         -- only reset triggered when no trigger condition present
-        if ( alg = "00000000" ) then
-          triggered <= '0';
+        if alg = (alg'range => '0') then
+          triggered <= '0';  -- undo trigger state
         else
-          triggered <= '1';
+          triggered <= '1';  -- should already be '1', keep it at '1'
         end if;
       end if;
 
@@ -142,7 +147,7 @@ begin
 
   -- process for delay and trigger generation
   process ( clk ) begin
-    if ( clk'event and clk = '1' ) then
+    if rising_edge(clk) then
       case delay_state is
       when Idle =>
         wrdata <= '0';

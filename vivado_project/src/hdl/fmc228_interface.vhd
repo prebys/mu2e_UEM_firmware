@@ -180,7 +180,8 @@ architecture RTL of fmc228_interface is
     outrst : out std_logic;
     ibusy : in std_logic;
     outevn_number : out std_logic_vector(31 downto 0);
-    algorithm : out std_logic_vector(7 downto 0)
+    algorithm : out std_logic_vector(7 downto 0);
+    trigger_counter_out : out unsigned(15 downto 0)
   );
   end component;
 
@@ -393,6 +394,8 @@ end component;
   constant address_fmc228_stat_ch2 : std_logic_vector(15 downto 0) := x"0068";
   constant address_fmc228_stat_ch3 : std_logic_vector(15 downto 0) := x"006c";
 
+  constant address_trigger_counter : std_logic_vector(15 downto 0) := x"0070";
+
   signal adc_buffer_csr : std_logic_vector(31 downto 0) := x"00000001";
   type adc_buffer_status_t is array(3 downto 0) of std_logic_vector(31 downto 0);
   signal adc_buffer_status : adc_buffer_status_t;
@@ -565,6 +568,7 @@ end component;
   attribute mark_debug of buffer_done : signal is "true";
   attribute mark_debug of trigger_output : signal is "true";
   attribute mark_debug of adc_fd_r : signal is "true";
+  signal trigger_counter : unsigned(15 downto 0);
 
 begin
 
@@ -673,7 +677,8 @@ begin
     outrst => fifo_rst,
     ibusy => evn_busy,
     outevn_number => evn_number, 
-    algorithm => trigger_algorithm
+    algorithm => trigger_algorithm,
+    trigger_counter_out => trigger_counter
   );
   
   oself_trig <= trigger_output;
@@ -1168,6 +1173,8 @@ begin
               latched_data <= latched_adc_buffer_status(2);
             when address_fmc228_stat_ch3 =>
               latched_data <= latched_adc_buffer_status(3);
+            when address_trigger_counter =>
+              latched_data <= x"0000" & std_logic_vector(trigger_counter);
             when others =>
               latched_data <= x"f8f8f8f8";
 
