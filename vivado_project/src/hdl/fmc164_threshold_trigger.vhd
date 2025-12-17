@@ -40,6 +40,8 @@ architecture Behavioral of fmc164_threshold_trigger is
 
   signal latched_threshold : std_logic_vector(15 downto 0);
   signal latched_ack : std_logic;
+  signal prev_din : std_logic_vector(15 downto 0);
+  signal prev_above_threshold : std_logic;
 
 begin
 
@@ -47,12 +49,34 @@ begin
     if ( clk'event and clk = '1' ) then
       latched_threshold <= threshold;
       latched_ack <= ack;
+      prev_din <= din;
+      
+      -- Check if current sample is above threshold
       if ( signed(latched_threshold)-signed(offset) < 0 and signed(din)-signed(offset) < signed(latched_threshold) ) then
-        trigger <= '1';
+        -- For negative threshold, check if current sample is below (more negative than) threshold
+        -- Also check if previous sample was also above threshold to filter single-sample spikes
+        if ( signed(prev_din)-signed(offset) < signed(latched_threshold) ) then
+          trigger <= '1';
+          prev_above_threshold <= '1';
+        else
+          trigger <= '0';
+          prev_above_threshold <= '1';
+        end if;
       elsif ( signed(latched_threshold)-signed(offset) > 0 and signed(din)-signed(offset) > signed(latched_threshold) ) then
-        trigger <= '1';
+        -- For positive threshold, check if current sample is above (more positive than) threshold
+        -- Also check if previous sample was also above threshold to filter single-sample spikes
+        if ( signed(prev_din)-signed(offset) > signed(latched_threshold) ) then
+          trigger <= '1';
+          prev_above_threshold <= '1';
+        else
+          trigger <= '0';
+          prev_above_threshold <= '1';
+        end if;
       elsif ( latched_ack = '1' ) then
         trigger <= '0';
+        prev_above_threshold <= '0';
+      else
+        prev_above_threshold <= '0';
       end if;
     end if;
   end process;
