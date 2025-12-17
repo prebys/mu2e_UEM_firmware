@@ -53,10 +53,10 @@ begin
       latched_threshold <= threshold;
       latched_ack <= ack;
       
-      -- Check if current sample is above threshold
+      -- Check if current sample crosses threshold
       if ( signed(latched_threshold)-signed(offset) < 0 and signed(din)-signed(offset) < signed(latched_threshold) ) then
-        -- For negative threshold, current sample is below (more negative than) threshold
-        -- Only trigger if previous sample was also above threshold to filter single-sample spikes
+        -- For negative threshold, current sample is more negative than threshold (exceeds it)
+        -- Only trigger if previous sample also exceeded threshold to filter single-sample spikes
         if ( prev_above_threshold = '1' ) then
           trigger <= '1';
         else
@@ -64,8 +64,8 @@ begin
         end if;
         prev_above_threshold <= '1';
       elsif ( signed(latched_threshold)-signed(offset) > 0 and signed(din)-signed(offset) > signed(latched_threshold) ) then
-        -- For positive threshold, current sample is above (more positive than) threshold
-        -- Only trigger if previous sample was also above threshold to filter single-sample spikes
+        -- For positive threshold, current sample exceeds positive threshold
+        -- Only trigger if previous sample also exceeded threshold to filter single-sample spikes
         if ( prev_above_threshold = '1' ) then
           trigger <= '1';
         else
@@ -76,7 +76,7 @@ begin
         trigger <= '0';
         prev_above_threshold <= '0';
       else
-        -- Current sample is not above threshold
+        -- Current sample does not exceed threshold
         trigger <= '0';
         prev_above_threshold <= '0';
       end if;
