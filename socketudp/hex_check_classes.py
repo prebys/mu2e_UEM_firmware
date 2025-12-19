@@ -224,8 +224,12 @@ class Event:
     def raw_data(self) -> ADCTypes:
         """Returns the raw data as a list of integers, processed by process_hex_raw_data"""
         if self.type == raw_data:
+            # below gives (a, b, remaining_count), with a and b being raw data
+            # the two data points:
             process_hex_raw_data_result = self.process_hex_raw_data(mode=config.integer_mode)
+            # the remaining count of ADC points:
             self.hex_check.raw_data_remaining = process_hex_raw_data_result[2]
+            
             return DoubleADCTuple(*process_hex_raw_data_result[:2])
         else:
             raise ValueError("This event is not a raw_data event.")
@@ -382,7 +386,9 @@ class Event:
             lower_count = word & 0xF  # Get lower 4 bits
             older_adc_value = signed(older_adc_value, 12)
             
+            # Step 5: Extract the final extra bits, the "2" and "4" in "f1f2f3f4"
             count = upper_count << 4 | lower_count
+            
             return DoubleADCTupleWithCount(older_adc_value, newer_adc_value, count)
         elif mode == 's16':
             # Step 3: Extract the first ADC value (upper 16 bits of `word`)
@@ -528,7 +534,8 @@ class Event:
             return f"<Event {self.hex} (UnknownType)>"
         
         if self.type == raw_data:
-            ret += f" = {self.raw_data} (extra bytes: {self.hex_check.raw_data_remaining})>"
+            ex = f"{self.hex_check.raw_data_remaining} - {self.hex_check.raw_data_remaining:08b}"
+            ret += f" = {self.raw_data} (extra bytes: {ex})>"
         elif self.type == peak_height_data_1:
             # data event 1 contains [peak_number (0-3), time (ns)]
             ret += f" = Peak #{self.peak_height_position} ({self.peak_height_time} ns)>"
@@ -558,11 +565,14 @@ def parse_raw_data_channel(block: str) -> list[int]:
     payload = block[8 * 7: -8 * 1]
     assert len(payload) % 8 == 0, f"Payload length {len(payload)} is not a multiple of 8."
     out = []
+    print("channel")
     for h in chunk(payload, size=8):
         evt = Event(h[:8], None, raw_data)
         # evt.raw_data is a 2-tuple/list -> extend both words
+        # also has a third element, the *remaining count* of ADC points to be sent later
         out.append(evt.raw_data[0])
         out.append(evt.raw_data[1])
+        print(f"Data: {evt}")
     return out
 
 
@@ -716,15 +726,15 @@ class NewSubEvent(HasEventNumber):
         # second half is matched in parse_peak_height_channel()
         self.peak_height_list = [parse_peak_height_channel(b) for b in peak_channels]  # four lists of Peak objects
         height_counts = [len(peaks) for peaks in self.peak_height_list]
-        # print(f"[{self.event_number}-{self.internal_event_number}-{self.sub_event_number}] "
-        #       f"[PEAK_HEIGHT] {len(peak_channels)} channels, lengths {height_counts}.")
+        print(f"[{self.event_number}-{self.internal_event_number}-{self.sub_event_number}] "
+              f"[PEAK_HEIGHT] {len(peak_channels)} channels, lengths {height_counts}.")
         # print(self.peak_height_list)
         
         # PEAK AREA
         self.peak_area_list = [parse_peak_area_channel(b) for b in peak_channels]  # four lists of PeakArea objects
         area_counts = [len(areas) for areas in self.peak_area_list]
-        # print(f"[{self.event_number}-{self.internal_event_number}-{self.sub_event_number}] "
-        #         f"[PEAK_AREA] {len(peak_channels)} channels, lengths {area_counts}.")
+        print(f"[{self.event_number}-{self.internal_event_number}-{self.sub_event_number}] "
+                f"[PEAK_AREA] {len(peak_channels)} channels, lengths {area_counts}.")
         # print(self.peak_area_list)
         
         self.channels: list[NewChannelData] = []
