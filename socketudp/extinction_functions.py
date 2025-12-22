@@ -1,6 +1,14 @@
+import importlib
+import re
+import sys
+from time import time
+
 import numpy as np
+from scipy.fft import next_fast_len
+from scipy.optimize import curve_fit
 
 from scipy.stats import norm
+
 
 
 def symmetric_mod(x, mod):
@@ -330,9 +338,9 @@ def report_results_with_error(fft_freqs, fft_abs, unpadded_df, mini_fft_abs, max
 
 
 
-def get_three_fold_coincidence_points(delta_trains: list[np.ndarray]):
+def get_three_fold_coincidence_points(delta_trains: list[np.ndarray], coincidence_window_ns = 300):
     # Parameters
-    coincidence_window_ns = 300  # events within this window are considered coincident
+    # coincidence_window_ns = 300  # events within this window are considered coincident
 
     # Get the three channels
     ch1: np.ndarray = np.array(delta_trains[0])
@@ -421,7 +429,10 @@ def combine_periods(mean_value: float, periods: list[float], errors: list[float]
     :return: A tuple containing the weighted mean period and its final error.
     """
     # Convert to numpy arrays
-    if len(periods) < 2:
+    if len(periods) == 0:
+        print("No period measurements to combine.")
+        return float('nan'), float('nan')
+    elif len(periods) < 2:
         print("Not enough period measurements to combine.")
         return periods[0], errors[0]
     periods = np.array(periods, dtype=float)
@@ -456,6 +467,159 @@ def combine_periods(mean_value: float, periods: list[float], errors: list[float]
     print(f"Birge ratio: {birge_ratio:.3f}")
     print(f"Final result: {weighted_mean:.9f} ± {final_error:.6f} ns")
     return weighted_mean, final_error
+
+
+def deep_reload(module_name: str):
+    """Reload a module and all its submodules that start with it."""
+    importlib.invalidate_caches()
+    mods_to_reload = [name for name in sys.modules if name.startswith(module_name)]
+    for name in sorted(mods_to_reload, reverse=True):
+        try:
+            importlib.reload(sys.modules[name])
+            print(f"Reloaded {name}")
+        except Exception as e:
+            print(f"Could not reload {name}: {e}")
+            
+            
+def fft(channel: int, delta_train, fft_time_range_ns: tuple[float, float], expected_peak_khz = 590,
+        use=None, sample_rate=None, desired_f_resolution=None, hc=None,
+        signal_period=None, length_ns=None, common_title_text=None, zero_padding_ratio=None):
+    
+    if use == "real_data":
+        if " - Channel" in common_title_text:
+            common_title_text = re.sub(r' - Channel \d', f' - Channel {channel}', common_title_text)
+        else:
+            common_title_text += f" - Channel {channel}"
+
+    # #######################################################
+    # Parameter Setup
+    # #######################################################
+    if not fft_time_range_ns[0]:
+        fft_time_range_ns = (delta_train[0], fft_time_range_ns[1])
+    if not fft_time_range_ns[1]:
+        fft_time_range_ns = (fft_time_range_ns[0], delta_train[-1])
+
+    length_ns = int(delta_train[-1] - delta_train[0])  # total time in ns
+    print(f"[CH{channel}] Total time: {length_ns * 1e-6:.3f} ms")
+    # to calc. minimum allowed sampling frequency, use Nyquist theorem:
+    # know we want to measure 1 / 1695 ns = 590.5 kHz, so we need at least 2 * 590.5 kHz = 1.181 MHz
+    # corresponds to a sampling time of 1 / 1.181 MHz = 846.5 ns
+    # anything outside of that will be aliased
+    theoretical_peak_width: float = 1 / length_ns * 1e6  # kHz, theoretical peak width in kHz
+    print(f"[CH{channel}] Expected theoretical peak width: {theoretical_peak_width:.4f} kHz")
+
+    # start creating bins
+    n_bins = int(np.round((fft_time_range_ns[1] - fft_time_range_ns[0]) / sample_rate)) + 1
+    t = np.arange(n_bins) * sample_rate + fft_time_range_ns[0]  # time bins in ns, starting at first absolute time
+
+    # check too many bins
+    if n_bins > 10000000:
+        raise Exception(f"Too many bins ({n_bins}). Check your time parameters ({fft_time_range_ns}).")
+
+    bin_counts = np.zeros(len(t)).astype(int)  # initialize bin counts
+    zero_start_delta_train = delta_train - (t[0] - t[0] % sample_rate)  # zero start time
+    bin_indices = np.round(zero_start_delta_train / sample_rate).astype(int)  # bin indices for each delta
+    # add counts to the corresponding bins
+    bin_counts[bin_indices] += 1
+
+    # calculate zero_padding ratio based on desired frequncy resolution
+    if zero_padding_ratio is None:
+        zero_padding_ratio = round(1e6 / length_ns / desired_f_resolution)  # zero padding ratio
+    zero_padded_width = 1 / (length_ns * zero_padding_ratio) * 1e6
+    print(f"[CH{channel}] Zero padding ratio: {zero_padding_ratio} (to achieve {zero_padded_width:.4f} kHz "
+          f"interpolated resolution)")
+    
+    # #######################################################
+    # FFT Calculation
+    # #######################################################
+
+    # optional, apply window if you wish
+    # sometimes helps, sometimes doesn't
+    # window = windows.hann(len(bin_counts))
+    # bin_counts *= window  # Apply a Hann window to the signal
+    
+    # Take the FFT
+    amp_exponent = 1  # exponent for amplitude, can be 1 for amplitude or 2 for power spectrum
+    n = next_fast_len(zero_padding_ratio * len(t))
+    # n = zero_padding_ratio * len(t)
+    # fft_result = 1 / len(t) * np.fft.rfft(bin_counts, n=n)
+    fft_result = np.fft.rfft(bin_counts, n=n)  # / len(t)
+    fft_abs = np.abs(fft_result) ** amp_exponent
+    fft_freqs = np.fft.rfftfreq(n, d=sample_rate * 1e-6)  # convert to kHz
+    
+    unpadded_df = 1 / (sample_rate * 1e-6) / len(bin_counts)
+    
+    # keep positive frequencies only
+    fft_abs = fft_abs[:len(fft_abs) // 2]
+    fft_freqs = fft_freqs[:len(fft_freqs) // 2]
+    # mask out DC component (bottom 1%)
+    print("Cutting off freqs below", fft_freqs * 0.001, "kHz")
+    fft_mask = fft_freqs >= fft_freqs * 0.001
+    fft_abs = fft_abs[fft_mask]
+    fft_freqs = fft_freqs[fft_mask]
+
+    # mini range from just above 589 kHz to just below 591 kHz
+    search_window_factor = 8
+    # search_window_factor = 80
+    if expected_peak_khz:
+        f_range = (expected_peak_khz - search_window_factor * theoretical_peak_width,
+                   expected_peak_khz + search_window_factor * theoretical_peak_width)
+    else:
+        # search whole frequency range
+        f_range = (-np.inf, np.inf)
+    fft_mask = (f_range[0] <= fft_freqs) & (fft_freqs <= f_range[1])
+    mini_fft_abs = fft_abs[fft_mask]
+    mini_fft_freqs = fft_freqs[fft_mask]
+    max_idx = np.argsort(mini_fft_abs)[::-1][0]  # Get index of highest bin in mini_fft_abs
+    fft_f = mini_fft_freqs[max_idx]  # the frequency FFT bin of the peak
+    fft_amp = mini_fft_abs[max_idx]  # amp of that peak
+    print(f"[CH{channel}] FFT Peak Frequency: {fft_f:.3f} kHz, Amplitude: {fft_amp:.3f} "
+          f"(searched between {mini_fft_freqs[0]:.3f} kHz and {mini_fft_freqs[-1]:.3f} kHz)")
+    
+
+
+    # #######################################################
+    # FFT Peak Fitting
+    # #######################################################
+
+    # pull out just the +/- 0.5 kHz around peak for the fit
+    fft_fit_window_mask = (np.abs(mini_fft_freqs - fft_f) < theoretical_peak_width * 5)  # +/- 0.5 kHz
+    freq_window = mini_fft_freqs[fft_fit_window_mask]
+    amp_window = mini_fft_abs[fft_fit_window_mask]
+
+    # do fit
+    p0 = [fft_amp, fft_f, theoretical_peak_width, 0]
+    popt, pcov = curve_fit(lorentzian, freq_window, amp_window, p0=p0, maxfev=10000)
+    A_fit, detected_frequency, sigma_fit, offset_fit = popt
+
+    # calculate period from detected fit frequency
+    detected_period = 1 / detected_frequency * 1e6  # ns, looks like 1694.99 ns
+
+    # uncertainty in detected frequency
+    detected_frequency_error = np.sqrt(np.diag(pcov))[1]  # second element is frequency
+    # propagate to period error
+    period_fit_error = detected_frequency_error / (detected_frequency ** 2) * 1e6  # ns
+
+    final_channel_error = report_results_with_error(fft_freqs, fft_abs, unpadded_df, mini_fft_abs, max_idx,
+                                                    zero_padding_ratio, detected_frequency,
+                                                    length_ns, detected_period, detected_frequency_error, channel)
+
+    # #######################################################
+    # Plot FFT Peak / Fitting Result
+    # #######################################################
+    
+    from socketudp.extinction_plots import plot_fft_peak
+    
+    plot_fft_peak(mini_fft_freqs, mini_fft_abs, freq_window, amp_window, popt, amp_exponent,
+                  common_title_text, delta_train, detected_frequency, detected_period, fft_time_range_ns,
+                  file_name = f"img/{hc.folder_name}/fft_peak.png",
+                  title = (f"FFT Peak Fitting Result - Time Range: {delta_train[0] * 1e-6:.2f} to "
+                            f"{delta_train[-1] * 1e-6:.2f} ms"),
+                  figsize=(8, 3),
+                  )
+    
+    
+    return delta_train, detected_period, final_channel_error
 
 
 if __name__ == "__main__":

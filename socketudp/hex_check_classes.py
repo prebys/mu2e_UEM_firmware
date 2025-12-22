@@ -565,14 +565,12 @@ def parse_raw_data_channel(block: str) -> list[int]:
     payload = block[8 * 7: -8 * 1]
     assert len(payload) % 8 == 0, f"Payload length {len(payload)} is not a multiple of 8."
     out = []
-    print("channel")
     for h in chunk(payload, size=8):
         evt = Event(h[:8], None, raw_data)
         # evt.raw_data is a 2-tuple/list -> extend both words
         # also has a third element, the *remaining count* of ADC points to be sent later
         out.append(evt.raw_data[0])
         out.append(evt.raw_data[1])
-        print(f"Data: {evt}")
     return out
 
 
@@ -792,6 +790,11 @@ class PeakArea:
             return self.time_trig_to_end - self.time_trig_to_begin
         else:
             return None
+        
+    @property
+    def peak_area(self) -> Optional[int]:
+        """Calculate peak area as total area - area from begin to max."""
+        return self.area_total
         
     @classmethod
     def from_events(cls,
