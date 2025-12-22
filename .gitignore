@@ -160,3 +160,6 @@ socketudp/__pycache__/hex_check_config.cpython-313.pyc
 socketudp/__pycache__/hex_check.cpython-313.pyc
 socketudp/__pycache__/histogram_2d.cpython-310.pyc
 socketudp/__pycache__/waterfall_plot.cpython-310.pyc
+
+# exempt the sdk folder from being ignored
+!/vivado_project/src/sdk/monitor_amc502/*
