@@ -467,42 +467,45 @@ begin
                 state <= SendDataSum;
 
         when SendDataSum =>
-           --sumarea_rden <= '1';
-           if(sumarea_valid = '1') then
-             dout <=sumarea_data;
-             outwr <= '1';
-           else
-             outwr <= '0';
-           end if;
+          sumarea_rden <= '1';
 
-          
-          --if( count = 0 ) then
-          --if( sumarea_empty = '1') then
-          if( count_sum = 0) then
-               state <= SendDataSumEndWait;
-               sumarea_rden <= '0';
-               --outwr <= '0';
+          if (sumarea_valid = '1') then
+          -- there's valid data to send
+            dout <= sumarea_data;
+            outwr <= '1';
 
-           else 
-               count <= count - 1;
-               count_sum <= count_sum - 1;
-               state <= SendDataSum;
-           end if;
+          if (count_sum = 1) then
+            sumarea_rden <= '0';
+            state <= SendDataSumEndWait;
+          else
+            count <= count - 1;
+            count_sum <= count_sum - 1;
+            state <= SendDataSum;
+          end if;
+
+          else
+          -- there's no valid data right now
+          -- there's a chance of getting stuck here right now, will fix later
+            outwr <= '0';
+            state <= SendDataSum;
+          end if;
            
         when SendDataSumEndWait =>
-           state <= SendDataSumEnd;
-           if(sumarea_valid = '1') then
-             dout <=sumarea_data;
-             outwr <= '1';
-           else
-             outwr <= '0';
-           end if;
+          outwr <= '0';
+          sumarea_rden <= '0';  
+          if (sumarea_valid = '0') then
+            -- fifo has closed, move on
+            state <= SendDataSumEnd;
+          else
+            -- fifo has not closed
+            state <= SendDataSumEndWait;
+          end if;
 
         when SendDataSumEnd =>
-                   sumarea_rden <= '0';
-                   dout <= x"dededede";
-                   outwr <= '1';
-                   state <= SendPeakfindingEnd;
+          sumarea_rden <= '0';
+          dout <= x"dededede";
+          outwr <= '1';
+          state <= SendPeakfindingEnd;
            
       when SendPeakfindingEnd =>
           dout <= x"bbbbbbbb";
