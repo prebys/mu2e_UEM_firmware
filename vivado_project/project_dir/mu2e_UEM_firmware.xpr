@@ -33,13 +33,13 @@
     <Option Name="WTVcsLaunchSim" Val="0"/>
     <Option Name="WTRivieraLaunchSim" Val="0"/>
     <Option Name="WTActivehdlLaunchSim" Val="0"/>
-    <Option Name="WTXSimExportSim" Val="110"/>
-    <Option Name="WTModelSimExportSim" Val="110"/>
-    <Option Name="WTQuestaExportSim" Val="110"/>
-    <Option Name="WTIesExportSim" Val="110"/>
-    <Option Name="WTVcsExportSim" Val="110"/>
-    <Option Name="WTRivieraExportSim" Val="110"/>
-    <Option Name="WTActivehdlExportSim" Val="110"/>
+    <Option Name="WTXSimExportSim" Val="113"/>
+    <Option Name="WTModelSimExportSim" Val="113"/>
+    <Option Name="WTQuestaExportSim" Val="113"/>
+    <Option Name="WTIesExportSim" Val="113"/>
+    <Option Name="WTVcsExportSim" Val="113"/>
+    <Option Name="WTRivieraExportSim" Val="113"/>
+    <Option Name="WTActivehdlExportSim" Val="113"/>
   </Configuration>
   <FileSets Version="1" Minor="31">
     <FileSet Name="sources_1" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
@@ -1386,29 +1386,29 @@
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
-        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_3/bd_fc5c_dlmb_0.xci">
-          <Proxy FileSetName="bd_fc5c_dlmb_0"/>
-        </CompFileExtendedInfo>
-        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_2/bd_fc5c_ilmb_0.xci">
-          <Proxy FileSetName="bd_fc5c_ilmb_0"/>
-        </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_7/bd_fc5c_iomodule_0_0.xci">
           <Proxy FileSetName="bd_fc5c_iomodule_0_0"/>
         </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_6/bd_fc5c_lmb_bram_I_0.xci">
           <Proxy FileSetName="bd_fc5c_lmb_bram_I_0"/>
         </CompFileExtendedInfo>
-        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_5/bd_fc5c_ilmb_cntlr_0.xci">
-          <Proxy FileSetName="bd_fc5c_ilmb_cntlr_0"/>
+        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_4/bd_fc5c_dlmb_cntlr_0.xci">
+          <Proxy FileSetName="bd_fc5c_dlmb_cntlr_0"/>
         </CompFileExtendedInfo>
-        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_1/bd_fc5c_rst_0_0.xci">
-          <Proxy FileSetName="bd_fc5c_rst_0_0"/>
+        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_2/bd_fc5c_ilmb_0.xci">
+          <Proxy FileSetName="bd_fc5c_ilmb_0"/>
         </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_0/bd_fc5c_microblaze_I_0.xci">
           <Proxy FileSetName="bd_fc5c_microblaze_I_0"/>
         </CompFileExtendedInfo>
-        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_4/bd_fc5c_dlmb_cntlr_0.xci">
-          <Proxy FileSetName="bd_fc5c_dlmb_cntlr_0"/>
+        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_5/bd_fc5c_ilmb_cntlr_0.xci">
+          <Proxy FileSetName="bd_fc5c_ilmb_cntlr_0"/>
+        </CompFileExtendedInfo>
+        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_3/bd_fc5c_dlmb_0.xci">
+          <Proxy FileSetName="bd_fc5c_dlmb_0"/>
+        </CompFileExtendedInfo>
+        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_1/bd_fc5c_rst_0_0.xci">
+          <Proxy FileSetName="bd_fc5c_rst_0_0"/>
         </CompFileExtendedInfo>
       </File>
       <Config>

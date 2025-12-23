@@ -163,3 +163,9 @@ socketudp/__pycache__/waterfall_plot.cpython-310.pyc
 
 # exempt the sdk folder from being ignored
 !/vivado_project/src/sdk/monitor_amc502/*
+
+# ignore some auto-generated IP folder things
+/vivado_project/src/ip/*/doc/*changelog.txt
+/vivado_project/src/**/*rfs.v*
+/vivado_project/src/ip/**/*beh.v*
+/vivado_project/src/ip/*/sim/*.v*
