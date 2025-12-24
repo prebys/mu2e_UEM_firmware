@@ -114,8 +114,8 @@ class HexCheck:
         # events: list[NewEvent] = [NewEvent(i+1, data_str) for i, data_str in enumerate(events)]
         self.event_buffer: list[NewEvent] = []
         for i, data_str in enumerate(events):
-            if i >= config.n_events:
-                break
+            if not (config.event_range[0] < i < config.event_range[1]):
+                continue
             event = NewEvent(i + 1, data_str)
             self.event_buffer.append(event)
         # print(events)
@@ -173,8 +173,8 @@ class HexCheck:
             
             # end file processing if the event number and subevent number
             # are greater than the configured values
-            if current_event.internal_event_number > config.n_events:
-                break
+            if not (config.event_range[0] <= current_event.event_number <= config.event_range[1]):
+                continue
             
             # current_event object contains:
             # - current_event.hex: the current hex value
@@ -380,7 +380,9 @@ class HexCheck:
     def plot_raw_data(self):
         grouped = self.raw_data_dataframe.groupby(["internal_event_number", "sub_event_number"])
         for (internal_event, sub_event), group in grouped:
-            if sub_event + 1 > config.n_subevents or internal_event > config.n_events:
+            if sub_event + 1 > config.n_subevents:
+                continue
+            if not (config.event_range[0] <= internal_event <= config.event_range[1]):
                 continue
             channel_arrays = []
             for ch in [1, 2, 3, 4]:
@@ -400,7 +402,7 @@ class HexCheck:
             # internal_event is an integer
             # "group" is the same dataframe as before, but only with events from the chosen internal event
             internal_event: int
-            if internal_event > config.n_events:
+            if not (config.event_range[0] <= internal_event <= config.event_range[1]):
                 continue
             t_arrays = []
             channel_arrays = []
@@ -428,7 +430,7 @@ class HexCheck:
             grouped_by_event = self.peak_height_dataframe.groupby("internal_event_number")
             for internal_event, group in grouped_by_event:
                 internal_event: int
-                if internal_event > config.n_events:
+                if not (config.event_range[0] <= internal_event <= config.event_range[1]):
                     continue
                 self.histogram_grid(group, internal_event)
     

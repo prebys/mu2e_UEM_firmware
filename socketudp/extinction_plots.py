@@ -43,7 +43,7 @@ def plot_2d_histogram_delta_train(delta_train,
     if not isinstance(colors, list):
         colors = [colors]
     if not delta_train.any():
-        print("Warning: delta_train is empty, skipping 2D histogram plot.")
+        print("⚠️⚠️ Warning: delta_train is empty, skipping 2D histogram plot. ⚠️⚠️")
         return
 
     # detected_period_ns = 1 / 589.9801 * 1e6  # convert kHz to ns, use real theoretical value
@@ -210,7 +210,7 @@ def plot_1d_histogram(data_lists: list[np.ndarray],
     # check for empty data lists
     for i, l in enumerate(data_lists):
         if not l.any():
-            print(f"Warning: Data list #{i + 1} is empty, skipping histogram plot.")
+            print(f"⚠️⚠️ Warning: Data list #{i + 1} is empty, skipping histogram plot. ⚠️⚠️")
             data_lists.pop(i)
 
     # calculate range of histogram
@@ -705,8 +705,8 @@ def plot_2d_histogram_time_vs_event_number(
         tmin, tmax = binrange[0], binrange[1]
     bins = np.arange(tmin, tmax + bin_width, bin_width)
     if len(bins) > 1000000:
-        print(f"Warning: Too many histogram bins, reduce bin_width or remove this warning. "
-              f"({len(bins)} bins from {tmin} to {tmax} with width {bin_width})")
+        print(f"⚠️⚠️ Warning: Too many histogram bins, reduce bin_width or remove this warning. ⚠️⚠️"
+              f"({len(bins)} bins from {tmin} to {tmax} with width {bin_width}) ⚠️⚠️")
         return
     
     # Build histogram: rows = events, cols = bins
@@ -769,7 +769,7 @@ def plot_2d_histogram_time_vs_event_number(
     plt.show()
     
     
-def plot_raw_data(_hex_check: HexCheck, n_subevents = np.inf, n_events = np.inf, plotting_units = "volts", figsize = (8, 8), t_range=(0, np.inf), y_range=None):
+def plot_raw_data(_hex_check: HexCheck, n_subevents = np.inf, event_range = (0, np.inf), plotting_units = "volts", figsize = (8, 8), t_range=(0, np.inf), y_range=None):
     # grouped = _hex_check.raw_data_dataframe.groupby(["internal_event_number", "sub_event_number"])
     grouped = _hex_check.raw_data_dataframe.groupby(["internal_event_number"])
     # for (internal_event, sub_event), group in grouped:
@@ -777,7 +777,7 @@ def plot_raw_data(_hex_check: HexCheck, n_subevents = np.inf, n_events = np.inf,
         if isinstance(internal_event, tuple):
             internal_event = internal_event[0]
         # if sub_event + 1 > n_subevents or internal_event > n_events:
-        if internal_event > n_events:
+        if not (event_range[0] <= internal_event <= event_range[1]):
             continue
         t_arrays = []
         channel_arrays = []

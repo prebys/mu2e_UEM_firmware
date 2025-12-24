@@ -953,8 +953,8 @@ def find_data_file(desired_file_path, to_use_index_increment: int = 0) -> str:
         input_file_name = dat_files[-config.to_use_file_index - to_use_index_increment]
         # if not input_file_name.startswith("data_202507"):
         #     raise ValueError("Outside range of data_202507 files. Temporarily ignoring all other files.")
-        print(f"Warning: Multiple .dat files found in the current directory. "
-              f"Picking this one ({input_file_name})")
+        print(f"ℹ️ℹ️ Info: Multiple .dat files found in the current directory. "
+              f"Picking this one ({input_file_name}) ℹ️ℹ️")
     else:
         input_file_name = dat_files[0]  # only one result
     return input_file_name
@@ -975,7 +975,20 @@ def read_data_file(dir_name, file_name) -> tuple[list[str], datetime, list[str]]
     
     # convert to hex, should be a single string containing the entire file starting with "ffffffffffffff00" etc
     hex_data: str = binary_data.hex()
-    assert len(hex_data) % 8 == 0, f"Hex data length is not divisible by 8 ({len(hex_data)})"
+    
+    # assert len(hex_data) % 8 == 0, f"Hex data length is not divisible by 8 ({len(hex_data)})"
+    if len(hex_data) % 8 != 0:
+        # find last instance of 'ffffffff 00ffffff f4f3f2f1' and truncate everything after that
+        pattern = r'(ffffffff00fffffff4f3f2f1)'
+        matches = list(re.finditer(pattern, hex_data))
+        if matches:
+            last_match = matches[-1]
+            cut_len = len(hex_data[last_match.end():])
+            full_len = len(hex_data)
+            hex_data = hex_data[:last_match.end()]
+            print(f"⚠️⚠️ Truncated hex data to last valid event ending at index {last_match.end()}. "
+                  f"Cut last {cut_len / full_len * 100:.2f}% of data. ⚠️⚠️")
+    
     hex_data_list = [hex_data[i:i + 8] for i in range(0, len(hex_data), 8)]
     
     return hex_data_list, file_creation_date, headers

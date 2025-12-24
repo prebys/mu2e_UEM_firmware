@@ -11,7 +11,7 @@ from scipy.stats import norm
 
 
 
-def symmetric_mod(x, mod):
+def symmetric_mod(x, mod) -> int | np.ndarray:
     """
     Symmetric modulo operation that returns values in the range [-mod/2, mod/2).
     Examples:
@@ -21,18 +21,27 @@ def symmetric_mod(x, mod):
         21 %% 5 -> 1
         22 %% 5 -> 2
     """
-    return np.round(((x + mod / 2) % mod) - (mod / 2)).astype(int)
+    if hasattr(x, '__iter__'):
+        x = np.asarray(x, dtype=np.float64)   # <-- force real numeric array
+    mod = float(mod)
+    if mod == 0.0:
+        raise ValueError("mod must be non-zero")
+
+    return (np.mod(x + mod/2.0, mod) - mod/2.0).astype(int)
 
 
-def center_pulses(delta_trains, period):
+def center_pulses(delta_trains, period) -> tuple[list[np.ndarray], float, int]:
     """
     Center the pulses in the delta trains by correcting the period and subtracting the mean.
     :param delta_trains: A list of the three delta trains. Operations should be performed equally on all three channels.
     :param period: The period averaged between the three delta trains.
     :return: A new array of three delta trains, and a new period.
     """
+    from socketudp.extinction_plots import plot_2d_histogram_delta_train
+    
     starting_period = period
     sss = np.concatenate(delta_trains)  # all three lists are concatenated into one array
+    sss.sort()
     sss_norm = symmetric_mod(sss, period)  # the normalized version of above
     
     individual_means = np.array([np.mean(symmetric_mod(train, period)) for train in delta_trains])
@@ -41,27 +50,61 @@ def center_pulses(delta_trains, period):
     normalized_delta_train = symmetric_mod(sss_norm, period)
     print(f"Delta train mean value (combined channels): {np.mean(normalized_delta_train):.2f} ns")
 
+    # (0 - Mean, Beginning Focus)
+    # first, center the BEGINNING of the pulses based on the mean
+    print("0) Center Beginning:")
+    delta_train, delta_correction = subtract_mean(sss, period, focus_beginning=True)
+    
+    plot_2d_histogram_delta_train(delta_train, period, bin_width_ns=12, n_slices=40,
+                                  figsize=(8, 4), colors=['inferno'],
+                                  common_title_text="Centered Beginning")
+
     # (1 - Period)
     # calculate new period based on the shift of the mean value,
-    period, normalized_delta_train = correct_period(sss, normalized_delta_train, period)
+    print("1) Correct Period:")
+    period = correct_period_bin_method(delta_train, period)
+    
+    plot_2d_histogram_delta_train(delta_train, period, bin_width_ns=12, n_slices=40,
+                                  figsize=(8, 4), colors=['inferno'],
+                                  common_title_text="1) First period correction")
 
     # (2 - Mean)
     # correct by subtracting from the mean of the modulated delta train (it'll be offset from zero by some amnt.)
-    delta_train, delta_correction = subtract_mean(sss, period, focus_beginning=True)
+    print("2) Correct Mean:")
+    delta_train, delta_correction = subtract_mean(delta_train, period, focus_beginning=True)
+    
+    plot_2d_histogram_delta_train(delta_train, period, bin_width_ns=12, n_slices=40,
+                                  figsize=(8, 4), colors=['inferno'],
+                                  common_title_text="2) Correct mean")
 
     # (3 - Mean, Middle Focus)
     # once the pulse is *mostly* centered,
     # now specifically center it by just the mean of the  middle 300 ns of points
+    print("3) Correct Mean (Middle Focus):")
     delta_train, new_delta_correction = subtract_mean(delta_train, period, focus_middle=True, focus_beginning=True)
     delta_correction += new_delta_correction
+    
+    plot_2d_histogram_delta_train(delta_train, period, bin_width_ns=12, n_slices=40,
+                                  figsize=(8, 4), colors=['inferno'],
+                                  common_title_text="3) Correct Mean (Middle Focus)")
 
     # (4 - Period, Middle Focus)
     # correct for mean deviation using just the center 300 ns
-    period, normalized_delta_train = correct_period(delta_train, normalized_delta_train, period, focus_middle=True)
+    print("4) Correct Period (Middle Focus):")
+    period = correct_period_bin_method(delta_train, period, focus_middle=True)
+    
+    plot_2d_histogram_delta_train(delta_train, period, bin_width_ns=12, n_slices=40,
+                                  figsize=(8, 4), colors=['inferno'],
+                                  common_title_text="4) Correct period (Middle Focus)")
 
     # (5 - Mean, Middle Focus)
+    print("5) Correct Mean (Middle Focus):")
     delta_train, new_delta_correction = subtract_mean(delta_train, period, focus_middle=True, focus_beginning=True)
     delta_correction += new_delta_correction
+    
+    plot_2d_histogram_delta_train(delta_train, period, bin_width_ns=12, n_slices=40,
+                                  figsize=(8, 4), colors=['inferno'],
+                                  common_title_text="5) Correct mean (Middle Focus)")
     
     # Report result
     print(f"Total correction on the mean: {delta_correction} ns")
@@ -78,12 +121,12 @@ def center_pulses(delta_trains, period):
         print(f"{mean * 1e-6:.2f} ms, ", end="")
     print()
 
-    return delta_trains, period
+    return delta_trains, period, delta_correction
 
 
 def correct_period(delta_train: np.ndarray,
-                   normalized_deltas: np.ndarray,
-                   period: float, focus_middle=False) -> tuple[float, np.ndarray]:
+                   # normalized_deltas: np.ndarray,
+                   period: float, focus_middle=False) -> float:
     """
 
     :param delta_train: Three delta trains concatenated into one array.
@@ -94,27 +137,34 @@ def correct_period(delta_train: np.ndarray,
     """
     # first, if there's an error in detected_period, there will be a drift in the mean value after modulo
     # get the mean value of the first and last 5% of the normalized delta_train
+    normalized_deltas = symmetric_mod(delta_train, period)
     if focus_middle:
         normalized_deltas = normalized_deltas[np.abs(normalized_deltas) < 200]
     five_percent = int(len(normalized_deltas) * 0.15)
+    if five_percent > 2000:
+        five_percent = 2000  # cap at 500 first points
 
     # check to make sure there is enough data to make a good correction
+    starting_window_times: np.ndarray = delta_train[:five_percent]
     starting_window: np.ndarray = normalized_deltas[:five_percent]
+    print(len(starting_window_times), len(delta_train), list(starting_window_times), list(starting_window))
     ending_window = normalized_deltas[-five_percent:]
+    ending_window_times: np.ndarray = delta_train[-five_percent:]
+    print(len(ending_window_times), len(delta_train), list(ending_window_times), list(ending_window))
     ending_mean_error = np.std(ending_window, ddof=1) / np.sqrt(len(ending_window))  # standard error of the mean
     starting_mean_error = np.std(starting_window, ddof=1) / np.sqrt(len(starting_window))  # standard error of the mean
     if starting_window.size < 2 or ending_window.size < 2:
-        print("Warning: Not enough data to calculate starting or ending mean, aborting period correction.")
-        return period, normalized_deltas
-    if starting_mean_error > 5 or ending_mean_error > 5:
-        print(f"Warning: Starting mean error {starting_mean_error:.2f} ns or "
+        print("⚠️⚠️ Warning: Not enough data to calculate starting or ending mean, aborting period correction. ⚠️⚠️")
+        return period
+    if starting_mean_error > 7 or ending_mean_error > 25:
+        print(f"⚠️⚠️ Warning: Starting mean error {starting_mean_error:.2f} ns or "
               f"ending mean error {ending_mean_error:.2f} ns is too high, "
-              f"aborting period correction.")
-        return period, normalized_deltas
+              f"aborting period correction. ⚠️⚠️")
+        return period
 
     # calculate the mean of the first and last 5% of the normalized delta train
-    starting_mean = np.mean(normalized_deltas[:five_percent])
-    ending_mean = np.mean(normalized_deltas[-five_percent:])
+    starting_mean: float = np.mean(normalized_deltas[:five_percent]).astype(float)
+    ending_mean: float = np.mean(normalized_deltas[-five_percent:]).astype(float)
     print(f"Starting first {five_percent}/{len(normalized_deltas)} points: {normalized_deltas[:five_percent]}")
     print(f"Ending last {five_percent}/{len(normalized_deltas)} points: {normalized_deltas[-five_percent:]}")
 
@@ -128,7 +178,134 @@ def correct_period(delta_train: np.ndarray,
           f"Error: {error:.4f} ns, Old Period: {period:.4f} ns, "
           f"New Period: {period + error:.4f} ns")
 
-    return period + error, symmetric_mod(delta_train, period + error)
+    return period + error
+
+
+def correct_period_bin_method(delta_train: np.ndarray,
+                              period: float,
+                              focus_middle: bool = False) -> float:
+    """
+    Period correction using a histogram-mode ("most populous bin") estimate.
+
+    Steps:
+      1) Normalize delta_train with symmetric_mod(delta_train, period).
+      2) Take the first and last 5% of points (by time order).
+      3) Histogram each window, pick the most populous bin (mode estimate).
+         Optionally refine by averaging points inside that max bin.
+      4) Drift = end_mode - start_mode (wrapped to [-period/2, +period/2]).
+      5) error_per_cycle = drift / n_cycles
+      6) new_period = period + error_per_cycle
+    """
+    if delta_train is None or len(delta_train) < 2:
+        print("⚠️⚠️ Warning: Not enough data to correct period (bin method). ⚠️⚠️")
+        return period
+
+    # Ensure time order (beginning/end windows should be by increasing time)
+    dt = np.asarray(delta_train, dtype=float)
+    if np.any(np.diff(dt) < 0):
+        order = np.argsort(dt)
+        dt = dt[order]
+
+    norm = symmetric_mod(dt, period)
+
+    # Optional: only use points near the pulse center in phase space
+    if focus_middle:
+        mask = np.abs(norm) < 200
+        dt = dt[mask]
+        norm = norm[mask]
+
+    n = len(norm)
+    if n < 2:
+        print("⚠️⚠️ Warning: Not enough data after focus_middle filtering (bin method). ⚠️⚠️")
+        return period
+
+    # First/last 5% windows (with reasonable caps so it doesn't get silly)
+    five_percent = int(0.05 * n)
+    five_percent = max(five_percent, 50)          # avoid tiny windows
+    five_percent = min(five_percent, 2000)        # cap
+    five_percent = min(five_percent, n // 2)      # ensure start/end windows don't overlap too much
+
+    if five_percent < 2:
+        print("⚠️⚠️ Warning: Not enough data in start/end windows (bin method). ⚠️⚠️")
+        return period
+
+    start_w = norm[:five_percent]
+    end_w   = norm[-five_percent:]
+
+    # Choose a bin width. If your pulse is very narrow, reduce this (e.g. 2–5 ns).
+    bin_width_ns = 24
+
+    # Histogram range: full normalized range
+    hist_min = -0.5 * period
+    hist_max =  0.5 * period
+
+    # Build bin edges
+    edges = np.arange(hist_min, hist_max + bin_width_ns, bin_width_ns)
+    if len(edges) < 3:
+        print("⚠️⚠️ Warning: Histogram edges too small (bin method). ⚠️⚠️")
+        return period
+    
+    def top_five_modes_from_hist(window: np.ndarray) -> tuple[float, int]:
+        """Return the top five modes from the histogram as (mode_estimate, count_in_max_bin)."""
+        counts, e = np.histogram(window, bins=edges)
+        top_indices = np.argsort(counts)[-5:][::-1]  # indices of top 5 bins
+
+        modes = []
+        cmaxes = []
+        for k in top_indices:
+            cmax = int(counts[k])  # count in this bin
+            lo, hi = e[k], e[k + 1]
+            in_bin = window[(window >= lo) & (window < hi)]
+
+            # If there are actual points in the bin, refine by their mean; else use bin center.
+            if in_bin.size > 0:
+                mode_est = float(np.mean(in_bin))
+            else:
+                mode_est = float(0.5 * (lo + hi))
+
+            modes.append(mode_est)
+            cmaxes.append(cmax)
+
+        for i, (m, c) in enumerate(zip(modes, cmaxes), start=1):
+            print(f"  Mode {i}: {m:.2f} ns (count={c})")
+            
+        return float(np.mean(modes)), int(np.mean(cmaxes))
+
+    start_mode, start_count = top_five_modes_from_hist(start_w)
+    end_mode,   end_count   = top_five_modes_from_hist(end_w)
+
+    # Basic sanity checks: if the "peak bin" isn't meaningfully populated, correction is unreliable.
+    # Tune these thresholds if needed.
+    if start_count < max(10, int(0.02 * five_percent)) or end_count < max(10, int(0.02 * five_percent)):
+        print(f"⚠️⚠️ Warning: Peak bins not populated enough (start_count={start_count}, end_count={end_count}); "
+              f"aborting period correction (bin method). ⚠️⚠️")
+        return period
+
+    # Number of cycles spanned (using the current period estimate)
+    span = dt[-1] - dt[0]
+    if span <= 0:
+        print("⚠️⚠️ Warning: Non-positive time span; aborting period correction (bin method). ⚠️⚠️")
+        return period
+
+    n_cycles = span / period
+    if n_cycles <= 0:
+        print("⚠️⚠️ Warning: Non-positive n_cycles; aborting period correction (bin method). ⚠️⚠️")
+        return period
+
+    # Drift between end and start (phase-space). Wrap to smallest equivalent drift.
+    drift = end_mode - start_mode
+    drift = ((drift + 0.5 * period) % period) - 0.5 * period  # map to [-period/2, +period/2]
+
+    error_per_cycle = drift / n_cycles
+    new_period = period + error_per_cycle
+
+    print(f"[BinPeriod] start_mode={start_mode:.2f} ns (count={start_count}), "
+          f"end_mode={end_mode:.2f} ns (count={end_count}), "
+          f"drift={drift:.3f} ns over {n_cycles:.2f} cycles -> "
+          f"error/cycle={error_per_cycle:.6f} ns, period {period:.6f} -> {new_period:.6f} ns")
+
+    return float(new_period)
+
 
 
 def subtract_mean(deltas: np.ndarray, period: float, focus_middle=False, focus_beginning=True
@@ -141,7 +318,7 @@ def subtract_mean(deltas: np.ndarray, period: float, focus_middle=False, focus_b
     :return: 1) The new concatenated delta train with the mean subtracted, 2) The value of correction made to the train
     """
     if len(deltas) < 2:
-        print("Warning: Not enough data to calculate mean, aborting mean subtraction.")
+        print("⚠️⚠️ Warning: Not enough data to calculate mean, aborting mean subtraction. ⚠️⚠️")
         return deltas, 0
 
     # potentially, focus on just the first 5% of the delta train
@@ -159,7 +336,7 @@ def subtract_mean(deltas: np.ndarray, period: float, focus_middle=False, focus_b
         normalized_delta_window = normalized_delta_window[np.abs(normalized_delta_window) < 250]
 
     if not normalized_delta_window.size > 0:
-        print("Warning: Not enough data to calculate mean, aborting mean subtraction.")
+        print("⚠️⚠️ Warning: Not enough data to calculate mean, aborting mean subtraction. ⚠️⚠️")
         return deltas, 0
     correction = -round(np.mean(normalized_delta_window))  # make the correction be the opposite of whatever the mean is
     centered = " (center of) " if focus_middle else " "

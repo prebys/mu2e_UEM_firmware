@@ -8,12 +8,13 @@ class Config:
     # setting to a name will search for any files with that name in the directory
     # consider searching for the names 'diag_0x1', 'diag_0x2', 'diag_0x3', 'diag_0x5', 'diag_0x9', 'diag_0xF'
     desired_file_path: Optional[str]
+    desired_file_path = None
     # desired_file_path = "test20241112_145129.dat"
     # desired_file_path = "data_20250711_023734.dat"  # 8000 hits,
     # desired_file_path = "data_20250711_023300.dat"  # 7000 hits
     # desired_file_path = "data_20250708_200715.dat"  # short, about 80us, < 1000 hits per channel
     # desired_file_path = "data_20250710_172837.dat"  # short, about 180us, < 1000 hits per channel
-    desired_file_path = "data_20250711_024604.dat"  # 8MB, 80,000 hits, # cut this off at 40ms, events 1-49 are on different extraction timing
+    # desired_file_path = "data_20250711_024604.dat"  # 8MB, 80,000 hits, # cut this off at 40ms, events 1-49 are on different extraction timing
 
     # desired_file_path = "data_20250708_202121.dat"  # 5 events, 10 sub events, 200 ns raw data, all clean events, v21
     # desired_file_path = "data_20250707_140601.dat"  # self-trigger datafile with 164 events, 1 subevent
@@ -23,7 +24,6 @@ class Config:
     # desired_file_path = "data_20250709_185455.dat"  # just testing raw data vs function generator in single channel
 
     # desired_file_path: Optional[str] = "data_20250710_212356.dat"  # potential high intensity #1
-    # desired_file_path = None
 
     # set to "1" to use the newest file in the directory
     # "2" for example will use the second-newest file
@@ -46,7 +46,7 @@ class Config:
     # or "peak_separation" to plot a histogram of the separation between peaks in channel 4
     
     # set number of events and subevents
-    n_events: int = 999
+    event_range: int = (18, 25)
     n_subevents: int = 999
     
     # search for cosmic events
