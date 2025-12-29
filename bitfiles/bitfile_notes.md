@@ -80,3 +80,20 @@ v20:
 
 v21:
 5/21/2025: Added triangle wave test mode to adc_buffer file for testing peakfinding
+
+v23:
+7/08/2025: Updated to new peakfinding algorithm with fixed timing
+Maybe failed to be programmed to FPGA? 
+
+v24:
+7/09/2025: Arbitrarily refactored some parts of sumarea_module, now trying again
+
+v25: 
+12/01/2025 (approximately)
+Tried to change adc_trigger.vhd to require sequential high samples to avoid the single-bit error ADC samples, but it gave weird results, undone in next version
+
+v26: 
+12/15/2025: Undid v25, added trigger counter to count the number of triggers detected and it gets sent to cf00_0070, you can use peek cf000070 to read it (hopefully?)
+
+v27.0
+12/22/2025: Redo timing logic with sumarea peak counts so it only counts down when there is valid FIFO data
