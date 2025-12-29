@@ -15,7 +15,7 @@ import time
 # Something like 18ns is actually too *short* maybe so be careful
 # If you split the trigger output from signal generator in two, it decreases voltage
 #     so do something like 1.9V for that (when splitting)
-trigger_setting = "7F"
+trigger_setting = "FE"
 
 # 2. Trigger settings
 # each clock is 4ns, trigger_delay is in units of clock cycles
@@ -234,8 +234,8 @@ if enable_old_settings:
 
 print("DISABLING ADC1_B (channel 4)")
 send_command("wspi adc1 008 2")
-send_command("wspi adc1 015 1")  # disable
-# send_command("wspi adc1 015 0")  # enable
+# send_command("wspi adc1 015 1")  # disable
+send_command("wspi adc1 015 0")  # enable
 send_command("wspi adc1 008 3")
 
 # Close the serial connection
