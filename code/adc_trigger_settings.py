@@ -15,20 +15,29 @@ import time
 # Something like 18ns is actually too *short* maybe so be careful
 # If you split the trigger output from signal generator in two, it decreases voltage
 #     so do something like 1.9V for that (when splitting)
-trigger_setting = "00"
+trigger_setting = "7F"
 
 # 2. Trigger settings
+# each clock is 4ns, trigger_delay is in units of clock cycles
+# so for example, settings trigger_delay = 3000 will correspond to 
+# 12,000 ns of peak finding, if it doesn't hit the peak limit set below first
+
 # 0x5DC = 1500ns(?)
 # 0x2710 = 10000ns = 10us (?)
 # 0x4E20 = 20000
-# 0x7fcad80 = 134 ms (0.134s)
-trigger_delay = 20000
+# 0x3B9ACA00 = 1s
+# 0x1DCD6500 = 500 ms
+# 0x11E1A300 = 300 ms (0.3 * 50 = 15s max event time?)
+# 0x07fcad80 = 134 ms
+# 0x05f5E100 = 100 ms 
+trigger_delay = 0x11E1A300
 # trigger_delay = "0"
 
 # number of subevents per event, setting "3" for example will record subevents 1.0, 1.1, 1.2 (total of 3)
 # n_subevn = 20  # counts from 0 to 19 for every event
-n_subevn = 1
-waveform_length = 100  # number of packets per subevent (two data points per packet)
+n_subevn = 100
+waveform_length = 0  # number of packets per subevent (two data points per packet)
+# two data points per packet: a setting of "100" gives 200ns of data
 
 # 5. Test mode (0000=off, 0001=midscale short, 1111=ramp) (input in binary)
 # There's the AD9234 test mode (0x550) and JESD204B test mode (0x573)
@@ -37,8 +46,8 @@ waveform_length = 100  # number of packets per subevent (two data points per pac
 # The JESD204B test mode is the one that is used to test the datachain,
 # and it will be a 12-bit ramp.
 adc0_test_mode = 0b0000
-adc1_test_mode = 0b1111
-jesd0_test_mode = 0b1000
+adc1_test_mode = 0b0000
+jesd0_test_mode = 0b0000
 jesd1_test_mode = 0b0000
 
 # FPGA test mode: 0000: normal, 0001: checkerboard, 0010: 0xFFFF0000, 1001: data_adc_length value (ramp)
@@ -48,21 +57,28 @@ fpga_test_mode = 0b0000
 # 6. ADC Threshold (max 8192) and Dwell Time Settings (max 65,535)
 # at 300/400, lowest negative peak detected was -0.075V
 # with testing, threshold 1000 = 149.3mV
-lower_threshold = 400
+# About threshold:
+# ADC values go from -2048 to +2047
+# The threshold is set from 0 to 8195
+# Therefore, to convert a threshold value to an ADC value, DIVIDE BY 4
+# For example, setting upper threshold to 200 will allow any signal with an ADC value greater than 200 / 4 = 50
+# If you want to only allow ADC signals greater than 400, you should set the upper threshold to 400 * 4 = 1600
+lower_threshold = 200
 upper_threshold = 500
-dwell_time = 5  # in clock cycles (1 ns per cycle)
+dwell_time = 4  # in clock cycles (1 ns per cycle)
 
 # 7. Peakfinding threshold
 # Input four character hex, for example, B000 = -20480
-peakfinding_thr = -200
+peakfinding_thr = -100
+n_peaks = 50
 # Peakhigh count (number of events for peak height packets)
 # Two peak high packets per event, so total number of peaks is count/2
 # (Default: 84)
-peakhigh_count = 84  # 84/2 = 42 peaks allowed
+peakhigh_count = n_peaks * 2  # 84/2 = 42 peaks allowed
 # Peakarea count (number of events for peak area packets)
 # Six peak area packets per ecent, so total number of peaks is count/6
 # (Default: 252)
-peakarea_count = 252
+peakarea_count = n_peaks * 6
 
 
 # LOG CURRENT SETTINGS
@@ -84,7 +100,7 @@ to_log_data = {
 # #######################
 
 # Serial Port Configuration
-SERIAL_PORT = "/dev/ttyUSB0"  # Adjust as needed
+SERIAL_PORT = "/dev/ttyUSB_FMC228"  # Adjust as needed
 BAUD_RATE = 115200  # Adjust to match your device's baud rate
 
 # Open the serial connection
@@ -101,12 +117,14 @@ def send_command(command):
     ser.write((command + "\r").encode())  # Send over serial
     time.sleep(0.2)  # 200ms delay (equivalent to `usleep 200000`)
     
-def dec_to_hex(dec_in: int) -> str:
+def dec_to_hex(dec_in: int, bytes: int = 2) -> str:
     """Convert decimal to signed hex string (2's complement)."""
-    return dec_in.to_bytes(2, byteorder='big', signed=True).hex()
+    return dec_in.to_bytes(bytes, byteorder='big', signed=True).hex()
 
 assert dec_to_hex(-20480) == "b000"
 assert dec_to_hex(20999) == "5207"
+assert dec_to_hex(-20480, 4) == "ffffb000"
+assert dec_to_hex(0x7fcad80, 4) == "07fcad80"
 
 # Send commands
 
@@ -114,7 +132,7 @@ assert dec_to_hex(20999) == "5207"
 send_command(f"poke cf00003c {trigger_setting}   -- trigger mode")
 
 # 2. Trigger settings
-send_command(f"poke cf000044 {dec_to_hex(trigger_delay)}   -- Peakfinding length")
+send_command(f"poke cf000044 {dec_to_hex(trigger_delay, 4)}   -- Peakfinding length")
 assert n_subevn > 0
 # need subevn - 1 because, for example, setting n_subevn = 3 records events 1.0, 1.1, 1.2, 1.3 (four events)
 send_command(f"poke cf00004c {dec_to_hex(n_subevn - 1)}   -- number of subevents")
@@ -191,6 +209,10 @@ if enable_old_settings:
     
     # 3. Enable FD
     def fd_enable(adc, fd0, fd1):
+        if not fd0:
+            print(f"WARNING: Disabling {adc} FD_0")
+        if not fd1:
+            print(f"WARNING: Disabling {adc} FD_1")
         fd0_binary = 0b000111 if not fd0 else 0
         fd1_binary = 0b111000 if not fd1 else 0
         fd_value = fd0_binary | fd1_binary
@@ -209,6 +231,12 @@ if enable_old_settings:
         send_command(f"wspi adc1 561 {dec_to_hex(0b101)}")
     else:
         send_command(f"wspi adc1 561 {dec_to_hex(0b001)}")
+
+print("DISABLING ADC1_B (channel 4)")
+send_command("wspi adc1 008 2")
+send_command("wspi adc1 015 1")  # disable
+# send_command("wspi adc1 015 0")  # enable
+send_command("wspi adc1 008 3")
 
 # Close the serial connection
 ser.close()

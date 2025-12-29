@@ -1,5 +1,5 @@
 #!/bin/bash
-cat << EOF  |  while read line; do echo "$line" | tee /dev/ttyUSB0; usleep 200000; done
+cat << EOF  |  while read line; do echo "$line" | tee /dev/ttyUSB_FMC228; usleep 200000; done
 
 # old "setup_fmc228_begin.sh" file
 
