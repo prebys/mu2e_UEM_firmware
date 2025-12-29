@@ -1,1 +1,1 @@
-top_fmc228_pcie_v01.bit
+top_fmc228_pcie_v27.1.bit

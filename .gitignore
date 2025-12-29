@@ -145,21 +145,7 @@ sources/
 
 /vivado_project/project_dir/*
 !/vivado_project/project_dir/mu2e_UEM_firmware.runs/impl_1/top_fmc228_pcie.bit
-socketudp/__pycache__/__init__.cpython-310.pyc
-socketudp/__pycache__/hex_check_classes.cpython-310.pyc
-socketudp/__pycache__/hex_check.cpython-310.pyc
-socketudp/tests/__pycache__/*
-socketudp/__pycache__/__init__.cpython-313.pyc
-socketudp/__pycache__/extinction_functions.cpython-310.pyc
-socketudp/__pycache__/extinction_functions.cpython-313.pyc
-socketudp/__pycache__/extinction_plots.cpython-310.pyc
-socketudp/__pycache__/extinction_plots.cpython-313.pyc
-socketudp/__pycache__/hex_check_classes.cpython-313.pyc
-socketudp/__pycache__/hex_check_config.cpython-310.pyc
-socketudp/__pycache__/hex_check_config.cpython-313.pyc
-socketudp/__pycache__/hex_check.cpython-313.pyc
-socketudp/__pycache__/histogram_2d.cpython-310.pyc
-socketudp/__pycache__/waterfall_plot.cpython-310.pyc
+**/__pycache__/
 
 # exempt the sdk folder from being ignored
 !/vivado_project/src/sdk/monitor_amc502/*
@@ -171,3 +157,5 @@ socketudp/__pycache__/waterfall_plot.cpython-310.pyc
 /vivado_project/src/ip/*/sim/*.v*
 
 !/code/fgen*
+
+**/nohup.out

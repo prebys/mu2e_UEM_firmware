@@ -82,7 +82,11 @@ void handleSigint(int sig) {
 
 int main(int argc, char **argv)
 {
+    
     signal(SIGINT, handleSigint);  // Register signal handler
+    signal(SIGTERM, handleSigint);  // Register signal handler
+    signal(SIGQUIT, handleSigint);  // Register signal handler
+
 
     if (argc > 1) {
         eventLimit = atoi(argv[1]);
