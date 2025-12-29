@@ -1,0 +1,38 @@
+{
+  "*IDN?": "Rigol Technologies,DG832,DG8A252803144,00.02.06.00.01",
+  "CH2": {
+    "APPL?": "\"SIN,1.000000E+00,1.300000E+00,0.000000E+00,0.000000E+00\"",
+    "FUNC": "SIN",
+    "FREQ": "1.000000E+00",
+    "VOLT": "1.300000E+00",
+    "VOLT:UNIT": "VRMS",
+    "VOLT:OFFS": "0.000000E+00",
+    "PHAS": "0.000000E+00",
+    "VOLT:HIGH": "1.838200E+00",
+    "VOLT:LOW": "-1.838200E+00",
+    "OUTP": "ON",
+    "OUTP:LOAD": "5.000000E+01",
+    "PULSE:DCYC": "1.600000E+01",
+    "PULSE:WIDT": "1.600000E-08",
+    "PULSE:TRAN:LEAD": "1.000000E-08",
+    "PULSE:TRAN:TRA": "1.000000E-08",
+    "SQU:DCYC": "N/A (USBTimeoutError)"
+  },
+  "CH1": {
+    "APPL?": "\"PULSE,5.000000E+02,2.100000E+00,1.050000E+00,0.000000E+00\"",
+    "FUNC": "PULS",
+    "FREQ": "0.1",
+    "VOLT": "2.100000E+00",
+    "VOLT:UNIT": "VPP",
+    "VOLT:OFFS": "1.050000E+00",
+    "PHAS": "0.000000E+00",
+    "VOLT:HIGH": "2.100000E+00",
+    "VOLT:LOW": "0.000000E+00",
+    "OUTP": "ON",
+    "OUTP:LOAD": "5.000000E+01",
+    "PULSE:DCYC": "2.500000E-02",
+    "PULSE:TRAN:LEAD": "8.000000E-09",
+    "PULSE:TRAN:TRA": "8.000000E-09",
+    "SQU:DCYC": "N/A (USBTimeoutError)"
+  }
+}

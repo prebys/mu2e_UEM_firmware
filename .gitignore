@@ -169,3 +169,5 @@ socketudp/__pycache__/waterfall_plot.cpython-310.pyc
 /vivado_project/src/**/*rfs.v*
 /vivado_project/src/ip/**/*beh.v*
 /vivado_project/src/ip/*/sim/*.v*
+
+!/code/fgen*
