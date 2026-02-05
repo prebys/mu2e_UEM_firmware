@@ -23,6 +23,36 @@ code*/*
 *.hw/*
 *.sim/*
 
+!/code/fgen*
+
+**/nohup.out
+
+# ignore folders that start with a period
+.*
+/vivado_files.csv
+/createSigasiProject.py
+/convertVivadoProjectToCsv.tcl
+*notes.txt
+
+/vivado_project/project_dir/*
+!/vivado_project/project_dir/mu2e_UEM_firmware.runs/impl_1/top_fmc228_pcie.bit
+socketudp/__pycache__/*
+socketudp/tests/__pycache__/*
+
+# exempt the sdk folder from being ignored
+!/vivado_project/src/sdk/monitor_amc502/*
+
+# ignore some auto-generated IP folder things
+/vivado_project/src/ip/*/doc/*changelog.txt
+/vivado_project/src/**/*rfs.v*
+/vivado_project/src/ip/**/*beh.v*
+/vivado_project/src/ip/*/sim/*.v*
+
+
+
+
+
+
 # gitignore template for Xilinx Vivado Design Suite
 # website: https://www.xilinx.com/support/download.html
 
@@ -135,27 +165,3 @@ Vadatech_amc_example/
 socketudp_tmnguyen/
 socketudp/FRU*
 sources/
-
-# ignore folders that start with a period
-.*
-/vivado_files.csv
-/createSigasiProject.py
-/convertVivadoProjectToCsv.tcl
-*notes.txt
-
-/vivado_project/project_dir/*
-!/vivado_project/project_dir/mu2e_UEM_firmware.runs/impl_1/top_fmc228_pcie.bit
-**/__pycache__/
-
-# exempt the sdk folder from being ignored
-!/vivado_project/src/sdk/monitor_amc502/*
-
-# ignore some auto-generated IP folder things
-/vivado_project/src/ip/*/doc/*changelog.txt
-/vivado_project/src/**/*rfs.v*
-/vivado_project/src/ip/**/*beh.v*
-/vivado_project/src/ip/*/sim/*.v*
-
-!/code/fgen*
-
-**/nohup.out

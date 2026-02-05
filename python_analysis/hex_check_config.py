@@ -1,0 +1,75 @@
+from dataclasses import dataclass, field
+from typing import Optional
+
+
+@dataclass
+class Config:
+    # set "desired_file_path" to "None" to use the most recent data file in the directory
+    # setting to a name will search for any files with that name in the directory
+    # consider searching for the names 'diag_0x1', 'diag_0x2', 'diag_0x3', 'diag_0x5', 'diag_0x9', 'diag_0xF'
+    desired_file_path: Optional[str]
+    desired_file_path = None
+    # desired_file_path = "test20241112_145129.dat"
+    # desired_file_path = "data_20250711_023734.dat"  # 8000 hits,
+    # desired_file_path = "data_20250711_023300.dat"  # 7000 hits
+    # desired_file_path = "data_20250708_200715.dat"  # short, about 80us, < 1000 hits per channel
+    # desired_file_path = "data_20250710_172837.dat"  # short, about 180us, < 1000 hits per channel
+    # desired_file_path = "data_20250711_024604.dat"  # 8MB, 80,000 hits, # cut this off at 40ms, events 1-49 are on different extraction timing
+
+    # desired_file_path = "data_20250708_202121.dat"  # 5 events, 10 sub events, 200 ns raw data, all clean events, v21
+    # desired_file_path = "data_20250707_140601.dat"  # self-trigger datafile with 164 events, 1 subevent
+    # desired_file_path = "data_20250708_200524.dat"  # self-trigger datafile with 36 events, 15 subevents, 200 ns raw data, v21
+
+    # v24: new peakfinding alg:
+    # desired_file_path = "data_20250709_185455.dat"  # just testing raw data vs function generator in single channel
+
+    # desired_file_path: Optional[str] = "data_20250710_212356.dat"  # potential high intensity #1
+
+    # set to "1" to use the newest file in the directory
+    # "2" for example will use the second-newest file
+    to_use_file_index: int = 1
+    
+    # data processing mode
+    # s12: 12-bit signed integer (normal ADC operation, split 32-bits into two 16-bit values, take top 12-bits)
+    # s16: 16-bit signed integer (split 32-bits into two 16-bit values, take all 16-bits)
+    # s32: 32-bit signed integer (take all 32-bits as one data point)
+    integer_mode: str = 's12'
+
+    # set number of events and subevents
+    event_range: int = (0, 999)
+    n_subevents: int = 999
+    
+    # plotting units
+    # volts: standard operation, plot data in volts (convert from raw values)
+    # raw: plot data in raw values (no conversion)
+    plotting_units: str = "volts"  # "volts" or "raw"
+    
+    # if True, will print all event types regardless of the "only_show" list below
+    show_all: bool = True
+    
+    # if True, will print NO EVENTS regardless of the "only_show" list
+    show_nothing: bool = False
+    
+    # if this contains entries, then this code will only print the events in this list
+    only_show: list[str] = field(default_factory=lambda: ['begin_event', 'end_event',
+                                                          'begin_sub_event',
+                                                          'event_number',
+                                                          'sub_event_number',
+                                                          'end_sub_event',
+                                                          'peak_area_data'])
+    # set to empty list [] to use the "show" attribute of the name_to_event dictionary
+    
+    # maximum number of logs to show
+    # n_logs_to_show = float('inf')
+    n_logs_to_show = 2000 * 10
+    
+    # optional footnote below axes in plot
+    # optional_note = "CH1: 100ns (10MHz) sine wave, CH2: Ext. Trig., trigger_delay = 1,000,000"
+    optional_note = None
+    
+    def __post_init__(self):
+        assert self.plotting_units in ["volts", "raw"], \
+            "Invalid plotting_units. Please choose 'volts' or 'raw'."
+        
+
+config = Config()
