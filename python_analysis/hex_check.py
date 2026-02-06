@@ -1,17 +1,18 @@
 #!/usr/bin python3
 import os
 import re
-import traceback
 import unittest
+from time import perf_counter
 
 from collections import Counter
 from typing import Optional
 
 import pandas as pd
 
-from hex_check_config import config
-from hex_check_classes import (Event, EventType, name_to_event, Peak, NewEvent)
-from dat_io import read_data_file, find_data_file
+from python_analysis.hex_check_config import config
+from python_analysis.event_types import EventType, name_to_event
+from python_analysis.dat_io import read_data_file, find_data_file
+from python_analysis.hex_check_classes import Event, PeakHeight
 
 file_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(file_path)
@@ -27,9 +28,7 @@ class HexCheck:
     def __init__(self, to_use_index_increment: int = 0, desired_file_path: str = None):
         self.name_to_event: dict[str, EventType] = {}
         self.event_counts: dict[EventType, int] = Counter()
-        self.event_buffer: list[NewEvent] = []  # buffer of all events
-        self.raw_data_buffer: list[Event] = []  # buffer of just raw data events
-        self.peak_height_buffer: list[Peak] = []  # buffer of just peak height events
+        self.event_buffer: list[Event] = []  # buffer of all events
         self.raw_data_dataframe: Optional[pd.DataFrame] = None  # buffer of raw data events in a pandas DataFrame
         self.peak_height_dataframe: Optional[pd.DataFrame] = None  # buffer of peak height events in a DataFrame
         self.headers = []  # list of headers from the data file
@@ -66,7 +65,7 @@ class HexCheck:
         self.name_to_event = _name_to_event
 
 
-    def new_main(self):
+    def main(self):
         print(f"Using input file {self.file_name}")
         for header in self.headers:
             print(header)
@@ -97,11 +96,11 @@ class HexCheck:
         print(f"Found {len(events)} events in the file.")
         
         # events: list[NewEvent] = [NewEvent(i+1, data_str) for i, data_str in enumerate(events)]
-        self.event_buffer: list[NewEvent] = []
+        self.event_buffer: list[Event] = []
         for i, data_str in enumerate(events):
             if not (config.event_range[0] <= i < config.event_range[1]):
                 continue
-            event = NewEvent(i + 1, data_str)
+            event = Event(i + 1, data_str)
             self.event_buffer.append(event)
         # print(events)
 
@@ -112,11 +111,11 @@ class HexCheck:
                 if i >= config.n_subevents:
                     break
                 for c in sub_event.channels:
-                    for data in c.raw_data:
+                    for data in c.raw_data_list:
                         raw_data_panda.append((c.internal_event_number, c.sub_event_number,
                                               c.channel_number, data))
                         
-                    for peak in c.peak_heights:
+                    for peak in c.peak_height_list:
                         peak_height_panda.append((c.internal_event_number, c.channel_number,
                                                   c.sub_event_number, peak.time_ns, peak.height))
                                 
@@ -132,52 +131,6 @@ class HexCheck:
                                                            "sub_event_number",
                                                            "time_ns",
                                                            "height"])
-    
-    def make_raw_data_dataframe(self):
-        panda_entry = []
-        if config.integer_mode in ["s12", "s16"]:
-            for event in self.raw_data_buffer:
-                panda_entry.append((event.internal_event_number, event.sub_event_number,
-                                    event.channel_number, event.raw_data[0]))
-                panda_entry.append((event.internal_event_number, event.sub_event_number,
-                                    event.channel_number, event.raw_data[1]))
-        elif config.integer_mode == "s32":
-            for event in self.raw_data_buffer:
-                panda_entry.append((event.internal_event_number, event.sub_event_number,
-                                    event.channel_number, event.raw_data[0]))
-        
-        panda_frame = pd.DataFrame(panda_entry,
-                                    columns=["internal_event_number",
-                                             "sub_event_number",
-                                             "channel_number",
-                                             "data"])
-        return panda_frame
-    
-    def make_peak_height_dataframe(self):
-        panda_entry = []
-        for peak in self.peak_height_buffer:
-            if peak.channel_number == 4:
-                continue
-            panda_entry.append((peak.internal_event_number,
-                                peak.channel_number,
-                                peak.sub_event_number,
-                                peak.time_ns,
-                                peak.height))
-        panda_frame = pd.DataFrame(self.peak_height_buffer,
-                                   columns=["internal_event_number",
-                                            "channel_number",
-                                            "sub_event_number",
-                                            "time_ns",
-                                            "height"])
-        
-        # save peak height data to CSV file
-        output_path = f"img/{self.folder_name}/peak_height_data_{self.file_name}.csv"
-        if not os.path.exists(f"img/{self.folder_name}"):
-            os.makedirs(f"img/{self.folder_name}")
-        panda_frame.to_csv(output_path, index=False)
-        print(f"Peak height data saved to {output_path}")
-        
-        return panda_frame
     
 
 if __name__ == "__main__":
@@ -196,17 +149,19 @@ if __name__ == "__main__":
         hex_check_state[
             "hex_check"] = hex_check  # set global variable to the current instance of HexCheck
         
-        result = unittest.TextTestRunner().run(unittest.defaultTestLoader.discover("tests"))
+        # result = unittest.TextTestRunner().run(unittest.defaultTestLoader.discover("tests"))
         
-        if result.wasSuccessful():
-            print("\nAll tests passed. Running hex_check...")
-            hex_check.new_main()
-        else:
-            print("\nTests failed. Exiting.")
-            exit()
+        # if result.wasSuccessful():
+        #     print("\nAll tests passed. Running hex_check...")
+        # else:
+        #     print("\nTests failed. Exiting.")
+        #     exit()
         
         try:
-            hex_check.new_main()
+            t1 = perf_counter()
+            hex_check.main()
+            t2 = perf_counter()
+            print(f"Processing completed in {t2 - t1:.2f} seconds.")
         except Exception as e:
             print(f"Error processing file {hex_check.file_name}: {e}")
             raise

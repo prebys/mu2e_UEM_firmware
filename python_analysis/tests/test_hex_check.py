@@ -1,7 +1,6 @@
 # tests/test_hex_check.py
 import unittest
-from python_analysis.hex_check_classes import (Event, signed, name_to_event, hex_check_state,
-                                         DoubleADCTuple, DoubleADCTupleWithCount, SingleADC)
+from python_analysis.hex_check_classes import *
 
 
 class TestHexCheck(unittest.TestCase):

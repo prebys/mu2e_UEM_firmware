@@ -1,7 +1,6 @@
 import os
 import re
 import sys
-from binascii import hexlify
 from datetime import datetime
 
 from python_analysis.hex_check_config import config
