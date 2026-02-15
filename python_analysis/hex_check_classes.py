@@ -323,17 +323,17 @@ def _parse_peak_area_channel(channel: "ChannelData", block: str) -> list["PeakAr
 
 class Event:
     """Recreation of the Event class with a new method of storing previous event to save memory.
-    
+
     This "Event" will be one Event in a data file, starting with 0xffffffff and ending with either
     0x00fcfcfc (end_sub_event) or 0xfcfcfcfc (end_event)
-    
+
     Some new event types will also start with 0xff_ff_ff_f1 followed by an 8-byte unix timestamp"""
-    
+
     def __init__(self, internal_event_number, data_str, verbosity=logging.INFO):
         logger = logging.getLogger(self.__class__.__name__)
         logger.setLevel(verbosity)
         # check for timestamp in beginning of event, first four bytes of data_str will be ffffff11
-        logger.debug(f"Parsing NewEvent #{internal_event_number}, data length {len(data_str)}.")
+        logger.debug(f"Parsing Event #{internal_event_number}, data length {len(data_str)}.")
         logger.debug(f"data_str starts with {data_str[:20]}")
         if data_str.startswith('ffffff11'):
             self.timestamp = datetime.fromtimestamp(int(data_str[8:24], 16) / 1e6,
@@ -343,17 +343,17 @@ class Event:
             data_str = data_str[24:]
         else:
             self.timestamp = None
-            
+
         self.event_number = _decode_eventtype_data_word(hex_word=data_str[8 * 5:8 * 6],
                                                         event_type=et.event_number_evn)
         self.internal_event_number: int = internal_event_number
-        
+
         # print timestamp if available
         if self.timestamp:
             logger.debug(f"Event {self.event_number}-{self.internal_event_number} has timestamp {self.timestamp}")
         else:
             logger.debug(f"Event {self.event_number}-{self.internal_event_number} has no timestamp.")
-        
+
         # get sub events
         r = (r'00ffffff'
              r'f4f3f2f1'
@@ -366,7 +366,7 @@ class Event:
         self.sub_events = [SubEvent(self, sub_event_hex_str) for sub_event_hex_str in sub_events]
 
     def __repr__(self):
-        return f"<NewEvent #{self.event_number}-{self.internal_event_number}, {len(self.sub_events)} sub-events>"
+        return f"<Event #{self.event_number}-{self.internal_event_number}, {len(self.sub_events)} sub-events>"
 
 
 class SubEvent(ParentHasEventNumber):
@@ -374,30 +374,30 @@ class SubEvent(ParentHasEventNumber):
         # logging
         logger = logging.getLogger(self.__class__.__name__)
         logger.setLevel(verbosity)
-        
 
-        
+
+
         self.parent: Event = event
         self.sub_event_number = _decode_eventtype_data_word(
             hex_word=data_str[8*3:8*4],
             event_type=et.sub_event_number_evn
         )
-        
-        logger.debug(f"Parsing NewSubEvent for "
+
+        logger.debug(f"Parsing SubEvent for "
                      f"Event #{event.internal_event_number}-{self.sub_event_number}, "
                      f"hex length {len(data_str)}.")
-        
+
         # RAW DATA
         # list of four hex strings, one for each of the channels
         raw_data_channels = re.findall(r'fafa....ffff.*?fbfbfbfb(?=fafa|fefe)', data_str)
-        
-        
+
+
         # PEAK DATA
         # list of four hex strings, one for each of the channels
         peak_channels = re.findall(r'eeee....aaaa.*?bbbbbbbbecececec', data_str)
 
         # logger.debug('\n'.join(peak_channels))
-        
+
         self.channels: list[ChannelData] = []
         for i in range(4):
             channel_num = 4 - i  # starts with channel 4 and counts down to channel 1
@@ -408,12 +408,12 @@ class SubEvent(ParentHasEventNumber):
                 )
             self.channels.append(channel)
         self.channels = self.channels[::-1]  # reverse order so channel 1 is first
-        
+
     def __repr__(self):
-        return f"<NewSubEvent #{self.event_number}-{self.internal_event_number}-{self.sub_event_number}, " \
+        return f"<SubEvent #{self.event_number}-{self.internal_event_number}-{self.sub_event_number}, " \
                f"{len(self.channels)} channels>"
 
-        
+
 class ChannelData(ParentHasSubEventNumber):
     """
     ChannelData contains all data for one channel within a SubEvent.

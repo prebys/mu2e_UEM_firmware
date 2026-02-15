@@ -95,7 +95,7 @@ class HexCheck:
         events = re.findall(r, hex_data_str)
         print(f"Found {len(events)} events in the file.")
         
-        # events: list[NewEvent] = [NewEvent(i+1, data_str) for i, data_str in enumerate(events)]
+        # events: list[Event] = [Event(i+1, data_str) for i, data_str in enumerate(events)]
         self.event_buffer: list[Event] = []
         for i, data_str in enumerate(events):
             if not (config.event_range[0] <= i < config.event_range[1]):
@@ -131,23 +131,24 @@ class HexCheck:
                                                            "sub_event_number",
                                                            "time_ns",
                                                            "height"])
-    
 
-if __name__ == "__main__":
+
+def build_hex_check(desired_file_path=None) -> HexCheck:
+    """Build and return a HexCheck object to be used in the Jupyter notebook"""
     try:
-        hex_check: Optional[HexCheck] = HexCheck()
+        _hex_check: Optional[HexCheck] = HexCheck(desired_file_path=desired_file_path)
     except Exception as e:
         # print(f"Error initializing HexCheck: {e}")
         # traceback.print_exc()
         raise
     else:
-        hex_check.get_event_types(name_to_event)
+        _hex_check.get_event_types(name_to_event)
         
         # make hex_check available in hex_check_classes.py
         from hex_check_classes import hex_check_state
         
         hex_check_state[
-            "hex_check"] = hex_check  # set global variable to the current instance of HexCheck
+            "hex_check"] = _hex_check  # set global variable to the current instance of HexCheck
         
         # result = unittest.TextTestRunner().run(unittest.defaultTestLoader.discover("tests"))
         
@@ -159,12 +160,18 @@ if __name__ == "__main__":
         
         try:
             t1 = perf_counter()
-            hex_check.main()
+            _hex_check.main()
             t2 = perf_counter()
             print(f"Processing completed in {t2 - t1:.2f} seconds.")
         except Exception as e:
-            print(f"Error processing file {hex_check.file_name}: {e}")
+            print(f"Error processing file {_hex_check.file_name}: {e}")
             raise
+        
+        return _hex_check
 
 
+
+if __name__ == "__main__":
+    build_hex_check(desired_file_path=None)
+  
 hex_check: HexCheck

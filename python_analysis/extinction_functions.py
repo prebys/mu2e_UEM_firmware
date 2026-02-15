@@ -37,7 +37,7 @@ def center_pulses(delta_trains, period) -> tuple[list[np.ndarray], float, int]:
     :param period: The period averaged between the three delta trains.
     :return: A new array of three delta trains, and a new period.
     """
-    from socketudp.extinction_plots import plot_2d_histogram_delta_train
+    from python_analysis.extinction_plots import plot_2d_histogram_delta_train
     
     starting_period = period
     sss = np.concatenate(delta_trains)  # all three lists are concatenated into one array
@@ -785,7 +785,7 @@ def fft(channel: int, delta_train, fft_time_range_ns: tuple[float, float], expec
     # Plot FFT Peak / Fitting Result
     # #######################################################
     
-    from socketudp.extinction_plots import plot_fft_peak
+    from python_analysis.extinction_plots import plot_fft_peak
     
     plot_fft_peak(mini_fft_freqs, mini_fft_abs, freq_window, amp_window, popt, amp_exponent,
                   common_title_text, delta_train, detected_frequency, detected_period, fft_time_range_ns,

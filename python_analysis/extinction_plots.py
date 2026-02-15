@@ -12,8 +12,8 @@ from matplotlib.ticker import FixedLocator, FixedFormatter
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from extinction_functions import (lorentzian, symmetric_mod, get_delta_trains_from_hex)
-from socketudp.hex_check import HexCheck
-from socketudp.hex_check_classes import convert_voltage
+from python_analysis.hex_check import HexCheck
+from python_analysis.hex_check_classes import convert_voltage
 
 
 def plot_2d_histogram_delta_train(delta_train,
