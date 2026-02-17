@@ -690,7 +690,7 @@ def fft(channel: int, delta_train, fft_time_range_ns: tuple[float, float], expec
     t = np.arange(n_bins) * sample_rate + fft_time_range_ns[0]  # time bins in ns, starting at first absolute time
 
     # check too many bins
-    if n_bins > 10000000:
+    if n_bins > 50_000_000:
         raise Exception(f"Too many bins ({n_bins}). Check your time parameters ({fft_time_range_ns}).")
 
     bin_counts = np.zeros(len(t)).astype(int)  # initialize bin counts

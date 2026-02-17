@@ -28,7 +28,7 @@ class HexCheck:
     def __init__(self, to_use_index_increment: int = 0, desired_file_path: str = None):
         self.name_to_event: dict[str, EventType] = {}
         self.event_counts: dict[EventType, int] = Counter()
-        self.event_buffer: list[Event] = []  # buffer of all events
+        self.events: list[Event] = []  # buffer of all events
         self.raw_data_dataframe: Optional[pd.DataFrame] = None  # buffer of raw data events in a pandas DataFrame
         self.peak_height_dataframe: Optional[pd.DataFrame] = None  # buffer of peak height events in a DataFrame
         self.headers = []  # list of headers from the data file
@@ -69,6 +69,18 @@ class HexCheck:
         print(f"Using input file {self.file_name}")
         for header in self.headers:
             print(header)
+            if header.startswith("# Peakfinding Length: "):
+                self.adc_length_header = int(header.split(": ")[1])
+                print(f"Expected ADC length: {self.adc_length_header}")
+            elif header.startswith("# Number of subevents: "):
+                self.n_subevents_header = int(header.split(": ")[1])
+                print(f"Expected number of subevents: {self.n_subevents_header}")
+            elif header.startswith("# Peak height event count: "):
+                # example, 100 peak height events means 50 peaks because each is two
+                self.peak_height_event_count_header = int(int(header.split(": ")[1]) / 2)
+                print(f"Expected number of peak height events: {self.peak_height_event_count_header}")
+
+
         number_of_printed_logs = 0
         hex_reg = []
         for i, current_event_hex in enumerate(self.full_hex_data):
@@ -96,17 +108,23 @@ class HexCheck:
         print(f"Found {len(events)} events in the file.")
         
         # events: list[Event] = [Event(i+1, data_str) for i, data_str in enumerate(events)]
-        self.event_buffer: list[Event] = []
-        for i, data_str in enumerate(events):
-            if not (config.event_range[0] <= i < config.event_range[1]):
+        self.events: list[Event] = []
+        num_valid_events = 0
+        for data_str in events:
+            num_valid_events += 1
+            if not (config.event_range[0] <= num_valid_events < config.event_range[1]):
                 continue
-            event = Event(i + 1, data_str)
-            self.event_buffer.append(event)
+            event = Event(num_valid_events, data_str)
+            if event.empty_event:
+                num_valid_events -= 1
+                continue
+            print(f"APPENDING {event} with {len(event.sub_events)} subevents")
+            self.events.append(event)
         # print(events)
 
         raw_data_panda = []
         peak_height_panda = []
-        for event in self.event_buffer:
+        for event in self.events:
             for i, sub_event in enumerate(event.sub_events):
                 if i >= config.n_subevents:
                     break

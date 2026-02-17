@@ -55,6 +55,11 @@ def read_data_file(dir_name, file_name) -> tuple[list[str], datetime, list[str]]
     headers = []
     data_file_path = os.path.join(dir_name, "..", "socketudp", "data", file_name)
     assert os.path.exists(data_file_path), f"File at {data_file_path} does not exist."
+
+    # check to make sure file has content
+    if os.path.getsize(data_file_path) == 0:
+        raise ValueError(f"File at {data_file_path} is empty.")
+
     with open(data_file_path, "rb") as file:
         for line in file:
             if line.startswith(b"#"):

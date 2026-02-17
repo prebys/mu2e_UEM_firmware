@@ -16,12 +16,12 @@ from python_analysis.hex_check_helpers import (endian_conversion, signed, chunk,
                                                DoubleADCTupleWithCount, DoubleADCTuple, SingleADC,
                                                PeakHeaderTuple, PeakHeightTuple, convert_voltage)
 
-
 if __name__ == "__main__":
     raise ImportError("This module is not meant to be run directly. Please use it as a library.")
 
 
-def _decode_raw_data_word(hex_in: str = "", mode: str = 's12') -> Union[DoubleADCTupleWithCount, DoubleADCTuple, SingleADC]:
+def _decode_raw_data_word(hex_in: str = "", mode: str = 's12') -> Union[
+    DoubleADCTupleWithCount, DoubleADCTuple, SingleADC]:
     # FOR HELP UNDERSTANDING ABOUT SIGNED VS UNSIGNED INTEGERS IN PYTHON:
     # See /documentation_texts/signed_vs_unsigned_tests.ipynb
     # Short summary:
@@ -32,51 +32,51 @@ def _decode_raw_data_word(hex_in: str = "", mode: str = 's12') -> Union[DoubleAD
     # - Below, it does not matter whether you use 'I' or 'i' in the struct.unpack() function.
     # - They will produce the same binary in memory, only the interpretation of that binary number will differ
     # - In the last step is where we choose to interpret it as a signed integer.
-    
+
     # Input: Hexadecimal string
     # Step 1: Convert hex string to bytes
     # Step 2: Reconstruct the 32-bit word in little-endian order
     word: int = endian_conversion(hex_in)
-    
+
     # MODES:
     # s12: 12-bit signed integer (normal ADC operation, split 32-bits into two 16-bit values, take top 12-bits)
     # s16: 16-bit signed integer (split 32-bits into two 16-bit values, take all 16-bits)
     # s32: 32-bit signed integer (take all 32-bits as one data point)
     if mode not in ["s12", "s16", "s32"]:
         raise ValueError("Invalid mode. Please choose 's12', 's16', or 's32'.")
-    
+
     if mode == 's12':
         # start with word =0xf1f2f3f4, LSB is f4, MSB is f1
         # LSB is the oldest, MSB is the newest
         # the "2" byte and "4" byte contain the remaining count of ADC points to be sent
-        
+
         # Step 3: Extract the newer ADC value (upper 16 bits of `word`, f1f2)
         # word >> 16: 0xf1f2 = 61,938
         # adcvalue1: 0xf1f0 --> 0x0f1f = -225
         newer_adc_value: int = (((word >> 16) & 0xFFF0) >> 4)  # Shift right 16 bits, mask, then shift right 4 again
         upper_count = word >> 16 & 0xF  # Get upper 4 bits
         newer_adc_value = signed(newer_adc_value, 12)
-        
+
         # Step 4: Extract the older ADC value (lower 16 bits of `word`)
         # word & 0xFFFF: 0xf3f4 = 62,452
         # adcvalue2: 0xf3f0 --> 0x0f3f = -193
         older_adc_value: int = ((word & 0xFFF0) >> 4)  # Get upper 12 bits, shift right by 4 to be lowest 12 bits
         lower_count = word & 0xF  # Get lower 4 bits
         older_adc_value = signed(older_adc_value, 12)
-        
+
         # Step 5: Extract the final extra bits, the "2" and "4" in "f1f2f3f4"
         count = upper_count << 4 | lower_count
-        
+
         return DoubleADCTupleWithCount(older_adc_value, newer_adc_value, count)
     elif mode == 's16':
         # Step 3: Extract the first ADC value (upper 16 bits of `word`)
         newer_adc_value: int = word >> 16  # Shift right 16 bits
         newer_adc_value = signed(newer_adc_value, 16)
-        
+
         # Step 4: Extract the second ADC value (lower 16 bits of `word`)
         older_adc_value: int = word & 0xFFFF  # Get upper 12 bits, shift right by 4 to be lowest 12 bits
         older_adc_value = signed(older_adc_value, 16)
-        
+
         return DoubleADCTuple(older_adc_value, newer_adc_value)
     elif mode == 's32':
         # this is already ordered in the right way, with the MSB being the newest data and the LSB being oldest
@@ -90,7 +90,7 @@ def _decode_peak_height_header_word(hex_word: str) -> PeakHeaderTuple:
     """
     Parse and return peak height header events.
 
-    Each peak is encoded as two consecutive 32-bit words (8 bytes total). The header structure is:
+    Each peak height is encoded as two consecutive 32-bit words (8 bytes total). The header structure is:
 
     -------------------------------
     Word 1 (32 bits) - Peak Header (examples before endian order swap: 10080040, 27000050, 40000060, 9f220070)
@@ -109,7 +109,7 @@ def _decode_peak_height_header_word(hex_word: str) -> PeakHeaderTuple:
         - MSB nibble is always one of: 0x7, 0x6, 0x5, 0x4
     """
     word = endian_conversion(hex_word)
-    
+
     # first word
     # 0x70, 0x60, 0x50, or 0x40
     first_word = (word & 0xF0000000) >> 28
@@ -121,11 +121,12 @@ def _decode_peak_height_header_word(hex_word: str) -> PeakHeaderTuple:
     time = counter * 4  # time in ns
     return PeakHeaderTuple(peak_location, time)
 
+
 def _decode_peak_height_value_word(hex_word: str) -> PeakHeightTuple:
     """
     Parse and return peak height events.
 
-    Each peak is encoded as two consecutive 32-bit words (8 bytes total). The height structure is:
+    Each peak height is encoded as two consecutive 32-bit words (8 bytes total). The height structure is:
 
     -------------------------------
     Word 2 (32 bits) - Peak Value (examples before endian order swap: 06ca0000, 14ca0000, 4dca0000, 4bca0000)
@@ -137,23 +138,24 @@ def _decode_peak_height_value_word(hex_word: str) -> PeakHeightTuple:
         - Final byte is always 0x00 (lower 16 bits = 0x0000)
     """
     word = endian_conversion(hex_word)
-    
+
     # top 16 bits are always 0x0000
     if (word & 0xFFFF0000) != 0:
         raise ValueError(
             f"Invalid second word: {hex(word)}. Expected top 16 bits to be 0x0000.")
     # bottom 16 bits are the signed peak height
     peak_height = signed(word & 0x0000FFFF, 16)
-    
+
     # convert to hex string and pad with zeros
     hex_str = peak_height.to_bytes(2, byteorder='little', signed=True).hex().zfill(4)
     proper_height = _decode_raw_data_word(mode='s12', hex_in=hex_str + '0000')[0]  # convert to signed 12-bit
     return PeakHeightTuple(proper_height)
 
-def _decode_peak_area(hex_word: str, 
+
+def _decode_peak_area(hex_word: str,
                       peak_type: EventType) -> int:
     """
-    Peak area data structure with one FMC228 card.
+    Peak area data structure with one FMC228 card. Total six 32-bit words.
     +------------------+----------+--------------------------------------------------------------+
     | Bits field       | Bits     | Meaning                                                      |
     +------------------+----------+--------------------------------------------------------------+
@@ -180,7 +182,7 @@ def _decode_peak_area(hex_word: str,
             raise ValueError(
                 f"Invalid peak_area_data_1 marker in {hex_word}: got 0x{top:04x}"
             )
-        
+
         return bottom
     elif peak_type == "peak_area_data_2":
         # examples before conversions: 2c8bf9ff, c089f9ff, b48ef9ff
@@ -197,7 +199,7 @@ def _decode_peak_area(hex_word: str,
         return time_to_peak
     else:
         raise ValueError(f"Invalid peak area data type: {hex_word}")
-    
+
 
 def _decode_eventtype_data_word(event_type: EventType, hex_word: str) -> Optional[int]:
     """
@@ -232,11 +234,11 @@ def _parse_raw_data_channel(channel: "ChannelData", block: str) -> list["RawData
     FOOTER_LENGTH = 1
     payload = block[PACKET_LENGTH * HEADER_LENGTH: -PACKET_LENGTH * FOOTER_LENGTH]
     assert len(payload) % 8 == 0, f"Payload length {len(payload)} is not a multiple of 8."
-    
+
     out: list[RawData] = []
     for hex_word in chunk(payload, size=PACKET_LENGTH):
         raw_data_result = _decode_raw_data_word(hex_in=hex_word, mode=config.integer_mode)
-        
+
         if isinstance(raw_data_result, DoubleADCTupleWithCount):
             raw_data_result: DoubleADCTupleWithCount
             r1 = RawData(channel=channel, value=raw_data_result.adc1)
@@ -265,11 +267,11 @@ def _parse_peak_height_channel(channel: "ChannelData", block: str) -> list["Peak
     matches = re.findall(r'aaaacccccccc(.*?)cecececedddd', block)
     if not matches:
         return []
-    
+
     payload: str = matches[0]
-    assert len(payload) % 16 == 0, f"Payload length {len(payload)} is not a multiple of 16."
+    assert len(payload) % 16 == 0, f"{channel}: height payload length {len(payload)} is not a multiple of 16."
     out = []
-    
+
     # make placeholder to take advantage of Event's regex matching on peak format
     # Event checks format if the "previous" arg is filled and "current" is not
     chunks = list(chunk(payload, size=16))
@@ -277,10 +279,10 @@ def _parse_peak_height_channel(channel: "ChannelData", block: str) -> list["Peak
     for pair in chunks:
         w1 = pair[:8]
         w2 = pair[8:]
-        
+
         header = _decode_peak_height_header_word(w1)
         value = _decode_peak_height_value_word(w2)
-        
+
         out.append(
             PeakHeight.from_header_and_value(channel, header, value)
         )
@@ -293,20 +295,20 @@ def _parse_peak_area_channel(channel: "ChannelData", block: str) -> list["PeakAr
     # dddd_dddd = peak area header
     # dede_dede = peak area end
     # bbbb = first half of end peak data
-    
+
     out = []
     match = re.findall(r'cecedddddddd(.*?)dedededebbbb', block)
     if not match:
         return []
-    
+
     payload: str = match[0]
     try:
         assert len(
-            payload) % 48 == 0, f"Payload length {len(payload)} ({block} -> {payload}) is not a multiple of 48."
+            payload) % 48 == 0, f"{channel}: Area payload length {len(payload)} is not a multiple of 48."
     except AssertionError as e:
         print(e)
         return out
-    
+
     chunks = list(chunk(payload, size=48))
     for h in chunks:
         data1 = _decode_peak_area(h[0:8], et.peak_area_data_1)
@@ -317,7 +319,7 @@ def _parse_peak_area_channel(channel: "ChannelData", block: str) -> list["PeakAr
         data6 = _decode_peak_area(h[40:48], et.peak_area_data_6)
         peak_area = PeakArea.from_ints(channel, data1, data2, data3, data4, data5, data6)
         out.append(peak_area)
-    
+
     return out
 
 
@@ -329,10 +331,11 @@ class Event:
 
     Some new event types will also start with 0xff_ff_ff_f1 followed by an 8-byte unix timestamp"""
 
-    def __init__(self, internal_event_number, data_str, verbosity=logging.INFO):
+    def __init__(self, internal_event_number, data_str, verbosity=logging.DEBUG):
         logger = logging.getLogger(self.__class__.__name__)
         logger.setLevel(verbosity)
         # check for timestamp in beginning of event, first four bytes of data_str will be ffffff11
+        logger.debug("")
         logger.debug(f"Parsing Event #{internal_event_number}, data length {len(data_str)}.")
         logger.debug(f"data_str starts with {data_str[:20]}")
         if data_str.startswith('ffffff11'):
@@ -362,8 +365,30 @@ class Event:
              r'00fcfcfc')
         sub_events: list[str] = re.findall(r, data_str)
         logger.debug(f"Event {self.event_number}-{self.internal_event_number} has {len(sub_events)} "
-              f"sub-events.")
+                     f"sub-events.")
         self.sub_events = [SubEvent(self, sub_event_hex_str) for sub_event_hex_str in sub_events]
+
+        # total counts per channel
+        self.total_raw_data_counts = [0, 0, 0, 0]
+        self.total_peak_height_counts = [0, 0, 0, 0]
+        self.total_peak_area_counts = [0, 0, 0, 0]
+        for se in self.sub_events:
+            for i, c in enumerate(se.channels):
+                self.total_raw_data_counts[i] += c.raw_data_length
+                self.total_peak_height_counts[i] += c.height_counts
+                self.total_peak_area_counts[i] += c.area_counts
+        logger.debug(f"{self}: Total raw per c: {self.total_raw_data_counts}, "
+                    f"Peak h. per: {self.total_peak_height_counts}, "
+                    f"Peak a. per: {self.total_peak_area_counts}.")
+
+        # if event has no events of any kind, skip it
+        if sum([sum(self.total_raw_data_counts),
+                sum(self.total_peak_height_counts),
+                sum(self.total_peak_area_counts)]) == 0:
+            logger.debug(f"Event {self.event_number}-{self.internal_event_number} has no data, skipping.")
+            self.empty_event = True
+        else:
+            self.empty_event = False
 
     def __repr__(self):
         return f"<Event #{self.event_number}-{self.internal_event_number}, {len(self.sub_events)} sub-events>"
@@ -375,11 +400,10 @@ class SubEvent(ParentHasEventNumber):
         logger = logging.getLogger(self.__class__.__name__)
         logger.setLevel(verbosity)
 
-
-
+        self.channels: list[ChannelData] = []
         self.parent: Event = event
         self.sub_event_number = _decode_eventtype_data_word(
-            hex_word=data_str[8*3:8*4],
+            hex_word=data_str[8 * 3:8 * 4],
             event_type=et.sub_event_number_evn
         )
 
@@ -391,21 +415,19 @@ class SubEvent(ParentHasEventNumber):
         # list of four hex strings, one for each of the channels
         raw_data_channels = re.findall(r'fafa....ffff.*?fbfbfbfb(?=fafa|fefe)', data_str)
 
-
         # PEAK DATA
         # list of four hex strings, one for each of the channels
         peak_channels = re.findall(r'eeee....aaaa.*?bbbbbbbbecececec', data_str)
 
         # logger.debug('\n'.join(peak_channels))
 
-        self.channels: list[ChannelData] = []
         for i in range(4):
             channel_num = 4 - i  # starts with channel 4 and counts down to channel 1
             channel = ChannelData(self,
-                channel_num,
-                raw_data_channels[i],
-                peak_channels[i],
-                )
+                                  channel_num,
+                                  raw_data_channels[i],
+                                  peak_channels[i],
+                                  )
             self.channels.append(channel)
         self.channels = self.channels[::-1]  # reverse order so channel 1 is first
 
@@ -423,41 +445,46 @@ class ChannelData(ParentHasSubEventNumber):
         - peak_height_list: list of PeakHeight objects
         - peak_area_list: list of PeakArea objects
     """
+
     def __init__(self,
                  sub_event: SubEvent,
                  channel_num: int,
                  raw_data_hex_string: str,
                  peaks_hex_string: str,
-                 verbosity = logging.INFO
+                 verbosity=logging.INFO
                  ):
-
         logger = logging.getLogger(self.__class__.__name__)
         logger.setLevel(verbosity)
-        
+
         self.parent = sub_event
         self.channel_number = channel_num
         self.event_num_string = f"{self.internal_event_number}-{self.sub_event_number}-{self.channel_number}"
-        
+
         # RAW DATA
         self.raw_data_list = _parse_raw_data_channel(self, raw_data_hex_string)
-        raw_data_length = len(self.raw_data_list)
+        self.raw_data_length = len(self.raw_data_list)
 
         # PEAK HEIGHT
         self.peak_height_list = _parse_peak_height_channel(self, peaks_hex_string)
-        height_counts = len(self.peak_height_list)
+        self.height_counts = len(self.peak_height_list)
 
         # PEAK AREA
         self.peak_area_list = _parse_peak_area_channel(self, peaks_hex_string)  # four lists of PeakArea objects
-        area_counts = len(self.peak_area_list)
-    
+        self.area_counts = len(self.peak_area_list)
+
+        # Total counts
+
         logger.debug("")
-        logger.debug(f"[{self.event_num_string}] [RAW_DATA] length: {raw_data_length}.")
+        logger.debug(f"[{self.event_num_string}] [RAW_DATA] length: {self.raw_data_length}.")
         logger.debug(self.raw_data_list)
-        logger.debug(f"[{self.event_num_string}] [PEAK_HEIGHT] length: {height_counts}.")
+        logger.debug(f"[{self.event_num_string}] [PEAK_HEIGHT] length: {self.height_counts}.")
         logger.debug(self.peak_height_list)
-        logger.debug(f"[{self.event_num_string}] [PEAK_AREA] length: {area_counts}.")
+        logger.debug(f"[{self.event_num_string}] [PEAK_AREA] length: {self.area_counts}.")
         logger.debug(self.peak_area_list)
-        
+
+    def __repr__(self):
+        return f"<ChannelData #{self.event_num_string}>"
+
 
 @dataclass(slots=True, frozen=True)
 class RawData:
@@ -490,7 +517,7 @@ class PeakArea:
     time_trig_to_max: int
     time_trig_to_begin: int
     time_trig_to_end: int
-    
+
     @property
     def peak_width(self) -> Optional[int]:
         """Calculate peak width as time from begin to end, in ns."""
@@ -498,12 +525,12 @@ class PeakArea:
             return self.time_trig_to_end - self.time_trig_to_begin
         else:
             return None
-        
+
     @property
     def peak_area(self) -> Optional[int]:
         """Calculate peak area as total area - area from begin to max."""
         return self.area_total
-    
+
     @classmethod
     def from_ints(cls,
                   channel: "ChannelData",
@@ -523,7 +550,7 @@ class PeakArea:
             time_trig_to_end=data6,
         )
         return p
-    
+
     def __repr__(self):
         return (f"<PeakArea max_peak={self.max_peak}, "
                 f"area_begin_to_max={self.area_begin_to_max}, "
@@ -539,7 +566,7 @@ class PeakHeight:
     position: int
     time_ns: int
     height: int
-    
+
     @property
     def internal_event_number(self) -> int:
         return self.channel.internal_event_number
@@ -551,7 +578,7 @@ class PeakHeight:
     @property
     def channel_number(self) -> int:
         return self.channel.channel_number
-    
+
     @classmethod
     def from_header_and_value(
             cls,
@@ -571,7 +598,6 @@ class PeakHeight:
                 f"height={self.height} "
                 f"({convert_voltage(self.height, 3, config.integer_mode)
                 if self.height is not None else 'N/A'} V)>")
-
 
 
 hex_check_state = {}  # hex_check.py will put hex_check in here as hex_check_state["hex_check"]
