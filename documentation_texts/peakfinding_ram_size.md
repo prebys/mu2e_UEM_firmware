@@ -47,12 +47,12 @@ Current configuration:
 
 This means:
 - Each entry is 64 bits
-- There are 16384 entries
+- There are 16,384 entries
 
 Total 64-bit entries:
 ```
 
-TOTAL_HEIGHT_ENTRIES_64 = 16384
+TOTAL_HEIGHT_ENTRIES_64 = 16,384
 
 ```
 
@@ -60,7 +60,7 @@ Peak height uses **1 × 64-bit entry per peak**, so:
 
 ```
 
-TOTAL_HEIGHT_PEAKS_MAX = 16384 peaks
+TOTAL_HEIGHT_PEAKS_MAX = 16,384 peaks
 
 ```
 
@@ -68,19 +68,19 @@ TOTAL_HEIGHT_PEAKS_MAX = 16384 peaks
 
 ---
 
-### 2B) Peak Area FIFO (32 × 32768)
+### 2B) Peak Area FIFO (32 × 65536)
 
 Current configuration:
-- **sumarea_fifo = 32 × 32768** (32-bit wide FIFO)
+- **sumarea_fifo = 32 × 65536** (32-bit wide FIFO)
 
 This means:
 - Each entry is 32 bits
-- There are 32768 entries
+- There are 65,536 entries
 
 Total 32-bit words:
 ```
 
-TOTAL_AREA_WORDS_32 = 32768 words
+TOTAL_AREA_WORDS_32 = 65,536 words
 
 ```
 
@@ -88,7 +88,7 @@ Peak area uses **6 × 32-bit words per peak**, so:
 
 ```
 
-TOTAL_AREA_PEAKS_MAX = floor(32768 / 6) = 5461 peaks
+TOTAL_AREA_PEAKS_MAX = floor(65536 / 6) = 10,922 peaks
 
 ```
 
@@ -101,14 +101,14 @@ Per channel:
 - **Peak height capacity:**  
 ```
 
-16384 total peaks
+16,384 total peaks
 
 ```
 
 - **Peak area capacity:**  
 ```
 
-5461 total peaks
+10,922 total peaks
 
 ```
 
@@ -157,7 +157,7 @@ P_max_height = floor(TOTAL_HEIGHT_PEAKS_MAX / S)
 ```
 
 P_max_area = floor(TOTAL_AREA_PEAKS_MAX / S)
-= floor(5461 / S)
+= floor(10922 / S)
 
 ```
 
@@ -179,33 +179,13 @@ P_max_height = floor(16384 / 80) = 204 peaks/subevent
 Peak area:
 ```
 
-P_max_area = floor(5461 / 80) = 68 peaks/subevent
+P_max_area = floor(10922 / 80) = 136 peaks/subevent
 
 ```
 
 So for 80 subevents, a safe upper bound is:
 - height: up to 204 peaks/subevent
-- area:  up to 68 peaks/subevent
-
----
-
-### Example B: 45 subevents per event
-
-Let `S = 45`.
-
-Peak height:
-```
-
-P_max_height = floor(16384 / 45) = 364 peaks/subevent
-
-```
-
-Peak area:
-```
-
-P_max_area = floor(5461 / 45) = 121 peaks/subevent
-
-```
+- area:  up to 136 peaks/subevent
 
 ---
 
@@ -213,7 +193,7 @@ P_max_area = floor(5461 / 45) = 121 peaks/subevent
 
 1. **Compute total peak capacity from FIFO size first**  
    - Height: 64×16384 → 16384 peaks
-   - Area:  32×32768 → 5461 peaks
+   - Area:  32×65536 → 10922 peaks
 
 2. **Then distribute across subevents** using:
 ```
@@ -223,6 +203,3 @@ P_max = floor(TOTAL_PEAKS_MAX / S)
 ```
 
 3. In typical operation, **peak area limits the event** before peak height does.
-
----
-```
