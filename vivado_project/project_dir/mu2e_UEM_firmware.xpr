@@ -44,6 +44,24 @@
   <FileSets Version="1" Minor="31">
     <FileSet Name="sources_1" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
       <Filter Type="Srcs"/>
+      <File Path="$PPRDIR/../src/hdl/lfsr_n.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/lfsr_n.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/add8.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/add8.vhd"/>
+          <Attr Name="ImportTime" Val="1580329877"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <File Path="$PPRDIR/../src/hdl/validation.vhd">
         <FileInfo>
           <Attr Name="Library" Val="hep337dev"/>
@@ -60,46 +78,10 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/../src/hdl/add8.vhd">
+      <File Path="$PPRDIR/../src/hdl/ipbuf.vhd">
         <FileInfo>
           <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/add8.vhd"/>
-          <Attr Name="ImportTime" Val="1580329877"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/lfsr_n.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/lfsr_n.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/trigger_ram.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/trigger_ram.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/sumarea_module.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/sumarea_module.vhd"/>
-          <Attr Name="ImportTime" Val="1618537356"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/ilas.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ilas.vhd"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ipbuf.vhd"/>
           <Attr Name="ImportTime" Val="1580329878"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -132,11 +114,344 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/../src/hdl/ipbuf.vhd">
+      <File Path="$PPRDIR/../src/hdl/ilas.vhd">
         <FileInfo>
           <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ipbuf.vhd"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ilas.vhd"/>
           <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/trigger_ram.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/trigger_ram.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/sumarea_module.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/sumarea_module.vhd"/>
+          <Attr Name="ImportTime" Val="1618537356"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/udpbuffer.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/udpbuffer.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/udp.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/udp.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/txether.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/txether.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/txbuffer.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/txbuffer.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/streampkt.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/streampkt.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/sendpkt.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/sendpkt.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/peakdata_stream.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/peakdata_stream.vhd"/>
+          <Attr Name="ImportTime" Val="1582409501"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/lmk_spi.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/lmk_spi.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/latch_generator.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/latch_generator.vhd"/>
+          <Attr Name="ImportTime" Val="1580329877"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/jesd204_adc.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/jesd204_adc.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/ipheader.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ipheader.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/ip.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/icmprep.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/icmprep.vhd"/>
+          <Attr Name="ImportTime" Val="1580329877"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/icmp.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/icmp.vhd"/>
+          <Attr Name="ImportTime" Val="1580329877"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/hmc_spi.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/hmc_spi.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/event_generator.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/event_generator.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/event_card1_module.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/event_card1_module.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/ethernet.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ethernet.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/clkfreq.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/clkfreq.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/arptab.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/arptab.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/arpreq.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/arpreq.vhd"/>
+          <Attr Name="ImportTime" Val="1580329877"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/arprep.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/arprep.vhd"/>
+          <Attr Name="ImportTime" Val="1580329877"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/arp.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/arp.vhd"/>
+          <Attr Name="ImportTime" Val="1580329877"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/adc_spi.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/adc_spi.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/tclka_counter.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/tclka_counter.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/peakfinding.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/peakfinding.vhd"/>
+          <Attr Name="ImportTime" Val="1618457940"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/i2c_slave.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/i2c_slave.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/i2c.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/i2c.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/gbe_stream_buffer.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/gbe_stream_buffer.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/gbe.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/gbe.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/fmc228.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/fmc228.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/event_module.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/event_module.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/amc502.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/amc502.vhd"/>
+          <Attr Name="ImportTime" Val="1580329877"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/adc_trigger.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/adc_trigger.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/adc_buffer_streamer.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/adc_buffer_streamer.vhd"/>
+          <Attr Name="ImportTime" Val="1582740595"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
@@ -163,330 +478,6 @@
         <FileInfo>
           <Attr Name="Library" Val="hep337dev"/>
           <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/tclka_receiver.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/tclka_counter.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/tclka_counter.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/latch_generator.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/latch_generator.vhd"/>
-          <Attr Name="ImportTime" Val="1580329877"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/i2c_slave.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/i2c_slave.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/i2c.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/i2c.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/event_generator.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/event_generator.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/clkfreq.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/clkfreq.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/peakfinding.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/peakfinding.vhd"/>
-          <Attr Name="ImportTime" Val="1618457940"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/peakdata_stream.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/peakdata_stream.vhd"/>
-          <Attr Name="ImportTime" Val="1582409501"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/lmk_spi.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/lmk_spi.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/jesd204_adc.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/jesd204_adc.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/hmc_spi.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/hmc_spi.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/event_module.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/event_module.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/adc_trigger.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/adc_trigger.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/adc_spi.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/adc_spi.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/adc_buffer_streamer.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/adc_buffer_streamer.vhd"/>
-          <Attr Name="ImportTime" Val="1582740595"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/gbe.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/gbe.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/sendpkt.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/sendpkt.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/ip.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ip.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/arprep.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/arprep.vhd"/>
-          <Attr Name="ImportTime" Val="1580329877"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/txether.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/txether.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/icmp.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/icmp.vhd"/>
-          <Attr Name="ImportTime" Val="1580329877"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/streampkt.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/streampkt.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/udp.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/udp.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/ipheader.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ipheader.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/icmprep.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/icmprep.vhd"/>
-          <Attr Name="ImportTime" Val="1580329877"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/udpbuffer.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/udpbuffer.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/arp.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/arp.vhd"/>
-          <Attr Name="ImportTime" Val="1580329877"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/gbe_stream_buffer.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/gbe_stream_buffer.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/txbuffer.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/txbuffer.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/arpreq.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/arpreq.vhd"/>
-          <Attr Name="ImportTime" Val="1580329877"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/ethernet.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/ethernet.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/arptab.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/arptab.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/fmc228.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/fmc228.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/event_card1_module.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/event_card1_module.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/amc502.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/amc502.vhd"/>
-          <Attr Name="ImportTime" Val="1580329877"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/fmc228card1_interface.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/fmc228card1_interface.vhd"/>
           <Attr Name="ImportTime" Val="1580329878"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -519,6 +510,15 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
+      <File Path="$PPRDIR/../src/hdl/fmc228card1_interface.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/fmc228card1_interface.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <File Path="$PPRDIR/../src/hdl/event_amc.vhd">
         <FileInfo>
           <Attr Name="Library" Val="hep337dev"/>
@@ -540,36 +540,6 @@
       <File Path="$PPRDIR/../src/hdl/top_fmc228_pcie.vhd">
         <FileInfo>
           <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/top_fmc228_pcie.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/fmc164.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/fmc164.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/fei4.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/fei4.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/xaui.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/xaui.vhd"/>
           <Attr Name="ImportTime" Val="1580329878"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -605,16 +575,6 @@
           <Attr Name="ScopedToRef" Val="microblaze_mcs_0"/>
           <Attr Name="ScopedToCell" Val="U0/microblaze_I"/>
           <Attr Name="IsVisible" Val="1"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/../src/hdl/link.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/link.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
       <File Path="$PPRDIR/../src/sdk/monitor_amc502/monitor_fmc228_pcie.elf">
@@ -875,8 +835,14 @@
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_7/bd_fc5c_iomodule_0_0.xci">
           <Proxy FileSetName="bd_fc5c_iomodule_0_0"/>
         </CompFileExtendedInfo>
+        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_6/bd_fc5c_lmb_bram_I_0.xci">
+          <Proxy FileSetName="bd_fc5c_lmb_bram_I_0"/>
+        </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_5/bd_fc5c_ilmb_cntlr_0.xci">
           <Proxy FileSetName="bd_fc5c_ilmb_cntlr_0"/>
+        </CompFileExtendedInfo>
+        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_4/bd_fc5c_dlmb_cntlr_0.xci">
+          <Proxy FileSetName="bd_fc5c_dlmb_cntlr_0"/>
         </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_3/bd_fc5c_dlmb_0.xci">
           <Proxy FileSetName="bd_fc5c_dlmb_0"/>
@@ -884,17 +850,11 @@
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_1/bd_fc5c_rst_0_0.xci">
           <Proxy FileSetName="bd_fc5c_rst_0_0"/>
         </CompFileExtendedInfo>
-        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_6/bd_fc5c_lmb_bram_I_0.xci">
-          <Proxy FileSetName="bd_fc5c_lmb_bram_I_0"/>
-        </CompFileExtendedInfo>
-        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_4/bd_fc5c_dlmb_cntlr_0.xci">
-          <Proxy FileSetName="bd_fc5c_dlmb_cntlr_0"/>
+        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_0/bd_fc5c_microblaze_I_0.xci">
+          <Proxy FileSetName="bd_fc5c_microblaze_I_0"/>
         </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_2/bd_fc5c_ilmb_0.xci">
           <Proxy FileSetName="bd_fc5c_ilmb_0"/>
-        </CompFileExtendedInfo>
-        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_0/bd_fc5c_microblaze_I_0.xci">
-          <Proxy FileSetName="bd_fc5c_microblaze_I_0"/>
         </CompFileExtendedInfo>
       </File>
       <Config>
