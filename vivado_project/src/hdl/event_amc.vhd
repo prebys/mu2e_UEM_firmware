@@ -60,8 +60,8 @@ architecture Behavioral of event_amc is
                     SendByteOrder,
                     SendFmcCard0Check,
                     SendFmcCard0Data,
-                    SendFmcCard1Check,
-                    SendFmcCard1Data,
+                    -- SendFmcCard1Check,
+                    -- SendFmcCard1Data,
                     SendEventEnd,
                     SendStrobe
                      );
@@ -135,41 +135,41 @@ begin
             outreq2 <= '1';
             wren <= '0';
             --state <= SendEventEnd;
-            state <= SendFmcCard1Check; --SendFmcCard1Data;
+            state <= SendEventEnd; --SendFmcCard1Data;
           else
             state <= SendFmcCard0Data;
           end if; 
 
-       when SendFmcCard1Check =>
-          strobe <='0';
-          wren <= '0';
-          dout <= x"f1f1f1f1";
-          if(inack2='1') then
-             outreq2 <= '0';
-             state <= SendFmcCard1Data;
-          end if;
+      --  when SendFmcCard1Check =>
+      --     strobe <='0';
+      --     wren <= '0';
+      --     dout <= x"f1f1f1f1";
+      --     if(inack2='1') then
+      --        outreq2 <= '0';
+      --        state <= SendFmcCard1Data;
+      --     end if;
 
-       when SendFmcCard1Data =>
-          --dout <= x"fc01fc01";
-          --wren <= '1';
-          --state <= SendEventEnd;
-          if (inwr2 = '1') then
-            dout <= datain2;
-            wren <= '1';
-          else
-            wren <= '0';
-          end if;
-          even_clock <= not even_clock;
-          strobe <= '0';
-          if ( done2 = '1' ) then
-            outreq1 <= '0';
-            outreq2 <= '0';
-            wren <= '0';
-            --state <= SendFmcCard0Data;
-            state <= SendEventEnd;
-          else
-            state <= SendFmcCard1Data;
-          end if; 
+      --  when SendFmcCard1Data =>
+      --     --dout <= x"fc01fc01";
+      --     --wren <= '1';
+      --     --state <= SendEventEnd;
+      --     if (inwr2 = '1') then
+      --       dout <= datain2;
+      --       wren <= '1';
+      --     else
+      --       wren <= '0';
+      --     end if;
+      --     even_clock <= not even_clock;
+      --     strobe <= '0';
+      --     if ( done2 = '1' ) then
+      --       outreq1 <= '0';
+      --       outreq2 <= '0';
+      --       wren <= '0';
+      --       --state <= SendFmcCard0Data;
+      --       state <= SendEventEnd;
+      --     else
+      --       state <= SendFmcCard1Data;
+      --     end if; 
 
            
       when SendEventEnd =>

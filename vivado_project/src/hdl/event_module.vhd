@@ -79,7 +79,7 @@ architecture Behavioral of event_module is
                     SendFmcNumber,
                     SendEvnTrig,
                     SendEvnNumber,
-                    SendDataRaw,
+                    -- SendDataRaw,
                     SendDataPeak,
                     --SendMinBegin,
                     SendEventEndSub,
@@ -189,35 +189,35 @@ begin
             if(inbusy='0') then
               wren <= '1';
               dout <= std_logic_vector(event_number);
-              state <= SendDataRaw;
+              state <= SendDataPeak;
               outreq1 <= '1';
           else
                  wren <='0';
           end if;
           
-       when SendDataRaw =>
-          if(inbusy='0') then
-              outbusy1 <='0';
-         else
-              outbusy1 <='1';
-         end if;
+      --  when SendDataRaw =>
+      --     if(inbusy='0') then
+      --         outbusy1 <='0';
+      --    else
+      --         outbusy1 <='1';
+      --    end if;
                       
-           if (inwr1 = '1') then
-             dout <= datain1;
-             wren <= '1';
-           else
-             wren <= '0';
-           end if;
-           even_clock <= not even_clock;
-           strobe <= '0';
-           if ( done1 = '1' ) then
-             outreq1 <= '0';
-             outreq2 <= '1';
-             wren <= '0';
-             state <= SendDataPeak;
-           else
-             state <= SendDataRaw;
-           end if; 
+      --      if (inwr1 = '1') then
+      --        dout <= datain1;
+      --        wren <= '1';
+      --      else
+      --        wren <= '0';
+      --      end if;
+      --      even_clock <= not even_clock;
+      --      strobe <= '0';
+      --      if ( done1 = '1' ) then
+      --        outreq1 <= '0';
+      --        outreq2 <= '1';
+      --        wren <= '0';
+      --        state <= SendDataPeak;
+      --      else
+      --        state <= SendDataRaw;
+      --      end if; 
 
  
  

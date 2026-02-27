@@ -36,8 +36,7 @@ code*/*
 
 /vivado_project/project_dir/*
 !/vivado_project/project_dir/mu2e_UEM_firmware.runs/impl_1/top_fmc228_pcie.bit
-socketudp/__pycache__/*
-socketudp/tests/__pycache__/*
+**/__pycache__/*
 
 # exempt the sdk folder from being ignored
 !/vivado_project/src/sdk/monitor_amc502/*
