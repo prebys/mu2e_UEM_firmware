@@ -54,7 +54,11 @@ entity event_module is
     wren : out std_logic;
     dout : out std_logic_vector(31 downto 0);
     obusy : out std_logic;
-    strobe : out std_logic
+    strobe : out std_logic; 
+
+    event_module_counter1 : out unsigned(3 downto 0);
+    event_module_counter2 : out unsigned(3 downto 0);
+    event_module_counter3 : out unsigned(3 downto 0)
   );
 end event_module;
 
@@ -64,6 +68,10 @@ architecture Behavioral of event_module is
   signal even_clock : std_logic;
   signal last_intrig : std_logic := '0';
   signal event_number : unsigned(31 downto 0) := (others => '0');
+
+  signal counter1 : unsigned(3 downto 0) := (others => '0');
+  signal counter2 : unsigned(3 downto 0) := (others => '0');
+  signal counter3 : unsigned(3 downto 0) := (others => '0');
 
   constant sub_evn : integer := 100;
   signal count_sub_evn : integer range 0 to sub_evn - 1;
@@ -95,6 +103,11 @@ begin
   process ( rst, clk )
     variable stat : std_logic_vector(31 downto 0);
   begin
+
+    event_module_counter1 <= counter1;
+    event_module_counter2 <= counter2;
+    event_module_counter3 <= counter3;
+
     if ( clk'event and clk = '1' ) then
       if ( rst = '1' ) then
           obusy <= '0';
@@ -128,6 +141,7 @@ begin
           count_sub_evn <= 0;
           --if(intrig ='0') then    
           if(inbusy ='0') then      
+            counter1 <= counter1 + 1;
              wren <= '1';
              dout <= x"ffffffff";
              state <= SendEventHeader1;
@@ -185,12 +199,15 @@ begin
           end if;
 
        when SendEvnNumber =>
+
              strobe <='0';
             if(inbusy='0') then
+              counter2 <= counter2 + 1;
               wren <= '1';
               dout <= std_logic_vector(event_number);
               state <= SendDataPeak;
-              outreq1 <= '1';
+              -- outreq1 <= '1';  -- request for ADC data
+              outreq2 <= '1';  -- request for peak data
           else
                  wren <='0';
           end if;
@@ -240,6 +257,7 @@ begin
            even_clock <= not even_clock;
            strobe <= '0';
            if ( done2 = '1' ) then
+             counter3 <= counter3 + 1;
              outreq2 <= '0';
              wren <= '0';
              --state <= SendEventEnd; --SendMinBegin; --SendEventEnd;

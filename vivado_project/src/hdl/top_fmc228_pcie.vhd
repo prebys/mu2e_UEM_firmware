@@ -335,7 +335,7 @@ architecture behavioral of top_fmc228_pcie is
   signal bco_counter_card1 : std_logic_vector(47 downto 0);
 
 
-  constant nslave : integer := 4;
+  constant nslave : integer := 3;
   signal core_reset : std_logic := '0';
   signal core_interrupt : std_logic_vector(0 downto 0) := "0";
   signal io_ready : std_logic;
@@ -508,7 +508,11 @@ end component;
     busclk : in std_logic;
     iobus : in iobus_t;
     write_data : out std_logic_vector(31 downto 0);
-    iobus_ready : out std_logic
+    iobus_ready : out std_logic; 
+
+    event_start_counter1 : in unsigned(3 downto 0);
+    event_start_counter2 : in unsigned(3 downto 0);
+    event_start_counter3 : in unsigned(3 downto 0)
     );
   end component;
 
@@ -630,9 +634,13 @@ end component;
     );
   end component;
 
- signal amc_req1 : std_logic;
- signal amc_req2 : std_logic;
- signal amc_busy : std_logic;
+signal amc_req1 : std_logic;
+signal amc_req2 : std_logic;
+signal amc_busy : std_logic;
+
+signal event_counter1 : unsigned(3 downto 0);
+signal event_counter2 : unsigned(3 downto 0);
+signal event_counter3 : unsigned(3 downto 0);
 
 component event_amc is
   port (
@@ -645,16 +653,20 @@ component event_amc is
     done1 : in std_logic;
     inack1  : in std_logic;
 
-    outreq2 : out std_logic;
-    datain2 : in std_logic_vector(31 downto 0);
-    done2 : in std_logic;
-    inwr2 : in std_logic;
-    inack2  : in std_logic;
+    -- outreq2 : out std_logic;
+    -- datain2 : in std_logic_vector(31 downto 0);
+    -- done2 : in std_logic;
+    -- inwr2 : in std_logic;
+    -- inack2  : in std_logic;
 
     wren : out std_logic;
     dout : out std_logic_vector(31 downto 0);
     obusy : out std_logic;
-    strobe : out std_logic
+    strobe : out std_logic; 
+
+    event_counter1 : out unsigned(3 downto 0);
+    event_counter2 : out unsigned(3 downto 0);
+    event_counter3 : out unsigned(3 downto 0)
   );
 end component;
 
@@ -911,7 +923,12 @@ begin
     busclk => clk100mhz,
     iobus => slave_iobus(2),
     write_data => slave_write_data(2),
-    iobus_ready => slave_ready(2)
+    iobus_ready => slave_ready(2), 
+
+    event_start_counter1 => event_counter1,
+    event_start_counter2 => event_counter2,
+    event_start_counter3 => event_counter3
+
   );
 
   --gbe_stream_wren(0) <= fmc_card0_stream_wren;
@@ -924,60 +941,60 @@ begin
     
   bco_counter_card1 <= bco_counter;
 
-  fmc228_card1_imp : fmc228card1_interface
-  port map (
-    u => fmc_led_card1,
-    trig_in => amc_req2, --fmc_trig_in_card1,
-    trig_out => open,
+  -- fmc228_card1_imp : fmc228card1_interface
+  -- port map (
+  --   u => fmc_led_card1,
+  --   trig_in => amc_req2, --fmc_trig_in_card1,
+  --   trig_out => open,
 
-    clk20mhz => clk20mhz,
-    bco => bco_counter,
+  --   clk20mhz => clk20mhz,
+  --   bco => bco_counter,
 
-    lmk_cs => lmk_cs_card1,
-    lmk_sclk => lmk_sclk_card1,
-    lmk_sdi => lmk_sdi_card1,
-    lmk_sdo => lmk_sdo_card1,
-    lmk_sdio_dir => lmk_sdio_dir_card1,
-    lmk_reset => lmk_reset_card1,
-    lmk_sync => lmk_sync_card1,
-    lmk_sysref_req => lmk_sysref_req_card1,
-    lmk_sync_dir => lmk_sync_dir_card1,
-    lmk_clkoe => lmk_clkoe_card1,
-    lmk_status_ld => lmk_status_ld_card1,
+  --   lmk_cs => lmk_cs_card1,
+  --   lmk_sclk => lmk_sclk_card1,
+  --   lmk_sdi => lmk_sdi_card1,
+  --   lmk_sdo => lmk_sdo_card1,
+  --   lmk_sdio_dir => lmk_sdio_dir_card1,
+  --   lmk_reset => lmk_reset_card1,
+  --   lmk_sync => lmk_sync_card1,
+  --   lmk_sysref_req => lmk_sysref_req_card1,
+  --   lmk_sync_dir => lmk_sync_dir_card1,
+  --   lmk_clkoe => lmk_clkoe_card1,
+  --   lmk_status_ld => lmk_status_ld_card1,
 
-    hmc_chip_en => hmc_chip_en_card1,
-    hmc_ldo => hmc_ldo_card1,
-    hmc_sck => hmc_sck_card1,
-    hmc_sdi => hmc_sdi_card1,
-    hmc_sdo => hmc_sdo_card1,
-    hmc_sen => hmc_sen_card1,
-    adc_cs => adc_cs_card1,
-    adc_sck => adc_sck_card1,
-    adc_sdi => adc_sdi_card1,
-    adc_sdo => adc_sdo_card1,
-    adc_spi_dir => adc_spi_dir_card1,
-    adc_pdwn => adc_pdwn_card1,
-    adc_sync => adc_sync_card1,
-    adc_fd => adc_fd_card1,
+  --   hmc_chip_en => hmc_chip_en_card1,
+  --   hmc_ldo => hmc_ldo_card1,
+  --   hmc_sck => hmc_sck_card1,
+  --   hmc_sdi => hmc_sdi_card1,
+  --   hmc_sdo => hmc_sdo_card1,
+  --   hmc_sen => hmc_sen_card1,
+  --   adc_cs => adc_cs_card1,
+  --   adc_sck => adc_sck_card1,
+  --   adc_sdi => adc_sdi_card1,
+  --   adc_sdo => adc_sdo_card1,
+  --   adc_spi_dir => adc_spi_dir_card1,
+  --   adc_pdwn => adc_pdwn_card1,
+  --   adc_sync => adc_sync_card1,
+  --   adc_fd => adc_fd_card1,
 
-    gte_refclk => fmc_refclk_card1,
-    sysref => fmc_sysref_card1,
-    rx_p => fmc228_rx_p_card1,
-    rx_n => fmc228_rx_n_card1,
+  --   gte_refclk => fmc_refclk_card1,
+  --   sysref => fmc_sysref_card1,
+  --   rx_p => fmc228_rx_p_card1,
+  --   rx_n => fmc228_rx_n_card1,
 
-    gbe_stream_clk => gbe_stream_clka,
+  --   gbe_stream_clk => gbe_stream_clka,
 
-    fmc_stream_wren =>  fmc_card1_stream_wren, --gbe_stream_wren(1),
-    fmc_stream_strobe => fmc_card1_stream_strobe, --gbe_stream_strobe(1),
-    fmc_stream_dout => fmc_card1_stream_data(0), --gbe_stream_data(1),
+  --   fmc_stream_wren =>  fmc_card1_stream_wren, --gbe_stream_wren(1),
+  --   fmc_stream_strobe => fmc_card1_stream_strobe, --gbe_stream_strobe(1),
+  --   fmc_stream_dout => fmc_card1_stream_data(0), --gbe_stream_data(1),
 
-    oack => fmc_card1_ack,
+  --   oack => fmc_card1_ack,
 
-    busclk => clk100mhz,
-    iobus => slave_iobus(3),
-    write_data => slave_write_data(3),
-    iobus_ready => slave_ready(3)
-  );
+  --   busclk => clk100mhz,
+  --   iobus => slave_iobus(3),
+  --   write_data => slave_write_data(3),
+  --   iobus_ready => slave_ready(3)
+  -- );
 
 
 event_amc_imp : event_amc
@@ -991,16 +1008,20 @@ event_amc_imp : event_amc
     done1 => fmc_card0_stream_strobe,
     inack1=> fmc_card0_ack,
 
-    outreq2 => amc_req2,
-    datain2 => fmc_card1_stream_data(0),
-    done2 => fmc_card1_stream_strobe,
-    inwr2 => fmc_card1_stream_wren,
-    inack2=> fmc_card1_ack,
+    -- outreq2 => amc_req2,
+    -- datain2 => fmc_card1_stream_data(0),
+    -- done2 => fmc_card1_stream_strobe,
+    -- inwr2 => fmc_card1_stream_wren,
+    -- inack2=> fmc_card1_ack,
 
     wren => open, --gbe_stream_wren(0),
     dout => open, --gbe_stream_data(0),
     obusy => amc_busy,
-    strobe => open --gbe_stream_strobe(0)
+    strobe => open,  --gbe_stream_strobe(0)
+
+    event_counter1 => event_counter1,
+    event_counter2 => event_counter2,
+    event_counter3 => event_counter3
   );
 
 

@@ -94,7 +94,11 @@ entity fmc228_interface is
     busclk : in std_logic;
     iobus : in iobus_t;
     write_data : out std_logic_vector(31 downto 0);
-    iobus_ready : out std_logic
+    iobus_ready : out std_logic; 
+
+    event_start_counter1 : in unsigned(3 downto 0);
+    event_start_counter2 : in unsigned(3 downto 0);
+    event_start_counter3 : in unsigned(3 downto 0)
   );
 end fmc228_interface;
 
@@ -170,7 +174,7 @@ architecture RTL of fmc228_interface is
     clk : in std_logic;
     adc_fd : in std_logic_vector(3 downto 0);
     ext_trig : in std_logic;   
-    inhibit : in std_logic;   
+    -- inhibit : in std_logic;   
     mask : in std_logic_vector(7 downto 0);
     pres : in std_logic_vector(15 downto 0);
     delay : in std_logic_vector(31 downto 0);
@@ -181,7 +185,7 @@ architecture RTL of fmc228_interface is
     ibusy : in std_logic;
     outevn_number : out std_logic_vector(31 downto 0);
     algorithm : out std_logic_vector(7 downto 0);
-    trigger_counter_out : out unsigned(15 downto 0)
+    trigger_counter_out : out unsigned(3 downto 0)
   );
   end component;
 
@@ -357,7 +361,11 @@ component event_module
   wren : out std_logic;
   dout : out std_logic_vector(31 downto 0);
   obusy : out std_logic;
-  strobe : out std_logic
+  strobe : out std_logic; 
+
+  event_module_counter1 : out unsigned(3 downto 0);
+  event_module_counter2 : out unsigned(3 downto 0);
+  event_module_counter3 : out unsigned(3 downto 0)
     );
 end component;  
 
@@ -395,6 +403,7 @@ end component;
   constant address_fmc228_stat_ch3 : std_logic_vector(15 downto 0) := x"006c";
 
   constant address_trigger_counter : std_logic_vector(15 downto 0) := x"0070";
+  constant address_trigger_counter2 : std_logic_vector(15 downto 0) := x"0074";
 
   signal adc_buffer_csr : std_logic_vector(31 downto 0) := x"00000001";
   type adc_buffer_status_t is array(3 downto 0) of std_logic_vector(31 downto 0);
@@ -568,7 +577,12 @@ end component;
   attribute mark_debug of buffer_done : signal is "true";
   attribute mark_debug of trigger_output : signal is "true";
   attribute mark_debug of adc_fd_r : signal is "true";
-  signal trigger_counter : unsigned(15 downto 0);
+
+  -- counter helpers to be output on cf000070
+  signal trigger_counter : unsigned(3 downto 0) := ( others => '0' );
+  signal event_module_counter1 : unsigned(3 downto 0):= ( others => '0' );
+  signal event_module_counter2 : unsigned(3 downto 0):= ( others => '0' );
+  signal event_module_counter3 : unsigned(3 downto 0):= ( others => '0' );
 
 begin
 
@@ -667,7 +681,7 @@ begin
     clk => jesd204_core_clk,
     adc_fd => adc_fd,
     ext_trig => trig_in,
-    inhibit => trigger_inhibit,
+    -- inhibit => trigger_inhibit,
     mask => trigger_mask,
     pres => trigger_prescale,
     delay => trigger_delay,
@@ -781,45 +795,45 @@ begin
  --end generate;
 
 
-  bs_imp : adc_buffer_streamer
-  port map (
-    rst => adc_buffer_csr(31), --fifo_rst, --
-    clk => gbe_stream_clk,
-    valid => buffer_busy,
-    done => buffer_done,
-    rden => buffer_rden,
-    bco => bco_counter,
-    din0 => fifo_data_out(0), -- adc_buffer_data(0),
-    din1 => fifo_data_out(1), --adc_buffer_data(1),
-    din2 => fifo_data_out(2), --adc_buffer_data(2),
-    din3 => fifo_data_out(3), --adc_buffer_data(3),
-    infifo_empty0 => fifo_empty0,
-    infifo_empty1 => fifo_empty1,
-    infifo_empty2 => fifo_empty2,
-    infifo_empty3 => fifo_empty3,
+  -- bs_imp : adc_buffer_streamer
+  -- port map (
+  --   rst => adc_buffer_csr(31), --fifo_rst, --
+  --   clk => gbe_stream_clk,
+  --   valid => buffer_busy,
+  --   done => buffer_done,
+  --   rden => buffer_rden,
+  --   bco => bco_counter,
+  --   din0 => fifo_data_out(0), -- adc_buffer_data(0),
+  --   din1 => fifo_data_out(1), --adc_buffer_data(1),
+  --   din2 => fifo_data_out(2), --adc_buffer_data(2),
+  --   din3 => fifo_data_out(3), --adc_buffer_data(3),
+  --   infifo_empty0 => fifo_empty0,
+  --   infifo_empty1 => fifo_empty1,
+  --   infifo_empty2 => fifo_empty2,
+  --   infifo_empty3 => fifo_empty3,
     
-    infifo_valid0 => fifo_valid0,
-    infifo_valid1 => fifo_valid1,
-    infifo_valid2 => fifo_valid2,
-    infifo_valid3 => fifo_valid3,
+  --   infifo_valid0 => fifo_valid0,
+  --   infifo_valid1 => fifo_valid1,
+  --   infifo_valid2 => fifo_valid2,
+  --   infifo_valid3 => fifo_valid3,
 
-    status0 => adc_buffer_status(0),
-    status1 => adc_buffer_status(1),
-    status2 => adc_buffer_status(2),
-    status3 => adc_buffer_status(3),
-    trig0 => trigger_maskbits(0),
-    trig1 => trigger_maskbits(1),
-    trig2 => trigger_maskbits(2),
-    trig3 => trigger_maskbits(3),
-    testmode => adc_buffer_csr(27 downto 24),
+  --   status0 => adc_buffer_status(0),
+  --   status1 => adc_buffer_status(1),
+  --   status2 => adc_buffer_status(2),
+  --   status3 => adc_buffer_status(3),
+  --   trig0 => trigger_maskbits(0),
+  --   trig1 => trigger_maskbits(1),
+  --   trig2 => trigger_maskbits(2),
+  --   trig3 => trigger_maskbits(3),
+  --   testmode => adc_buffer_csr(27 downto 24),
 
-    inreq1 => evn_req1,
-    inbusy1 => '0', --evn_busy1,
-    data_adc_length => raw_adc_length, 
-    wren => adc_buffer_stream_wr , --gbe_stream_wren,
-    dout => adc_buffer_stream_data, --gbe_stream_dout,
-    strobe => adc_buffer_stream_done --gbe_stream_strobe
-  );
+  --   inreq1 => evn_req1,
+  --   inbusy1 => '0', --evn_busy1,
+  --   data_adc_length => raw_adc_length, 
+  --   wren => adc_buffer_stream_wr , --gbe_stream_wren,
+  --   dout => adc_buffer_stream_data, --gbe_stream_dout,
+  --   strobe => adc_buffer_stream_done --gbe_stream_strobe
+  -- );
 
 
  pf_0_imp : peakfinding
@@ -973,7 +987,11 @@ begin
     wren => gbe_stream_wren,
     dout => gbe_stream_dout,
     obusy => evn_busy,
-    strobe => gbe_stream_strobe
+    strobe => gbe_stream_strobe, 
+
+    event_module_counter1 => event_module_counter1, 
+    event_module_counter2 => event_module_counter2,
+    event_module_counter3 => event_module_counter3
   );
 
   oack <= evn_ack; --oack of fmc228_interface 
@@ -1174,7 +1192,8 @@ begin
             when address_fmc228_stat_ch3 =>
               latched_data <= latched_adc_buffer_status(3);
             when address_trigger_counter =>
-              latched_data <= x"0000" & std_logic_vector(trigger_counter);
+              latched_data <= x"0" & std_logic_vector(event_module_counter3) & std_logic_vector(event_module_counter2) & std_logic_vector(event_module_counter1) & 
+                std_logic_vector(event_start_counter3) & std_logic_vector(event_start_counter2) & std_logic_vector(event_start_counter1) & std_logic_vector(trigger_counter);
             when others =>
               latched_data <= x"f8f8f8f8";
 
@@ -1213,7 +1232,7 @@ begin
     end if;
   end process;
 
-  process ( jesd204_core_clk, trig_in ) begin
+  process ( jesd204_core_clk, trig_in ) begin -- @suppress "Superfluous signals in sensitivity list. The process is not sensitive to signal 'trig_in'."
     if ( jesd204_core_clk'event and jesd204_core_clk = '1' ) then
       bco_counter <= bco;
     end if;

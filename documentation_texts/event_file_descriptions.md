@@ -1,4 +1,4 @@
-### data_20260216_161012.dat
+### data_20260216_161012.dat (v27.2)
 ```
 # Peakfinding Length: 300000000
 Expected ADC length: 300000000
@@ -26,3 +26,11 @@ they restarted without a proper `ff_ff_ff_ff` packet (but subevent number did re
 Investigate some kind of solution to split up that big event into multiple events, 
 or modify udp-recv to handle this case better (e.g. by checking for subevent number resets 
 and starting a new event if it detects one)
+
+--------------------
+
+### data_20260227_135023.dat (v27.4) 
+
+I think useless? Not sure why. Only channel 1 / 2 have data and it's random noise.
+
+------------

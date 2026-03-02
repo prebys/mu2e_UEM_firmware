@@ -1,4 +1,5 @@
 #!/usr/bin python3
+import logging
 import os
 import re
 import unittest
@@ -66,6 +67,7 @@ class HexCheck:
 
 
     def main(self):
+        logger = logging.getLogger(self.__class__.__name__)
         print(f"Using input file {self.file_name}")
         for header in self.headers:
             print(header)
@@ -118,7 +120,7 @@ class HexCheck:
             if event.empty_event:
                 num_valid_events -= 1
                 continue
-            print(f"APPENDING {event} with {len(event.sub_events)} subevents")
+            logger.info(f"APPENDING {event} with {len(event.sub_events)} subevents")
             self.events.append(event)
         # print(events)
 

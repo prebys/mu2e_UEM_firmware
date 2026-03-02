@@ -285,15 +285,6 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/../src/hdl/event_card1_module.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/event_card1_module.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
       <File Path="$PPRDIR/../src/hdl/ethernet.vhd">
         <FileInfo>
           <Attr Name="Library" Val="hep337dev"/>
@@ -447,15 +438,6 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/../src/hdl/adc_buffer_streamer.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/adc_buffer_streamer.vhd"/>
-          <Attr Name="ImportTime" Val="1582740595"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
       <File Path="$PPRDIR/../src/hdl/trigger.vhd">
         <FileInfo>
           <Attr Name="Library" Val="hep337dev"/>
@@ -510,15 +492,6 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/../src/hdl/fmc228card1_interface.vhd">
-        <FileInfo>
-          <Attr Name="Library" Val="hep337dev"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/fmc228card1_interface.vhd"/>
-          <Attr Name="ImportTime" Val="1580329878"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
       <File Path="$PPRDIR/../src/hdl/event_amc.vhd">
         <FileInfo>
           <Attr Name="Library" Val="hep337dev"/>
@@ -540,6 +513,36 @@
       <File Path="$PPRDIR/../src/hdl/top_fmc228_pcie.vhd">
         <FileInfo>
           <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/top_fmc228_pcie.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/adc_buffer_streamer.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/adc_buffer_streamer.vhd"/>
+          <Attr Name="ImportTime" Val="1582740595"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/event_card1_module.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/event_card1_module.vhd"/>
+          <Attr Name="ImportTime" Val="1580329878"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/hdl/fmc228card1_interface.vhd">
+        <FileInfo>
+          <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../mu2e_monitor_firmware_original/mu2e_monitor_firmware_original/firmware_New_v2/mu2e_1.srcs/sources_1/fmc228card1_interface.vhd"/>
           <Attr Name="ImportTime" Val="1580329878"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -621,6 +624,7 @@
       <File Path="$PPRDIR/../src/hdl/fmc228card1_interface.vhd">
         <FileInfo>
           <Attr Name="Library" Val="hep337dev"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
@@ -832,11 +836,11 @@
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
-        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_7/bd_fc5c_iomodule_0_0.xci">
-          <Proxy FileSetName="bd_fc5c_iomodule_0_0"/>
-        </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_6/bd_fc5c_lmb_bram_I_0.xci">
           <Proxy FileSetName="bd_fc5c_lmb_bram_I_0"/>
+        </CompFileExtendedInfo>
+        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_7/bd_fc5c_iomodule_0_0.xci">
+          <Proxy FileSetName="bd_fc5c_iomodule_0_0"/>
         </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_5/bd_fc5c_ilmb_cntlr_0.xci">
           <Proxy FileSetName="bd_fc5c_ilmb_cntlr_0"/>
@@ -847,14 +851,14 @@
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_3/bd_fc5c_dlmb_0.xci">
           <Proxy FileSetName="bd_fc5c_dlmb_0"/>
         </CompFileExtendedInfo>
+        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_2/bd_fc5c_ilmb_0.xci">
+          <Proxy FileSetName="bd_fc5c_ilmb_0"/>
+        </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_1/bd_fc5c_rst_0_0.xci">
           <Proxy FileSetName="bd_fc5c_rst_0_0"/>
         </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_0/bd_fc5c_microblaze_I_0.xci">
           <Proxy FileSetName="bd_fc5c_microblaze_I_0"/>
-        </CompFileExtendedInfo>
-        <CompFileExtendedInfo CompFileName="microblaze_mcs_0.xci" FileRelPathName="ip/ip_2/bd_fc5c_ilmb_0.xci">
-          <Proxy FileSetName="bd_fc5c_ilmb_0"/>
         </CompFileExtendedInfo>
       </File>
       <Config>

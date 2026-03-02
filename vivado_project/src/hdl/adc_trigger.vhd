@@ -28,7 +28,7 @@ entity adc_trigger is
     clk : in std_logic;
     adc_fd : in std_logic_vector(3 downto 0);
     ext_trig : in std_logic;
-    inhibit : in std_logic;
+    -- inhibit : in std_logic;
     mask : in std_logic_vector(7 downto 0);
     pres : in std_logic_vector(15 downto 0);
     delay : in std_logic_vector(31 downto 0);
@@ -39,13 +39,13 @@ entity adc_trigger is
     ibusy : in std_logic; 
     outevn_number : out std_logic_vector(31 downto 0);
     algorithm : out std_logic_vector(7 downto 0);
-    trigger_counter_out : out unsigned(15 downto 0)
+    trigger_counter_out : out unsigned(3 downto 0)
   );
 end adc_trigger;
 
 architecture RTL of adc_trigger is
-  signal prescale : unsigned(15 downto 0) := ( others => '0' );
-  signal prescale_trigger : std_logic;
+  -- signal prescale : unsigned(15 downto 0) := ( others => '0' );
+  -- signal prescale_trigger : std_logic;
 
   signal triggered : std_logic := '0';
   signal last_trig_out : std_logic;
@@ -87,7 +87,7 @@ architecture RTL of adc_trigger is
   );
 
   -- signal trig_req_d1   : std_logic := '0';  -- trigger request previous cycle
-  signal trigger_counter : unsigned(15 downto 0) := ( others => '0' );
+  signal trigger_counter : unsigned(3 downto 0) := ( others => '0' );
 
 begin
 

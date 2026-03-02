@@ -34,16 +34,20 @@ entity event_amc is
     done1 : in std_logic;
     inack1 : std_logic;
     
-    outreq2 : out std_logic;
-    datain2 : in std_logic_vector(31 downto 0);
-    done2 : in std_logic;
-    inwr2 : in std_logic;
-    inack2 : std_logic;
+    -- outreq2 : out std_logic;
+    -- datain2 : in std_logic_vector(31 downto 0);
+    -- done2 : in std_logic;
+    -- inwr2 : in std_logic;
+    -- inack2 : std_logic;
 
     wren : out std_logic;
     dout : out std_logic_vector(31 downto 0);
     obusy : out std_logic;
-    strobe : out std_logic
+    strobe : out std_logic; 
+
+    event_counter1 : out unsigned(3 downto 0);
+    event_counter2 : out unsigned(3 downto 0);
+    event_counter3 : out unsigned(3 downto 0)
   );
 end event_amc;
 
@@ -53,6 +57,9 @@ architecture Behavioral of event_amc is
   signal even_clock : std_logic;
   signal last_intrig : std_logic := '0';
   signal event_number : unsigned(31 downto 0) := (others => '0');
+  signal event_start_counter1 : unsigned(3 downto 0) := (others => '0');
+  signal event_start_counter2 : unsigned(3 downto 0) := (others => '0');
+  signal event_start_counter3 : unsigned(3 downto 0) := (others => '0');
 
   
   type state_t is ( Idle,
@@ -69,6 +76,10 @@ architecture Behavioral of event_amc is
 
 begin
 
+  event_counter1 <= event_start_counter1;
+  event_counter2 <= event_start_counter2;
+  event_counter3 <= event_start_counter3;
+
   process ( clk )
     variable stat : std_logic_vector(31 downto 0);
   begin
@@ -83,7 +94,7 @@ begin
           strobe <= '0';
           wren <= '0';
           outreq1 <= '0';
-          outreq2 <= '0';
+          -- outreq2 <= '0';
           obusy <= '0';
           if ( intrig = '1' and last_intrig='0' ) then
             state <= SendEventHeader;
@@ -99,6 +110,7 @@ begin
           dout <= x"AA502C01";
           even_clock <= not even_clock;
           state <= SendByteOrder;
+          event_start_counter1 <= event_start_counter1 + 1;
  
        when SendByteOrder =>
           strobe <='0';
@@ -122,6 +134,7 @@ begin
           --dout <= x"fc00fc00";
           --wren <= '1';
           --state <= SendFmcCard1Data;
+          
           if (inwr1 = '1') then
             dout <= datain1;
             wren <= '1';
@@ -131,8 +144,9 @@ begin
           even_clock <= not even_clock;
           strobe <= '0';
           if ( done1 = '1' ) then
+            event_start_counter2 <= event_start_counter2 + 1;
             outreq1 <= '0';
-            outreq2 <= '1';
+            -- outreq2 <= '0';
             wren <= '0';
             --state <= SendEventEnd;
             state <= SendEventEnd; --SendFmcCard1Data;
@@ -173,6 +187,7 @@ begin
 
            
       when SendEventEnd =>
+        event_start_counter3 <= event_start_counter3 + 1;
          dout <= x"fafafafa";
          wren <= '1';
          strobe <= '0';
