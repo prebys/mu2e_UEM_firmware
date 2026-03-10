@@ -350,7 +350,7 @@ class Event:
 
     Some new event types will also start with 0xff_ff_ff_f1 followed by an 8-byte unix timestamp"""
 
-    def __init__(self, internal_event_number, data_str, verbosity=logging.DEBUG):
+    def __init__(self, internal_event_number, data_str, verbosity=logging.INFO):
         logger = logging.getLogger(self.__class__.__name__)
         logger.setLevel(verbosity)
         # check for timestamp in beginning of event, first four bytes of data_str will be ffffff11
@@ -371,9 +371,9 @@ class Event:
 
         # print timestamp if available
         if self.timestamp:
-            logger.debug(f"Event {self.event_number}-{self.internal_event_number} has timestamp {self.timestamp}")
+            logger.info(f"Event {self.event_number}-{self.internal_event_number} has timestamp {self.timestamp}")
         else:
-            logger.debug(f"Event {self.event_number}-{self.internal_event_number} has no timestamp.")
+            logger.info(f"Event {self.event_number}-{self.internal_event_number} has no timestamp.")
 
         # get sub events
         r = (r'00ffffff'

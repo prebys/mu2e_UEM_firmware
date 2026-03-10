@@ -12,7 +12,7 @@ from python_analysis.hex_check_config import config
 from python_analysis.event_types import EventType, name_to_event
 from python_analysis.dat_io import read_data_file, find_data_file
 from python_analysis.hex_check_classes import Event
-from python_analysis.event_utils import iter_event_hex_strings
+from python_analysis.event_utils import iter_event_hex_strings, split_logical_events_on_subevent_reset
 
 file_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(file_path)
@@ -100,8 +100,18 @@ class HexCheck:
         
         # Use the shared event iterator to find events in the hex string
         hex_data_str = ''.join(self.full_hex_data)
-        events = list(iter_event_hex_strings(hex_data_str))
-        print(f"Found {len(events)} events in the file.")
+        raw_events = list(iter_event_hex_strings(hex_data_str))
+        events = []
+        split_count = 0
+        for raw_event in raw_events:
+            logical_events = split_logical_events_on_subevent_reset(raw_event)
+            if len(logical_events) > 1:
+                split_count += len(logical_events) - 1
+            events.extend(logical_events)
+        print(f"Found {len(raw_events)} regex-matched events in the file.")
+        if split_count:
+            print(f"Split {split_count} additional logical events at subevent-number resets.")
+        print(f"Processing {len(events)} logical events.")
         
         # events: list[Event] = [Event(i+1, data_str) for i, data_str in enumerate(events)]
         self.events: list[Event] = []
@@ -112,6 +122,7 @@ class HexCheck:
                 continue
             event = Event(num_valid_events, data_str)
             if event.empty_event:
+                logger.info(f"SKIPPING empty event {num_valid_events}")
                 num_valid_events -= 1
                 continue
             logger.info(f"APPENDING {event} with {len(event.sub_events)} subevents")
