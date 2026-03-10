@@ -919,6 +919,13 @@ def peak_width_classification(peak_areas, type="peak_width"):
     manual_sample_period = None  # e.g. 1/125e6  -> set to seconds/sample if you know it, otherwise None
     use_log_scales = True  # log-log scatter for width vs area
     save_figures: Optional[str] = None  # filepath (e.g. "peak_widths_summary.png") or None to skip saving
+
+    if 'width' in type:
+        desc_text = "Peak Widths"
+    elif 'height' in type:
+        desc_text = "Peak Heights"
+    else:
+        raise ValueError("type must contain 'width' or 'height'")
     
     # --- collect widths/areas robustly from peak_areas (assumes 'peak_areas' exists) ---
     import math
@@ -967,7 +974,7 @@ def peak_width_classification(peak_areas, type="peak_width"):
     _areas = np.array(_areas, dtype=float) if _areas else np.array([])
     
     if _widths.size == 0:
-        print("No valid peak widths found in `peak_areas`.")
+        print(f"No valid {desc_text} found in `peak_areas`.")
     else:
         # --- detect sample_period intelligently (samples -> seconds) ---
         def detect_sample_period(objs, fallback_hc=None, manual=None):
@@ -1026,7 +1033,7 @@ def peak_width_classification(peak_areas, type="peak_width"):
         
         # print concise summary
         print(
-            f"Peak widths (n={count}): mean={mean_samples:.6g} samples, median={med_samples:.6g}, std={std_samples:.6g}")
+            f"{desc_text} (n={count}): mean={mean_samples:.6g} samples, median={med_samples:.6g}, std={std_samples:.6g}")
         print(f"min={min_samples:.6g}, max={max_samples:.6g}")
         if wmean_samples is not None:
             print(f"area-weighted mean = {wmean_samples:.6g} samples")
@@ -1047,8 +1054,8 @@ def peak_width_classification(peak_areas, type="peak_width"):
         if wmean_samples is not None:
             ax_hist.axvline(wmean_samples, color="g", linestyle=":",
                             label=f"area-weighted {wmean_samples:.3g}")
-        ax_hist.set_title("Peak widths (samples)")
-        ax_hist.set_xlabel("Width (samples)")
+        ax_hist.set_title(f"{desc_text} (samples)")
+        ax_hist.set_xlabel(f"{desc_text} (samples)")
         ax_hist.legend()
         
         # Violin or box (distribution summary)
@@ -1057,12 +1064,12 @@ def peak_width_classification(peak_areas, type="peak_width"):
         else:
             ax_violin.boxplot(_widths, vert=False, patch_artist=True, boxprops=dict(color="C1"))
         ax_violin.set_title("Distribution (violin / box)")
-        ax_violin.set_xlabel("Width (samples)")
+        ax_violin.set_xlabel(f"{desc_text} (samples)")
         
         # Scatter: width vs area (helpful to see size/width correlation). Use log scales if appropriate.
         if _areas.size == count:
             x = _areas
-            xlabel = "Peak area"
+            xlabel = f"{desc_text}"
         else:
             # if no area, use index to show spread over buffer order
             x = np.arange(count)
@@ -1076,8 +1083,8 @@ def peak_width_classification(peak_areas, type="peak_width"):
             except Exception:
                 pass
         ax_scatter.set_xlabel(xlabel)
-        ax_scatter.set_ylabel("Width (samples)")
-        ax_scatter.set_title("Width vs Area (or index)")
+        ax_scatter.set_ylabel(f"{desc_text} (samples)")
+        ax_scatter.set_title(f"{desc_text} vs Area (or index)")
         
         # ECDF
         sorted_w = np.sort(_widths)
@@ -1088,7 +1095,7 @@ def peak_width_classification(peak_areas, type="peak_width"):
         # annotate median and a couple quantiles
         ax_ecdf.axvline(med_samples, color="r", linestyle="--", label=f"median {med_samples:.3g}")
         ax_ecdf.set_title("ECDF of widths")
-        ax_ecdf.set_xlabel("Width (samples)")
+        ax_ecdf.set_xlabel(f"{desc_text} (samples)")
         ax_ecdf.set_ylabel("ECDF")
         ax_ecdf.legend()
         
@@ -1101,7 +1108,7 @@ def peak_width_classification(peak_areas, type="peak_width"):
                 sns.histplot(widths_time, bins="auto", kde=True, ax=ax2, color="C2")
             else:
                 ax2.hist(widths_time, bins="auto", color="C2", alpha=0.7)
-            ax2.set_title("Peak widths (time)")
+            ax2.set_title(f"{desc_text}s (time)")
             ax2.set_xlabel("Seconds")
             ax2.axvline(np.mean(widths_time), color="r", linestyle="--",
                         label=f"mean {np.mean(widths_time):.3g}s")
