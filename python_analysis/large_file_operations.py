@@ -23,23 +23,23 @@ from datetime import datetime, timezone
 from typing import Optional, List
 
 from python_analysis.dat_io import find_data_file, read_data_file
-from python_analysis.event_utils import iter_event_hex_strings, parse_timestamp_and_strip, iter_event_matches
-
+from python_analysis.event_utils import iter_event_hex_strings, parse_timestamp_and_strip, iter_event_matches, _safe_tz
 
 # USER CONFIGURATION ---------------------------------------------------------
 # Edit these variables directly in the file before running in PyCharm.
 # - Set DESIRED_FILE_PATH to a substring or filename to choose a specific .dat file.
 # - Set SAMPLES to the number of uniformly-spaced events to sample/print.
 # - Set TO_USE_INDEX_INCREMENT to pick older files (matches find_data_file semantics).
-# DESIRED_FILE_PATH: Optional[str] = "data_20260303_134443_2026.03.04_09.32.40.dat"
+DESIRED_FILE_PATH: Optional[str] = "data_20260303_134443_2026.03.03_18.01.32.dat"
 DESIRED_FILE_PATH: Optional[str] = "data_20260303_134443.dat"
 SAMPLES: int = 200
 TO_USE_INDEX_INCREMENT: int = 0
 
 # Split datetime
-# Use UTC here so this module imports cleanly even when IANA tzdata is unavailable.
+# Use Chicago timezone here
 SPLIT_DATETIME: Optional[datetime] = datetime(2026, 3, 3, 23, 59,
-                                              tzinfo=timezone.utc)
+                                              tzinfo=_safe_tz("America/Chicago"))
+
 # ---------------------------------------------------------------------------
 
 def _read_hex_string_for_file(desired_file_path: Optional[str] = None,
@@ -239,17 +239,21 @@ def split_dat_file_by_datetime(desired_file_path: Optional[str] = None,
 # Replace CLI usage with a simple main() that uses the module-level configuration above.
 def main() -> None:
     """Run sampling using the module-level configuration variables so settings are editable in PyCharm."""
-    # sample_event_timestamps(desired_file_path=DESIRED_FILE_PATH,
-    #                         samples=SAMPLES,
-    #                         to_use_index_increment=TO_USE_INDEX_INCREMENT)
+    mode = 2
 
-    split_dat_file_by_datetime(
-        desired_file_path=DESIRED_FILE_PATH,
-        split_dt=SPLIT_DATETIME,
-        to_use_index_increment=TO_USE_INDEX_INCREMENT,
-        out_dir=None
-    )
-
+    if mode == 1:
+        sample_event_timestamps(desired_file_path=DESIRED_FILE_PATH,
+                                samples=SAMPLES,
+                                to_use_index_increment=TO_USE_INDEX_INCREMENT)
+    elif mode == 2:
+        split_dat_file_by_datetime(
+            desired_file_path=DESIRED_FILE_PATH,
+            split_dt=SPLIT_DATETIME,
+            to_use_index_increment=TO_USE_INDEX_INCREMENT,
+            out_dir=None
+        )
+    else:
+        raise ValueError(f"Invalid mode {mode} in main().")
 
 
 if __name__ == "__main__":
