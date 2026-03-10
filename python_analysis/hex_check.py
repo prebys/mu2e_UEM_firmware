@@ -1,8 +1,6 @@
 #!/usr/bin python3
 import logging
 import os
-import re
-import unittest
 from time import perf_counter
 
 from collections import Counter
@@ -13,7 +11,8 @@ import pandas as pd
 from python_analysis.hex_check_config import config
 from python_analysis.event_types import EventType, name_to_event
 from python_analysis.dat_io import read_data_file, find_data_file
-from python_analysis.hex_check_classes import Event, PeakHeight
+from python_analysis.hex_check_classes import Event
+from python_analysis.event_utils import iter_event_hex_strings
 
 file_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(file_path)
@@ -99,14 +98,9 @@ class HexCheck:
         # "\n#TS " = 0a 23 54 53 20
         # "Z\n" = 5a 0a
         
-        r = re.compile(
-            r'(?:ffffff11[0-9a-f]{16})?'  # optional timestamp packet
-            r'ffffffff00ffffff.*?edededed00fcfcfc(?:fcfcfcfc)?'  # event payload (captured)
-            r'(?=(?:ffffff11[0-9a-f]{16})?ffffffff00ffffff|$)',  # next record start or EOF
-            re.DOTALL
-        )
+        # Use the shared event iterator to find events in the hex string
         hex_data_str = ''.join(self.full_hex_data)
-        events = re.findall(r, hex_data_str)
+        events = list(iter_event_hex_strings(hex_data_str))
         print(f"Found {len(events)} events in the file.")
         
         # events: list[Event] = [Event(i+1, data_str) for i, data_str in enumerate(events)]
@@ -165,11 +159,9 @@ def build_hex_check(desired_file_path=None) -> HexCheck:
         _hex_check.get_event_types(name_to_event)
         
         # make hex_check available in hex_check_classes.py
-        from hex_check_classes import hex_check_state
-        
-        hex_check_state[
-            "hex_check"] = _hex_check  # set global variable to the current instance of HexCheck
-        
+        import python_analysis.hex_check_classes as hcc
+        hcc.hex_check_state["hex_check"] = _hex_check  # set global variable to the current instance of HexCheck
+
         # result = unittest.TextTestRunner().run(unittest.defaultTestLoader.discover("tests"))
         
         # if result.wasSuccessful():

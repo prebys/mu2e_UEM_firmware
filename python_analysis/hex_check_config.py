@@ -8,7 +8,8 @@ class Config:
     # setting to a name will search for any files with that name in the directory
     # consider searching for the names 'diag_0x1', 'diag_0x2', 'diag_0x3', 'diag_0x5', 'diag_0x9', 'diag_0xF'
     desired_file_path: Optional[str]
-    desired_file_path = None
+    desired_file_path = "data_20260303_134443_2026.03.04_00.01.32.dat"
+    desired_file_path = "data_20260303_134443.dat"
     # desired_file_path = "test20241112_145129.dat"
     # desired_file_path = "data_20250711_023734.dat"  # 8000 hits,
     # desired_file_path = "data_20250711_023300.dat"  # 7000 hits
@@ -36,8 +37,8 @@ class Config:
     integer_mode: str = 's12'
 
     # set number of events and subevents
-    event_range: int = (0, 999)
-    n_subevents: int = 999
+    event_range: int = (1476, 1478)
+    n_subevents: int = 9999
     
     # plotting units
     # volts: standard operation, plot data in volts (convert from raw values)
