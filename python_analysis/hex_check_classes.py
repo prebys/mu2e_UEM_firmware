@@ -1,6 +1,5 @@
 #!/usr/bin python3
 import logging
-import re
 import struct
 from dataclasses import dataclass
 from typing import Optional, Union
@@ -23,39 +22,28 @@ class AbortPeak(Exception):
     """Abort parsing of one malformed peak record without failing the parent event."""
 
 
-SUB_EVENT_RE = re.compile(
-    r'00ffffff'
-    r'f4f3f2f1'
-    r'.*?'
-    r'edededed'
-    r'00fcfcfc',
-    re.DOTALL,
-)
-RAW_DATA_CHANNEL_RE = re.compile(r'fafa....ffff.*?fbfbfbfb(?=fafa|fefe)', re.DOTALL)
-PEAK_CHANNEL_RE = re.compile(r'eeee....aaaa.*?bbbbbbbbecececec', re.DOTALL)
-PEAK_HEIGHT_PAYLOAD_RE = re.compile(r'aaaacccccccc(.*?)cecececedddd', re.DOTALL)
-PEAK_AREA_PAYLOAD_RE = re.compile(r'cecedddddddd(.*?)dedededebbbb', re.DOTALL)
-
-RAW_SECTION_START = "fdfdfdfdf4f3f2f1"
-RAW_SECTION_END = "fefefefe"
-RAW_CHANNEL_START = "fafa"
-RAW_CHANNEL_END = "fbfbfbfb"
-PEAK_SECTION_START = "efefefef"
-PEAK_SECTION_END = "edededed"
-PEAK_CHANNEL_START = "eeee"
-PEAK_CHANNEL_END = "bbbbbbbbecececec"
-PEAK_HEIGHT_START = "aaaacccccccc"
-PEAK_HEIGHT_END = "cecececedddd"
-PEAK_AREA_START = "cecedddddddd"
-PEAK_AREA_END = "dedededebbbb"
+SUB_EVENT_START = b"\x00\xff\xff\xff\xf4\xf3\xf2\xf1"
+SUB_EVENT_END = b"\xed\xed\xed\xed\x00\xfc\xfc\xfc"
+RAW_SECTION_START = b"\xfd\xfd\xfd\xfd\xf4\xf3\xf2\xf1"
+RAW_SECTION_END = b"\xfe\xfe\xfe\xfe"
+RAW_CHANNEL_START = b"\xfa\xfa"
+RAW_CHANNEL_END = b"\xfb\xfb\xfb\xfb"
+PEAK_SECTION_START = b"\xef\xef\xef\xef"
+PEAK_SECTION_END = b"\xed\xed\xed\xed"
+PEAK_CHANNEL_START = b"\xee\xee"
+PEAK_CHANNEL_END = b"\xbb\xbb\xbb\xbb\xec\xec\xec\xec"
+PEAK_HEIGHT_START = b"\xaa\xaa\xcc\xcc\xcc\xcc"
+PEAK_HEIGHT_END = b"\xce\xce\xce\xce\xdd\xdd"
+PEAK_AREA_START = b"\xce\xce\xdd\xdd\xdd\xdd"
+PEAK_AREA_END = b"\xde\xde\xde\xde\xbb\xbb"
 
 
-def _extract_delimited_blocks(section: str,
-                              block_start: str,
-                              block_end: str,
+def _extract_delimited_blocks(section: bytes,
+                              block_start: bytes,
+                              block_end: bytes,
                               max_blocks: int = 4) -> list[str]:
     """Extract up to `max_blocks` blocks delimited by fixed start/end markers."""
-    out: list[str] = []
+    out: list[bytes] = []
     cursor = 0
     end_len = len(block_end)
     while len(out) < max_blocks:
@@ -70,13 +58,13 @@ def _extract_delimited_blocks(section: str,
     return out
 
 
-def _extract_raw_data_channels(data_str: str) -> list[str]:
+def _extract_raw_data_channels(data_str: bytes) -> list[bytes]:
     """Extract raw-data channel blocks from one subevent with a single marker walk."""
     raw_start = data_str.find(RAW_SECTION_START)
     if raw_start == -1:
         return [""] * 4
 
-    raw_payload_start = raw_start + len(RAW_SECTION_START) + 8  # skip second byte-order word and event number
+    raw_payload_start = raw_start + len(RAW_SECTION_START) + 4  # skip repeated event number word
     raw_end = data_str.find(RAW_SECTION_END, raw_payload_start)
     if raw_end == -1:
         return [""] * 4
@@ -90,7 +78,7 @@ def _extract_raw_data_channels(data_str: str) -> list[str]:
     return channels + [""] * (4 - len(channels))
 
 
-def _extract_peak_channels(data_str: str) -> list[str]:
+def _extract_peak_channels(data_str: bytes) -> list[bytes]:
     """Extract peak-data channel blocks from one subevent with a single marker walk."""
     peak_start = data_str.find(PEAK_SECTION_START)
     if peak_start == -1:
@@ -110,7 +98,7 @@ def _extract_peak_channels(data_str: str) -> list[str]:
     return channels + [""] * (4 - len(channels))
 
 
-def _extract_payload_between_markers(block: str, start_marker: str, end_marker: str) -> str:
+def _extract_payload_between_markers(block: bytes, start_marker: bytes, end_marker: bytes) -> bytes:
     """Return substring between fixed markers, or an empty string if markers are missing."""
     start_idx = block.find(start_marker)
     if start_idx == -1:
@@ -122,7 +110,7 @@ def _extract_payload_between_markers(block: str, start_marker: str, end_marker: 
     return block[payload_start:end_idx]
 
 
-def _decode_raw_data_word(hex_in: str = "", mode: str = 's12') -> Union[
+def _decode_raw_data_word(hex_in: Union[str, bytes] = b"", mode: str = 's12') -> Union[
     DoubleADCTupleWithCount, DoubleADCTuple, SingleADC]:
     # FOR HELP UNDERSTANDING ABOUT SIGNED VS UNSIGNED INTEGERS IN PYTHON:
     # See /documentation_texts/signed_vs_unsigned_tests.ipynb
@@ -188,7 +176,7 @@ def _decode_raw_data_word(hex_in: str = "", mode: str = 's12') -> Union[
         raise ValueError("Invalid mode. Please choose 's12', 's16', or 's32'.")
 
 
-def _decode_peak_height_header_word(hex_word: str) -> PeakHeaderTuple:
+def _decode_peak_height_header_word(hex_word: Union[str, bytes]) -> PeakHeaderTuple:
     """
     Parse and return peak height header events.
 
@@ -224,7 +212,7 @@ def _decode_peak_height_header_word(hex_word: str) -> PeakHeaderTuple:
     return PeakHeaderTuple(peak_location, time)
 
 
-def _decode_peak_height_value_word(hex_word: str) -> PeakHeightTuple:
+def _decode_peak_height_value_word(hex_word: Union[str, bytes]) -> PeakHeightTuple:
     """
     Parse and return peak height events.
 
@@ -249,12 +237,12 @@ def _decode_peak_height_value_word(hex_word: str) -> PeakHeightTuple:
     peak_height = signed(word & 0x0000FFFF, 16)
 
     # convert to hex string and pad with zeros
-    hex_str = peak_height.to_bytes(2, byteorder='little', signed=True).hex().zfill(4)
-    proper_height = _decode_raw_data_word(mode='s12', hex_in=hex_str + '0000')[0]  # convert to signed 12-bit
+    word_bytes = peak_height.to_bytes(2, byteorder='little', signed=True) + b"\x00\x00"
+    proper_height = _decode_raw_data_word(mode='s12', hex_in=word_bytes)[0]  # convert to signed 12-bit
     return PeakHeightTuple(proper_height)
 
 
-def _decode_peak_area(hex_word: str,
+def _decode_peak_area(hex_word: Union[str, bytes],
                       peak_type: EventType) -> int:
     """
     Peak area data structure with one FMC228 card. Total six 32-bit words.
@@ -282,7 +270,7 @@ def _decode_peak_area(hex_word: str,
         # top bits are always 0x1111, bottom bits are the actual data
         top = (word >> 16) & 0xFFFF
         bottom = word & 0xFFFF
-        logger.debug(f"Decoding peak area data 1 from hex {hex_word}, endian converted to {hex(word)}. ")
+        logger.debug(f"Decoding peak area data 1 from {hex_word.hex() if isinstance(hex_word, bytes) else hex_word}, endian converted to {hex(word)}. ")
         if top != 0x1111:
             raise AbortPeak(
                 f"Invalid peak_area_data_1 marker in {hex_word}: got 0x{top:04x}, expected 0x1111."
@@ -291,11 +279,11 @@ def _decode_peak_area(hex_word: str,
         return bottom
     elif peak_type == "peak_area_data_2":
         # examples before conversions: 2c8bf9ff, c089f9ff, b48ef9ff
-        logger.debug(f"Decoding peak area data 2 from hex {hex_word}, endian converted to {hex(word)}.")
+        logger.debug(f"Decoding peak area data 2 from {hex_word.hex() if isinstance(hex_word, bytes) else hex_word}, endian converted to {hex(word)}.")
         return word
     elif peak_type == "peak_area_data_3":
         # examples before conversions: b089fdff, b821fdff
-        logger.debug(f"Decoding peak area data 3 from hex {hex_word}, endian converted to {hex(word)}.")
+        logger.debug(f"Decoding peak area data 3 from {hex_word.hex() if isinstance(hex_word, bytes) else hex_word}, endian converted to {hex(word)}.")
         return word
     elif peak_type in ["peak_area_data_4", "peak_area_data_5", "peak_area_data_6"]:
         # examples of different peak types before conversions: 
@@ -303,13 +291,13 @@ def _decode_peak_area(hex_word: str,
         # 5: 89180000, b5110000, d2110000
         # 6: d4c0a000, e2c0a000, f0c0a000
         time_to_peak = (word & 0x0FFFFFFF) * 4  # multiply to convert clock counter to ns
-        logger.debug(f"Decoding {peak_type} from hex {hex_word}, endian converted to {hex(word)}. ")
+        logger.debug(f"Decoding {peak_type} from {hex_word.hex() if isinstance(hex_word, bytes) else hex_word}, endian converted to {hex(word)}. ")
         return time_to_peak
     else:
         raise ValueError(f"Invalid peak area data type: {hex_word}")
 
 
-def _decode_eventtype_data_word(event_type: EventType, hex_word: str) -> Optional[int]:
+def _decode_eventtype_data_word(event_type: EventType, hex_word: Union[str, bytes]) -> Optional[int]:
     """
     Reuse the `EventType.data_chars` convention (nibble slice) without constructing an `Event`.
 
@@ -321,27 +309,35 @@ def _decode_eventtype_data_word(event_type: EventType, hex_word: str) -> Optiona
     if start == 0 and end == 0:
         return None
 
+    if isinstance(hex_word, bytes):
+        byte_start = start // 2
+        byte_end = end // 2
+        data_bytes = hex_word[byte_start:byte_end]
+        if not data_bytes:
+            return None
+        data_bytes = data_bytes.ljust(4, b"\x00")
+        return struct.unpack("<I", data_bytes)[0]
+
     data_hex = hex_word[start:end]
     if not data_hex:
         return None
 
-    # Pad to 8 chars (32 bits) like `Event.get_data_bytes()` does
     data_hex = f"{data_hex:0<8}"
     data_bytes = bytes.fromhex(data_hex)
     return struct.unpack("<I", data_bytes)[0]
 
 
-def _parse_raw_data_channel(channel: "ChannelData", block: str) -> list["RawData"]:
+def _parse_raw_data_channel(channel: "ChannelData", block: bytes) -> list["RawData"]:
     """Strip headers/trailer, convert packets to Events, flatten 2-word raw_data."""
     # inside each raw_data_channel, it starts with seven packets of headers
     # then raw data for unspecified length starting at the eight packet (i[8*7:])
     # then one packet (fbfbfbfb) of end_of_channel (skipped by i[:-8*1])
     # remove 7 header packets at start and 1 trailer packet at end
-    PACKET_LENGTH = 8
+    PACKET_LENGTH = 4
     HEADER_LENGTH = 7
     FOOTER_LENGTH = 1
     payload = block[PACKET_LENGTH * HEADER_LENGTH: -PACKET_LENGTH * FOOTER_LENGTH]
-    assert len(payload) % 8 == 0, f"Payload length {len(payload)} is not a multiple of 8."
+    assert len(payload) % 4 == 0, f"Payload length {len(payload)} is not a multiple of 4."
 
     out: list[RawData] = []
     for hex_word in chunk(payload, size=PACKET_LENGTH):
@@ -366,7 +362,7 @@ def _parse_raw_data_channel(channel: "ChannelData", block: str) -> list["RawData
     return out
 
 
-def _parse_peak_height_channel(channel: "ChannelData", block: str) -> list["PeakHeight"]:
+def _parse_peak_height_channel(channel: "ChannelData", block: bytes) -> list["PeakHeight"]:
     """Strip headers/trailer, convert packets to Events, flatten 2-word peak_height_data."""
     # aaaa is second half of overall peak_finding_header
     # cccc_cccc is peak height header
@@ -375,16 +371,16 @@ def _parse_peak_height_channel(channel: "ChannelData", block: str) -> list["Peak
     payload = _extract_payload_between_markers(block, PEAK_HEIGHT_START, PEAK_HEIGHT_END)
     if not payload:
         return []
-    assert len(payload) % 16 == 0, f"{channel}: height payload length {len(payload)} is not a multiple of 16."
+    assert len(payload) % 8 == 0, f"{channel}: height payload length {len(payload)} is not a multiple of 8."
     out = []
 
     # make placeholder to take advantage of Event's regex matching on peak format
     # Event checks format if the "previous" arg is filled and "current" is not
-    chunks = list(chunk(payload, size=16))
+    chunks = list(chunk(payload, size=8))
     # print(chunks)
     for pair in chunks:
-        w1 = pair[:8]
-        w2 = pair[8:]
+        w1 = pair[:4]
+        w2 = pair[4:]
 
         header = _decode_peak_height_header_word(w1)
         value = _decode_peak_height_value_word(w2)
@@ -395,7 +391,7 @@ def _parse_peak_height_channel(channel: "ChannelData", block: str) -> list["Peak
     return out
 
 
-def _parse_peak_area_channel(channel: "ChannelData", block: str) -> list["PeakArea"]:
+def _parse_peak_area_channel(channel: "ChannelData", block: bytes) -> list["PeakArea"]:
     """Strip headers/trailer, convert packets to Events, flatten 5-word peak_area_data."""
     # cece = peak height end
     # dddd_dddd = peak area header
@@ -410,21 +406,21 @@ def _parse_peak_area_channel(channel: "ChannelData", block: str) -> list["PeakAr
         return []
     try:
         assert len(
-            payload) % 48 == 0, f"{channel}: Area payload length {len(payload)} is not a multiple of 48."
+            payload) % 24 == 0, f"{channel}: Area payload length {len(payload)} is not a multiple of 24."
     except AssertionError as e:
         print(e)
         return out
 
-    chunks = list(chunk(payload, size=48))
+    chunks = list(chunk(payload, size=24))
     logger.debug(chunks)
     for h in chunks:
         try:
-            data1 = _decode_peak_area(h[0:8], et.peak_area_data_1)
-            data2 = _decode_peak_area(h[8:16], et.peak_area_data_2)
-            data3 = _decode_peak_area(h[16:24], et.peak_area_data_3)
-            data4 = _decode_peak_area(h[24:32], et.peak_area_data_4)
-            data5 = _decode_peak_area(h[32:40], et.peak_area_data_5)
-            data6 = _decode_peak_area(h[40:48], et.peak_area_data_6)
+            data1 = _decode_peak_area(h[0:4], et.peak_area_data_1)
+            data2 = _decode_peak_area(h[4:8], et.peak_area_data_2)
+            data3 = _decode_peak_area(h[8:12], et.peak_area_data_3)
+            data4 = _decode_peak_area(h[12:16], et.peak_area_data_4)
+            data5 = _decode_peak_area(h[16:20], et.peak_area_data_5)
+            data6 = _decode_peak_area(h[20:24], et.peak_area_data_6)
         except AbortPeak as e:
             # print the data of the exception but continue parsing the rest of the peaks in the channel
             logger.warning(f"Aborting peak area parsing for one peak in {channel} due to error: {e}. "
@@ -445,22 +441,22 @@ class Event:
 
     Some new event types will also start with 0xff_ff_ff_f1 followed by an 8-byte unix timestamp"""
 
-    def __init__(self, internal_event_number, data_str, verbosity=logging.INFO):
+    def __init__(self, internal_event_number, data_str: bytes, verbosity=logging.INFO):
         logger = logging.getLogger(self.__class__.__name__)
         logger.setLevel(verbosity)
         # check for timestamp in beginning of event, first four bytes of data_str will be ffffff11
         logger.debug("")
         logger.debug(f"Parsing Event #{internal_event_number}, data length {len(data_str)}.")
-        logger.debug(f"data_str starts with {data_str[:20]}")
+        logger.debug(f"data_str starts with {data_str[:20].hex()}")
         ts, stripped = parse_timestamp_and_strip(data_str)
         self.timestamp = ts
         if ts is not None:
-            logger.debug(f"Found timestamp: {self.timestamp}, skipping {data_str[:24]}")
+            logger.debug(f"Found timestamp: {self.timestamp}, skipping {data_str[:12].hex()}")
             data_str = stripped
         else:
             logger.debug(f"No timestamp found in event start.")
 
-        self.event_number = _decode_eventtype_data_word(hex_word=data_str[8 * 5:8 * 6],
+        self.event_number = _decode_eventtype_data_word(hex_word=data_str[4 * 5:4 * 6],
                                                         event_type=et.event_number_evn)
         self.internal_event_number: int = internal_event_number
 
@@ -471,7 +467,12 @@ class Event:
             logger.info(f"Event {self.event_number}-{self.internal_event_number} has no timestamp.")
 
         # get sub events
-        sub_events = [m.group(0) for m in SUB_EVENT_RE.finditer(data_str)]
+        sub_events = _extract_delimited_blocks(
+            data_str,
+            block_start=SUB_EVENT_START,
+            block_end=SUB_EVENT_END,
+            max_blocks=10_000,
+        )
         logger.debug(f"Event {self.event_number}-{self.internal_event_number} has {len(sub_events)} "
                      f"sub-events.")
         self.sub_events = [SubEvent(self, sub_event_hex_str) for sub_event_hex_str in sub_events]
@@ -503,7 +504,7 @@ class Event:
 
 
 class SubEvent(ParentHasEventNumber):
-    def __init__(self, event: Event, data_str: str, verbosity=logging.INFO):
+    def __init__(self, event: Event, data_str: bytes, verbosity=logging.INFO):
         # logging
         logger = logging.getLogger(self.__class__.__name__)
         logger.setLevel(verbosity)
@@ -511,7 +512,7 @@ class SubEvent(ParentHasEventNumber):
         self.channels: list[ChannelData] = []
         self.parent: Event = event
         self.sub_event_number = _decode_eventtype_data_word(
-            hex_word=data_str[8 * 3:8 * 4],
+            hex_word=data_str[4 * 3:4 * 4],
             event_type=et.sub_event_number_evn
         )
 
@@ -559,8 +560,8 @@ class ChannelData(ParentHasSubEventNumber):
     def __init__(self,
                  sub_event: SubEvent,
                  channel_num: int,
-                 raw_data_hex_string: str,
-                 peaks_hex_string: str,
+                 raw_data_hex_string: bytes,
+                 peaks_hex_string: bytes,
                  verbosity=logging.INFO
                  ):
         logger = logging.getLogger(self.__class__.__name__)

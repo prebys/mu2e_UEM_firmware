@@ -12,7 +12,7 @@ from python_analysis.hex_check_config import config
 from python_analysis.event_types import EventType, name_to_event
 from python_analysis.dat_io import read_data_file, find_data_file
 from python_analysis.hex_check_classes import Event
-from python_analysis.event_utils import iter_event_hex_strings, split_logical_events_on_subevent_reset
+from python_analysis.event_utils import iter_event_bytes, split_logical_events_on_subevent_reset
 
 file_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(file_path)
@@ -40,7 +40,7 @@ class HexCheck:
             print(f"WARNING: Overriding desired_file_path in hex_check_config.py "
                   f"to {desired_file_path} from extinction_measurement.ipynb")
         self.file_name: str = find_data_file(config.desired_file_path, to_use_index_increment)  # Name of the data file
-        self.full_hex_data, self.file_creation_date, self.headers = read_data_file(self.dir_name, self.file_name)  # Full hex data string and file creation date
+        self.full_hex_data, self.file_creation_date, self.headers = read_data_file(self.dir_name, self.file_name)  # Full byte payload and file creation date
         self.date_str = self.file_creation_date.strftime('%Y.%m.%d_%H.%M.%S')
         self.folder_name = f"{self.date_str}_{self.file_name}"  # folder name inside /img directory
         if not os.path.exists(f"img/{self.folder_name}"):
@@ -56,7 +56,7 @@ class HexCheck:
         if config.integer_mode != 's12':
             self.folder_name += f"_{config.integer_mode}"
         
-        # full_hex_data is one hex string for the whole file payload.
+        # full_hex_data is the raw byte payload for the whole file.
     
     def get_event_types(self, _name_to_event):
         """Get all EventType objects from the global name_to_event dictionary
@@ -83,12 +83,12 @@ class HexCheck:
 
         number_of_printed_logs = 0
         hex_reg = []
-        for marker in ("ffffffff", "ffffff11"):
+        for marker in (b"\xff\xff\xff\xff", b"\xff\xff\xff\x11"):
             start_idx = self.full_hex_data.find(marker)
             if start_idx != -1:
                 if start_idx > 0:
                     ignored_prefix = self.full_hex_data[:start_idx]
-                    print(f"Found {len(ignored_prefix) // 2} bytes before first event marker, ignoring.")
+                    print(f"Found {len(ignored_prefix)} bytes before first event marker, ignoring.")
                 self.full_hex_data = self.full_hex_data[start_idx:]
                 break
                 
@@ -98,7 +98,7 @@ class HexCheck:
         # "Z\n" = 5a 0a
         
         # Use the shared event iterator to find events in the hex string
-        raw_events = list(iter_event_hex_strings(self.full_hex_data))
+        raw_events = list(iter_event_bytes(self.full_hex_data))
         events = []
         split_count = 0
         for raw_event in raw_events:

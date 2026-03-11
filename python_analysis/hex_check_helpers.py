@@ -56,15 +56,19 @@ def signed(value: int, width: int) -> int:
     return -(value & (1 << width)) | (value & ((1 << width) - 1))
 
 
-def endian_conversion(hex_str: str) -> int:
+def endian_conversion(word_in: Union[str, bytes]) -> int:
     """Convert f4f3f2f1 to f1f2f3f4"""
-    if len(hex_str) % 2 != 0:
-        raise ValueError("Hex string length must be even.")
-    
-    # Step 1: Convert the hex string to bytes
-    # Each pair of characters in the hex string represents a byte.
-    # Use `bytes.fromhex` to parse the string.
-    byte_data = bytes.fromhex(hex_str)
+    if isinstance(word_in, str):
+        if len(word_in) % 2 != 0:
+            raise ValueError("Hex string length must be even.")
+        
+        # Step 1: Convert the hex string to bytes
+        # Each pair of characters in the hex string represents a byte.
+        # Use `bytes.fromhex` to parse the string.
+        byte_data = bytes.fromhex(word_in)
+    else:
+        # Step 1: The bytes are already available, so reuse them directly.
+        byte_data = word_in
     
     # Step 2: Reconstruct the 32-bit word in little-endian order
     # Use the unpack function from the struct module to interpret the bytes in little-endian format.
@@ -80,7 +84,7 @@ def endian_conversion(hex_str: str) -> int:
         # it's natural that the ADC will fill data in starting at the least significant byte
         # so f3f4 **is the older data** and f1f2 **is the newer data**
     except struct.error:
-        print(f"Error: {hex_str} could not be converted to a 32-bit word.")
+        print(f"Error: {word_in} could not be converted to a 32-bit word.")
         raise
     
     return word

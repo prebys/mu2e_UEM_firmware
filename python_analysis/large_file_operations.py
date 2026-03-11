@@ -25,7 +25,7 @@ from typing import Optional, List
 
 from python_analysis.dat_io import find_data_file, read_data_file
 from python_analysis.event_utils import (
-    iter_event_hex_strings,
+    iter_event_bytes,
     parse_timestamp_and_strip,
     split_logical_events_on_subevent_reset,
     _safe_tz,
@@ -48,28 +48,28 @@ SPLIT_DATETIME: Optional[datetime] = datetime(2026, 3, 3, 23, 59,
 
 # ---------------------------------------------------------------------------
 
-def _read_hex_string_for_file(desired_file_path: Optional[str] = None,
-                              to_use_index_increment: int = 0) -> tuple[str, datetime, List[str]]:
-    """Find and read a .dat file and return a single hex string representing the binary payload,
+def _read_bytes_for_file(desired_file_path: Optional[str] = None,
+                         to_use_index_increment: int = 0) -> tuple[bytes, datetime, List[str]]:
+    """Find and read a .dat file and return the binary payload,
     the file creation date, and headers list.
 
     Uses existing dat_io helpers to select a file when `desired_file_path` is None.
     """
     dir_name = os.path.dirname(os.path.realpath(__file__))
     file_name = find_data_file(desired_file_path, to_use_index_increment)
-    hex_str, file_creation_date, headers = read_data_file(dir_name, file_name)
-    return hex_str, file_creation_date, headers
+    payload, file_creation_date, headers = read_data_file(dir_name, file_name)
+    return payload, file_creation_date, headers
 
 
-def extract_event_timestamps_from_hex(hex_str: str) -> List[Optional[datetime]]:
-    """Scan the provided hex string for events and return a list of timestamps or None for each
+def extract_event_timestamps_from_bytes(data: bytes) -> List[Optional[datetime]]:
+    """Scan the provided byte payload for events and return a list of timestamps or None for each
     event found.
 
     Uses the shared `parse_timestamp_and_strip` helper to parse and strip timestamps.
     """
     out: List[Optional[datetime]] = []
-    for event_hex in iter_event_hex_strings(hex_str):
-        ts, _ = parse_timestamp_and_strip(event_hex)
+    for event_bytes in iter_event_bytes(data):
+        ts, _ = parse_timestamp_and_strip(event_bytes)
         out.append(ts)
     return out
 
@@ -91,8 +91,8 @@ def sample_event_timestamps(desired_file_path: Optional[str] = None,
       to_use_index_increment: passed through to `find_data_file` to select older files.
     """
     print(f"Scanning for events in file (matching '{desired_file_path or ''}')...")
-    hex_str, creation_date, headers = _read_hex_string_for_file(desired_file_path, to_use_index_increment)
-    timestamps = extract_event_timestamps_from_hex(hex_str)
+    data, creation_date, headers = _read_bytes_for_file(desired_file_path, to_use_index_increment)
+    timestamps = extract_event_timestamps_from_bytes(data)
     n_events = len(timestamps)
     if n_events == 0:
         print("No events found in file.")
@@ -135,35 +135,35 @@ def _base_name_through_capture_datetime(file_name: str) -> str:
     return base
 
 
-def _timestamp_for_output_name(first_event_hex: str, fallback_dt: datetime) -> str:
+def _timestamp_for_output_name(first_event_bytes: bytes, fallback_dt: datetime) -> str:
     """Format the first event timestamp for an output filename, falling back to file creation time."""
-    ts, _ = parse_timestamp_and_strip(first_event_hex)
+    ts, _ = parse_timestamp_and_strip(first_event_bytes)
     if ts is None:
         ts = fallback_dt
     return ts.strftime('%Y.%m.%d_%H.%M.%S')
 
 
-def _collect_nonempty_logical_events(hex_str: str) -> list[str]:
+def _collect_nonempty_logical_events(data: bytes) -> list[bytes]:
     """Split raw events into logical events and drop ones that contain no raw/peak data."""
     from python_analysis.hex_check_classes import Event
 
-    logical_events: list[str] = []
+    logical_events: list[bytes] = []
     skipped_empty = 0
-    for raw_event_idx, raw_event_hex in enumerate(iter_event_hex_strings(hex_str), start=1):
-        for logical_event_hex in split_logical_events_on_subevent_reset(raw_event_hex):
-            event = Event(raw_event_idx, logical_event_hex, verbosity=logging.WARNING)
+    for raw_event_idx, raw_event_bytes in enumerate(iter_event_bytes(data), start=1):
+        for logical_event_bytes in split_logical_events_on_subevent_reset(raw_event_bytes):
+            event = Event(raw_event_idx, logical_event_bytes, verbosity=logging.WARNING)
             if event.empty_event:
                 skipped_empty += 1
                 continue
-            logical_events.append(logical_event_hex)
+            logical_events.append(logical_event_bytes)
 
     if skipped_empty:
         print(f"Skipped {skipped_empty} empty logical events while splitting.")
     return logical_events
 
 
-def _write_dat_file(data_dir: str, filename: str, headers: List[str], hex_payload: str) -> str:
-    """Write headers and binary payload (hex string) to a .dat file in data_dir. Returns full path."""
+def _write_dat_file(data_dir: str, filename: str, headers: List[str], payload: bytes) -> str:
+    """Write headers and binary payload to a .dat file in data_dir. Returns full path."""
     path = os.path.join(data_dir, filename)
     # ensure directory exists
     os.makedirs(data_dir, exist_ok=True)
@@ -172,9 +172,8 @@ def _write_dat_file(data_dir: str, filename: str, headers: List[str], hex_payloa
         for h in headers:
             # headers in read_data_file were stored without trailing newline
             f.write((h + '\n').encode('utf-8'))
-        # write binary payload
-        if hex_payload:
-            f.write(bytes.fromhex(hex_payload))
+        if payload:
+            f.write(payload)
     return path
 
 
@@ -195,9 +194,9 @@ def split_dat_file_by_event(desired_file_path: Optional[str] = None,
     dir_name = os.path.dirname(os.path.realpath(__file__))
     data_dir = os.path.join(dir_name, "..", "socketudp", "data")
     file_name = find_data_file(desired_file_path, to_use_index_increment)
-    hex_str, file_creation_date, headers = read_data_file(dir_name, file_name)
+    data, file_creation_date, headers = read_data_file(dir_name, file_name)
 
-    events = _collect_nonempty_logical_events(hex_str)
+    events = _collect_nonempty_logical_events(data)
     n_events = len(events)
     if n_events == 0:
         raise ValueError("No non-empty logical events found in source file.")
@@ -207,8 +206,8 @@ def split_dat_file_by_event(desired_file_path: Optional[str] = None,
     first_parts = events[:split_event]
     second_parts = events[split_event:]
 
-    first_hex = ''.join(first_parts)
-    second_hex = ''.join(second_parts)
+    first_hex = b''.join(first_parts)
+    second_hex = b''.join(second_parts)
 
     # determine filenames from the original capture stem plus the first event timestamp in each output
     base_stem = _base_name_through_capture_datetime(file_name)
@@ -245,15 +244,15 @@ def split_dat_file_by_datetime(desired_file_path: Optional[str] = None,
     dir_name = os.path.dirname(os.path.realpath(__file__))
     data_dir = os.path.join(dir_name, "..", "socketudp", "data")
     file_name = find_data_file(desired_file_path, to_use_index_increment)
-    hex_str, file_creation_date, headers = read_data_file(dir_name, file_name)
+    data, file_creation_date, headers = read_data_file(dir_name, file_name)
 
-    events = _collect_nonempty_logical_events(hex_str)
+    events = _collect_nonempty_logical_events(data)
     if not events:
         raise ValueError("No non-empty logical events found in source file.")
 
     split_index = None
-    for i, event_hex in enumerate(events):
-        ts, _ = parse_timestamp_and_strip(event_hex)
+    for i, event_bytes in enumerate(events):
+        ts, _ = parse_timestamp_and_strip(event_bytes)
         if ts is not None and ts >= split_dt:
             split_index = i
             break
