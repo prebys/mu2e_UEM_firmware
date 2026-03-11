@@ -40,7 +40,7 @@ class HexCheck:
             print(f"WARNING: Overriding desired_file_path in hex_check_config.py "
                   f"to {desired_file_path} from extinction_measurement.ipynb")
         self.file_name: str = find_data_file(config.desired_file_path, to_use_index_increment)  # Name of the data file
-        self.full_hex_data, self.file_creation_date, self.headers = read_data_file(self.dir_name, self.file_name)  # Full hex data and file creation date
+        self.full_hex_data, self.file_creation_date, self.headers = read_data_file(self.dir_name, self.file_name)  # Full hex data string and file creation date
         self.date_str = self.file_creation_date.strftime('%Y.%m.%d_%H.%M.%S')
         self.folder_name = f"{self.date_str}_{self.file_name}"  # folder name inside /img directory
         if not os.path.exists(f"img/{self.folder_name}"):
@@ -56,8 +56,7 @@ class HexCheck:
         if config.integer_mode != 's12':
             self.folder_name += f"_{config.integer_mode}"
         
-        # full_hex_data is a list of strings, each string is 8 characters long (4 bytes)
-        # one "byte" in hex is two characters, for example, "ff"
+        # full_hex_data is one hex string for the whole file payload.
     
     def get_event_types(self, _name_to_event):
         """Get all EventType objects from the global name_to_event dictionary
@@ -84,14 +83,14 @@ class HexCheck:
 
         number_of_printed_logs = 0
         hex_reg = []
-        for i, current_event_hex in enumerate(self.full_hex_data):
-            if current_event_hex in ["ffffffff", 'ffffff11']:
-                # discard all data before the first 0xffffffff
-                self.full_hex_data = self.full_hex_data[i:]
+        for marker in ("ffffffff", "ffffff11"):
+            start_idx = self.full_hex_data.find(marker)
+            if start_idx != -1:
+                if start_idx > 0:
+                    ignored_prefix = self.full_hex_data[:start_idx]
+                    print(f"Found {len(ignored_prefix) // 2} bytes before first event marker, ignoring.")
+                self.full_hex_data = self.full_hex_data[start_idx:]
                 break
-            else:
-                print(f"Found {current_event_hex} before 0xffffffff, ignoring.")
-                continue
                 
         # each event starts with timestamp header, like
         # \n#TS event=123 epoch_us=1738141234567890 utc=2026-01-29T07:12:03Z\n
@@ -99,8 +98,7 @@ class HexCheck:
         # "Z\n" = 5a 0a
         
         # Use the shared event iterator to find events in the hex string
-        hex_data_str = ''.join(self.full_hex_data)
-        raw_events = list(iter_event_hex_strings(hex_data_str))
+        raw_events = list(iter_event_hex_strings(self.full_hex_data))
         events = []
         split_count = 0
         for raw_event in raw_events:

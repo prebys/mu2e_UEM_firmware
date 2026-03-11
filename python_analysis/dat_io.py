@@ -50,7 +50,7 @@ def find_data_file(desired_file_path, to_use_index_increment: int = 0) -> str:
     return input_file_name
 
 
-def read_data_file(dir_name, file_name) -> tuple[list[str], datetime, list[str]]:
+def read_data_file(dir_name, file_name) -> tuple[str, datetime, list[str]]:
     # open binary file, get binary data and file creation date
     headers = []
     data_file_path = os.path.join(dir_name, "..", "socketudp", "data", file_name)
@@ -86,6 +86,4 @@ def read_data_file(dir_name, file_name) -> tuple[list[str], datetime, list[str]]
                 f"⚠️⚠️ Truncated hex data to last valid event ending at index {last_match.end()}. "
                 f"Cut last {cut_len / full_len * 100:.2f}% of data. ⚠️⚠️")
     
-    hex_data_list = [hex_data[i:i + 8] for i in range(0, len(hex_data), 8)]
-    
-    return hex_data_list, file_creation_date, headers
+    return hex_data, file_creation_date, headers

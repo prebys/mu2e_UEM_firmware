@@ -23,6 +23,105 @@ class AbortPeak(Exception):
     """Abort parsing of one malformed peak record without failing the parent event."""
 
 
+SUB_EVENT_RE = re.compile(
+    r'00ffffff'
+    r'f4f3f2f1'
+    r'.*?'
+    r'edededed'
+    r'00fcfcfc',
+    re.DOTALL,
+)
+RAW_DATA_CHANNEL_RE = re.compile(r'fafa....ffff.*?fbfbfbfb(?=fafa|fefe)', re.DOTALL)
+PEAK_CHANNEL_RE = re.compile(r'eeee....aaaa.*?bbbbbbbbecececec', re.DOTALL)
+PEAK_HEIGHT_PAYLOAD_RE = re.compile(r'aaaacccccccc(.*?)cecececedddd', re.DOTALL)
+PEAK_AREA_PAYLOAD_RE = re.compile(r'cecedddddddd(.*?)dedededebbbb', re.DOTALL)
+
+RAW_SECTION_START = "fdfdfdfdf4f3f2f1"
+RAW_SECTION_END = "fefefefe"
+RAW_CHANNEL_START = "fafa"
+RAW_CHANNEL_END = "fbfbfbfb"
+PEAK_SECTION_START = "efefefef"
+PEAK_SECTION_END = "edededed"
+PEAK_CHANNEL_START = "eeee"
+PEAK_CHANNEL_END = "bbbbbbbbecececec"
+PEAK_HEIGHT_START = "aaaacccccccc"
+PEAK_HEIGHT_END = "cecececedddd"
+PEAK_AREA_START = "cecedddddddd"
+PEAK_AREA_END = "dedededebbbb"
+
+
+def _extract_delimited_blocks(section: str,
+                              block_start: str,
+                              block_end: str,
+                              max_blocks: int = 4) -> list[str]:
+    """Extract up to `max_blocks` blocks delimited by fixed start/end markers."""
+    out: list[str] = []
+    cursor = 0
+    end_len = len(block_end)
+    while len(out) < max_blocks:
+        start_idx = section.find(block_start, cursor)
+        if start_idx == -1:
+            break
+        end_idx = section.find(block_end, start_idx)
+        if end_idx == -1:
+            break
+        out.append(section[start_idx:end_idx + end_len])
+        cursor = end_idx + end_len
+    return out
+
+
+def _extract_raw_data_channels(data_str: str) -> list[str]:
+    """Extract raw-data channel blocks from one subevent with a single marker walk."""
+    raw_start = data_str.find(RAW_SECTION_START)
+    if raw_start == -1:
+        return [""] * 4
+
+    raw_payload_start = raw_start + len(RAW_SECTION_START) + 8  # skip second byte-order word and event number
+    raw_end = data_str.find(RAW_SECTION_END, raw_payload_start)
+    if raw_end == -1:
+        return [""] * 4
+
+    channels = _extract_delimited_blocks(
+        data_str[raw_payload_start:raw_end],
+        block_start=RAW_CHANNEL_START,
+        block_end=RAW_CHANNEL_END,
+        max_blocks=4,
+    )
+    return channels + [""] * (4 - len(channels))
+
+
+def _extract_peak_channels(data_str: str) -> list[str]:
+    """Extract peak-data channel blocks from one subevent with a single marker walk."""
+    peak_start = data_str.find(PEAK_SECTION_START)
+    if peak_start == -1:
+        return [""] * 4
+
+    peak_payload_start = peak_start + len(PEAK_SECTION_START)
+    peak_end = data_str.find(PEAK_SECTION_END, peak_payload_start)
+    if peak_end == -1:
+        return [""] * 4
+
+    channels = _extract_delimited_blocks(
+        data_str[peak_payload_start:peak_end],
+        block_start=PEAK_CHANNEL_START,
+        block_end=PEAK_CHANNEL_END,
+        max_blocks=4,
+    )
+    return channels + [""] * (4 - len(channels))
+
+
+def _extract_payload_between_markers(block: str, start_marker: str, end_marker: str) -> str:
+    """Return substring between fixed markers, or an empty string if markers are missing."""
+    start_idx = block.find(start_marker)
+    if start_idx == -1:
+        return ""
+    payload_start = start_idx + len(start_marker)
+    end_idx = block.find(end_marker, payload_start)
+    if end_idx == -1:
+        return ""
+    return block[payload_start:end_idx]
+
+
 def _decode_raw_data_word(hex_in: str = "", mode: str = 's12') -> Union[
     DoubleADCTupleWithCount, DoubleADCTuple, SingleADC]:
     # FOR HELP UNDERSTANDING ABOUT SIGNED VS UNSIGNED INTEGERS IN PYTHON:
@@ -273,11 +372,9 @@ def _parse_peak_height_channel(channel: "ChannelData", block: str) -> list["Peak
     # cccc_cccc is peak height header
     # cece_cece = peak height end
     # dddd = first half of peak area header
-    matches = re.findall(r'aaaacccccccc(.*?)cecececedddd', block)
-    if not matches:
+    payload = _extract_payload_between_markers(block, PEAK_HEIGHT_START, PEAK_HEIGHT_END)
+    if not payload:
         return []
-
-    payload: str = matches[0]
     assert len(payload) % 16 == 0, f"{channel}: height payload length {len(payload)} is not a multiple of 16."
     out = []
 
@@ -308,11 +405,9 @@ def _parse_peak_area_channel(channel: "ChannelData", block: str) -> list["PeakAr
     logger.setLevel(logging.INFO)
 
     out = []
-    match = re.findall(r'cecedddddddd(.*?)dedededebbbb', block)
-    if not match:
+    payload = _extract_payload_between_markers(block, PEAK_AREA_START, PEAK_AREA_END)
+    if not payload:
         return []
-
-    payload: str = match[0]
     try:
         assert len(
             payload) % 48 == 0, f"{channel}: Area payload length {len(payload)} is not a multiple of 48."
@@ -376,12 +471,7 @@ class Event:
             logger.info(f"Event {self.event_number}-{self.internal_event_number} has no timestamp.")
 
         # get sub events
-        r = (r'00ffffff'
-             r'f4f3f2f1'
-             r'.*?'
-             r'edededed'
-             r'00fcfcfc')
-        sub_events: list[str] = re.findall(r, data_str)
+        sub_events = [m.group(0) for m in SUB_EVENT_RE.finditer(data_str)]
         logger.debug(f"Event {self.event_number}-{self.internal_event_number} has {len(sub_events)} "
                      f"sub-events.")
         self.sub_events = [SubEvent(self, sub_event_hex_str) for sub_event_hex_str in sub_events]
@@ -431,14 +521,13 @@ class SubEvent(ParentHasEventNumber):
 
         # RAW DATA
         # list of four hex strings, one for each of the channels
-        raw_data_channels = re.findall(r'fafa....ffff.*?fbfbfbfb(?=fafa|fefe)', data_str)
-        if not raw_data_channels:
+        raw_data_channels = _extract_raw_data_channels(data_str)
+        if raw_data_channels == [""] * 4:
             logger.debug(f"SubEvent {self.event_number}-{self.internal_event_number}-{self.sub_event_number} has no raw data channels.")
-            raw_data_channels = [""] * 4  # fill with empty strings to avoid index errors later
 
         # PEAK DATA
         # list of four hex strings, one for each of the channels
-        peak_channels = re.findall(r'eeee....aaaa.*?bbbbbbbbecececec', data_str)
+        peak_channels = _extract_peak_channels(data_str)
 
         # logger.debug('\n'.join(peak_channels))
 
