@@ -1,0 +1,78 @@
+Signals seen in M38 
+
+D: = delivery ring
+RX = resonant extraction
+WCM = wall current monitor
+IC = ion chamber
+LI = loss integrated? integrated loss monitor
+2Qx = the 2Q section of DR
+BS = beam stop
+UBLM = universal beam loss monitor
+
+https://www-bd.fnal.gov/Elog/api/get/file/binary?fileId=421054
+D:DRWCM, D:M4WCM, D:QX301, D:SXCOS
+1. High before start of RX
+2. Spiked when RX started
+3. Rose for about 0.1 ms when RX started, corresponds to RX quad
+4. Started at RX and went for at least 0.15 ms past end of viewing window, sextupole
+
+https://www-bd.fnal.gov/Elog/api/get/file/binary?fileId=421057
+D:DRWCM, D:M4WCM, D:QX301, D:LIBS936A, @$F6
+1 - 3: Same as above
+4. Matched (3)
+
+D:IC902, beginning of M4
+D:IC933, near diagnostic absorber ion chamber
+D:ICABT, D:TORABT
+
+https://www-bd.fnal.gov/Elog/api/get/file/binary?fileId=420470
+D:SA12VO, D:LI2Q3, D:LI2Q4, D:LI2Q5
+0 - 200 ms
+1. Goes high on injection, stays high
+2, 3, 4: Loss *integrator*? 2Q3, 2Q4, 2Q5 are all in a row right at RX spot in DR
+
+https://www-bd.fnal.gov/Elog/api/get/file/binary?fileId=418946
+D:SA12VO, D:LQQ001, D:LQCOL907B, D:QX301
+VERY NICE RX GRAPH
+0 - 200 ms @ $F6
+
+
+https://www-bd.fnal.gov/Elog/api/get/file/binary?fileId=421201
+.., .., E:MUR1GU, D:DRLIFE
+3, 2.5 MHz Cavity 1 Gap Mon
+4, time unit of "mins"
+
+https://www-bd.fnal.gov/Elog/api/get/file/binary?fileId=421501
+D:DRWCM, D:SXCOS, D:QX301, D:LIBS936A
+
+
+
+D:DRWCM – Delivery Ring wall current monitor; measures circulating beam intensity in the Delivery Ring before resonant extraction begins.
+
+D:SXCOS - Cosine component of sextupole magnet
+
+D:QX301 – quadrupole (or its current/command readback) in the resonant extraction region of the Delivery Ring; tied to the extraction optics and timing when RX starts.
+
+D:LI2Q3 – loss integrator in the 2Q extraction section of the Delivery Ring; integrated radiation/loss over the cycle near the RX region.
+
+D:LI2Q4 – same as above, adjacent loss integrator in the 2Q extraction section.
+
+D:LI2Q5 – same as above, third loss integrator in a row in the 2Q extraction section.
+
+D:LQQ001 – fast beam loss monitor channel (UBLM fast sum) near a quadrupole in the Delivery Ring; instantaneous radiation / loss rate spike detector.
+
+D:SA12VO – spectrum analyzer video output signal; analog RF/microstructure diagnostic level, not a beam intensity device.
+
+D:DRLIFE – computed Delivery Ring beam lifetime in minutes based on decay of circulating beam intensity.
+
+D:TORABT – toroid beam current transformer in the abort line; measures beam intensity sent to the abort/dump branch.
+
+D:ICABT – ion chamber in the abort line; measures radiation and beam loss dose in the abort transport.
+
+D:M4WCM – wall current monitor in the M4 beamline; measures extracted beam intensity after the beam leaves the Delivery Ring.
+
+D:IC933 – ion chamber near the M4 diagnostic absorber region; measures radiation and beam loss close to the absorber.
+
+D:LIBS936A – loss integrator at M4 lattice location ~936A near the diagnostic absorber; integrated total beam loss or accumulated dose over the spill.
+
+D:LQCOL907B – fast beam loss monitor at a collimator in the M4/diagnostic region; instantaneous radiation/loss rate near the collimator.
