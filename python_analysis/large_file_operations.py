@@ -36,14 +36,13 @@ from python_analysis.event_utils import (
 # - Set DESIRED_FILE_PATH to a substring or filename to choose a specific .dat file.
 # - Set SAMPLES to the number of uniformly-spaced events to sample/print.
 # - Set TO_USE_INDEX_INCREMENT to pick older files (matches find_data_file semantics).
-DESIRED_FILE_PATH: Optional[str] = "data_20260303_134443_2026.03.04_16.53.41.dat"
-# DESIRED_FILE_PATH: Optional[str] = "data_20260303_134443.dat"
+DESIRED_FILE_PATH: Optional[str] = "data_20260303_134443_2026.03.04_18.40.55.dat"
 SAMPLES: int = 200
 TO_USE_INDEX_INCREMENT: int = 0
 
 # Split datetime
 # Use Chicago timezone here
-SPLIT_DATETIME: Optional[datetime] = datetime(2026, 3, 3, 23, 59,
+SPLIT_DATETIME: Optional[datetime] = datetime(2026, 3, 5, 23, 59,
                                               tzinfo=_safe_tz("America/Chicago"))
 
 # ---------------------------------------------------------------------------
@@ -177,6 +176,47 @@ def _write_dat_file(data_dir: str, filename: str, headers: List[str], payload: b
     return path
 
 
+def _write_split_files(file_name: str,
+                       file_creation_date: datetime,
+                       headers: List[str],
+                       events: list[bytes],
+                       split_event: int,
+                       data_dir: str,
+                       out_dir: Optional[str] = None) -> tuple[str, str]:
+    """Write two output files from an already-prepared logical-event list."""
+    n_events = len(events)
+    if n_events == 0:
+        raise ValueError("No non-empty logical events found in source file.")
+    if not (1 <= split_event < n_events):
+        raise ValueError(f"split_event must be between 1 and {n_events-1} (got {split_event}).")
+
+    first_parts = events[:split_event]
+    second_parts = events[split_event:]
+
+    first_payload = b''.join(first_parts)
+    second_payload = b''.join(second_parts)
+    print(f"[3/4] Split at event {split_event} of {n_events}. Building output payloads...")
+
+    base_stem = _base_name_through_capture_datetime(file_name)
+    _, ext = os.path.splitext(file_name)
+    first_date_str = _timestamp_for_output_name(first_parts[0], file_creation_date)
+    second_date_str = _timestamp_for_output_name(second_parts[0], file_creation_date)
+    first_desired = f"{base_stem}_{first_date_str}{ext}"
+    second_desired = f"{base_stem}_{second_date_str}{ext}"
+
+    out_dir = out_dir or data_dir
+    first_name = _unique_filename(out_dir, first_desired)
+    second_name = _unique_filename(out_dir, second_desired)
+
+    first_path = _write_dat_file(out_dir, first_name, headers, first_payload)
+    second_path = _write_dat_file(out_dir, second_name, headers, second_payload)
+    print("[4/4] Finished writing split files.")
+
+    print(f"Wrote first file with {split_event} non-empty logical events: {first_path}")
+    print(f"Wrote second file with {n_events - split_event} non-empty logical events: {second_path}")
+    return first_path, second_path
+
+
 def split_dat_file_by_event(desired_file_path: Optional[str] = None,
                             split_event: int = 1000,
                             to_use_index_increment: int = 0,
@@ -199,38 +239,13 @@ def split_dat_file_by_event(desired_file_path: Optional[str] = None,
 
     print("[2/4] Collecting non-empty logical events...")
     events = _collect_nonempty_logical_events(data)
-    n_events = len(events)
-    if n_events == 0:
-        raise ValueError("No non-empty logical events found in source file.")
-    if not (1 <= split_event < n_events):
-        raise ValueError(f"split_event must be between 1 and {n_events-1} (got {split_event}).")
-
-    first_parts = events[:split_event]
-    second_parts = events[split_event:]
-
-    first_hex = b''.join(first_parts)
-    second_hex = b''.join(second_parts)
-    print(f"[3/4] Split at event {split_event} of {n_events}. Building output payloads...")
-
-    # determine filenames from the original capture stem plus the first event timestamp in each output
-    base_stem = _base_name_through_capture_datetime(file_name)
-    _, ext = os.path.splitext(file_name)
-    first_date_str = _timestamp_for_output_name(first_parts[0], file_creation_date)
-    second_date_str = _timestamp_for_output_name(second_parts[0], file_creation_date)
-    first_desired = f"{base_stem}_{first_date_str}{ext}"
-    second_desired = f"{base_stem}_{second_date_str}{ext}"
-
-    out_dir = out_dir or data_dir
-    first_name = _unique_filename(out_dir, first_desired)
-    second_name = _unique_filename(out_dir, second_desired)
-
-    first_path = _write_dat_file(out_dir, first_name, headers, first_hex)
-    second_path = _write_dat_file(out_dir, second_name, headers, second_hex)
-    print("[4/4] Finished writing split files.")
-
-    print(f"Wrote first file with {split_event} non-empty logical events: {first_path}")
-    print(f"Wrote second file with {n_events - split_event} non-empty logical events: {second_path}")
-    return first_path, second_path
+    return _write_split_files(file_name=file_name,
+                              file_creation_date=file_creation_date,
+                              headers=headers,
+                              events=events,
+                              split_event=split_event,
+                              data_dir=data_dir,
+                              out_dir=out_dir)
 
 
 def split_dat_file_by_datetime(desired_file_path: Optional[str] = None,
@@ -266,18 +281,20 @@ def split_dat_file_by_datetime(desired_file_path: Optional[str] = None,
     if split_index is None:
         raise ValueError("No event with timestamp >= split_dt found.")
 
-    print(f"[4/4] Found split point at event index {split_index}. Delegating to event-based split...")
-    # use the same event-based splitting logic
-    return split_dat_file_by_event(desired_file_path=desired_file_path,
-                                   split_event=split_index,
-                                   to_use_index_increment=to_use_index_increment,
-                                   out_dir=out_dir)
+    print(f"[4/4] Found split point at event index {split_index}. Writing split files...")
+    return _write_split_files(file_name=file_name,
+                              file_creation_date=file_creation_date,
+                              headers=headers,
+                              events=events,
+                              split_event=split_index,
+                              data_dir=data_dir,
+                              out_dir=out_dir)
 
 
 # Replace CLI usage with a simple main() that uses the module-level configuration above.
 def main() -> None:
     """Run sampling using the module-level configuration variables so settings are editable in PyCharm."""
-    mode = 1
+    mode = 2
 
     if mode == 1:
         sample_event_timestamps(desired_file_path=DESIRED_FILE_PATH,
@@ -293,7 +310,7 @@ def main() -> None:
     elif mode == 3:
         split_dat_file_by_event(
             desired_file_path=DESIRED_FILE_PATH,
-            split_event=337,
+            split_event=110,
             to_use_index_increment=TO_USE_INDEX_INCREMENT,
             out_dir=None
         )
