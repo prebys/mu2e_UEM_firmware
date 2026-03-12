@@ -10,8 +10,7 @@ class Config:
     desired_file_path: Optional[str]
     desired_file_path = "data_20260303_134443_2026.03.03_18.01.32.dat"
     desired_file_path = "data_20260303_134443.dat"
-    desired_file_path = "data_20260303_134443_part1.dat"
-    desired_file_path = "data_20260303_134443_2026.03.04_09.32.40.dat"
+    desired_file_path = "data_20260303_134443_2026.03.04_16.53.41.dat"
     # desired_file_path = "test20241112_145129.dat"
     # desired_file_path = "data_20250711_023734.dat"  # 8000 hits,
     # desired_file_path = "data_20250711_023300.dat"  # 7000 hits
@@ -39,7 +38,7 @@ class Config:
     integer_mode: str = 's12'
 
     # set number of events and subevents
-    event_range: int = (0, 50)
+    event_range: int = (0, 1100)
     n_subevents: int = 9999
     
     # plotting units

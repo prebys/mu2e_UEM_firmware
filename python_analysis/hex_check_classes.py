@@ -2,11 +2,11 @@
 import logging
 import struct
 from dataclasses import dataclass
+from enum import Enum, auto
 from typing import Optional, Union
 
 
 import python_analysis.event_types as et
-from python_analysis.event_types import EventType
 from python_analysis.hex_check_config import config
 from python_analysis.hex_check_helpers import (endian_conversion, signed, chunk,
                                                ParentHasEventNumber, ParentHasSubEventNumber,
@@ -16,6 +16,19 @@ from python_analysis.event_utils import parse_timestamp_and_strip
 
 if __name__ == "__main__":
     raise ImportError("This module is not meant to be run directly. Please use it as a library.")
+
+
+DECODE_PEAK_AREA_LOGGER = logging.getLogger("_decode_peak_area")
+PARSE_PEAK_AREA_LOGGER = logging.getLogger("_parse_peak_area_channel")
+EVENT_LOGGER = logging.getLogger("Event")
+SUBEVENT_LOGGER = logging.getLogger("SubEvent")
+CHANNELDATA_LOGGER = logging.getLogger("ChannelData")
+
+DECODE_PEAK_AREA_LOGGER.setLevel(logging.INFO)
+PARSE_PEAK_AREA_LOGGER.setLevel(logging.INFO)
+EVENT_LOGGER.setLevel(logging.INFO)
+SUBEVENT_LOGGER.setLevel(logging.INFO)
+CHANNELDATA_LOGGER.setLevel(logging.INFO)
 
 
 class AbortPeak(Exception):
@@ -36,6 +49,27 @@ PEAK_HEIGHT_START = b"\xaa\xaa\xcc\xcc\xcc\xcc"
 PEAK_HEIGHT_END = b"\xce\xce\xce\xce\xdd\xdd"
 PEAK_AREA_START = b"\xce\xce\xdd\xdd\xdd\xdd"
 PEAK_AREA_END = b"\xde\xde\xde\xde\xbb\xbb"
+EVENT_NUMBER_OFFSET = slice(20, 24)
+SUB_EVENT_NUMBER_OFFSET = slice(12, 16)
+
+
+class PeakAreaWord(Enum):
+    DATA_1 = auto()
+    DATA_2 = auto()
+    DATA_3 = auto()
+    DATA_4 = auto()
+    DATA_5 = auto()
+    DATA_6 = auto()
+
+
+def _unpack_u32_le(word_bytes: bytes) -> int:
+    """Decode one 4-byte little-endian unsigned word.
+
+    `struct.unpack("<I", ...)` means:
+    - `<` = little-endian byte order
+    - `I` = 4-byte unsigned integer
+    """
+    return struct.unpack("<I", word_bytes)[0]
 
 
 def _extract_delimited_blocks(section: bytes,
@@ -243,7 +277,7 @@ def _decode_peak_height_value_word(hex_word: Union[str, bytes]) -> PeakHeightTup
 
 
 def _decode_peak_area(hex_word: Union[str, bytes],
-                      peak_type: EventType) -> int:
+                      peak_type: PeakAreaWord) -> int:
     """
     Peak area data structure with one FMC228 card. Total six 32-bit words.
     +------------------+----------+--------------------------------------------------------------+
@@ -261,70 +295,39 @@ def _decode_peak_area(hex_word: Union[str, bytes],
     |                  |          | the pulse.                                                   |
     +------------------+----------+--------------------------------------------------------------+
     """
-    logger = logging.getLogger("_decode_peak_area")
-    logger.setLevel(logging.INFO)
+    logger = DECODE_PEAK_AREA_LOGGER
     word = endian_conversion(hex_word)
-    if peak_type == "peak_area_data_1":
+    if peak_type is PeakAreaWord.DATA_1:
         # examples before conversions: c7e51111, bee51111, cbe51111
         # example, "c7ef1111" becomes "0x11_11_e5_c7" after endian conversion
         # top bits are always 0x1111, bottom bits are the actual data
         top = (word >> 16) & 0xFFFF
         bottom = word & 0xFFFF
-        logger.debug(f"Decoding peak area data 1 from {hex_word.hex() if isinstance(hex_word, bytes) else hex_word}, endian converted to {hex(word)}. ")
+        # logger.debug(f"Decoding peak area data 1 from {hex_word.hex() if isinstance(hex_word, bytes) else hex_word}, endian converted to {hex(word)}. ")
         if top != 0x1111:
             raise AbortPeak(
                 f"Invalid peak_area_data_1 marker in {hex_word}: got 0x{top:04x}, expected 0x1111."
             )
 
         return bottom
-    elif peak_type == "peak_area_data_2":
+    elif peak_type is PeakAreaWord.DATA_2:
         # examples before conversions: 2c8bf9ff, c089f9ff, b48ef9ff
-        logger.debug(f"Decoding peak area data 2 from {hex_word.hex() if isinstance(hex_word, bytes) else hex_word}, endian converted to {hex(word)}.")
+        # logger.debug(f"Decoding peak area data 2 from {hex_word.hex() if isinstance(hex_word, bytes) else hex_word}, endian converted to {hex(word)}.")
         return word
-    elif peak_type == "peak_area_data_3":
+    elif peak_type is PeakAreaWord.DATA_3:
         # examples before conversions: b089fdff, b821fdff
-        logger.debug(f"Decoding peak area data 3 from {hex_word.hex() if isinstance(hex_word, bytes) else hex_word}, endian converted to {hex(word)}.")
+        # logger.debug(f"Decoding peak area data 3 from {hex_word.hex() if isinstance(hex_word, bytes) else hex_word}, endian converted to {hex(word)}.")
         return word
-    elif peak_type in ["peak_area_data_4", "peak_area_data_5", "peak_area_data_6"]:
+    elif peak_type in (PeakAreaWord.DATA_4, PeakAreaWord.DATA_5, PeakAreaWord.DATA_6):
         # examples of different peak types before conversions: 
         # 4: 45170000, 78170000, db170000
         # 5: 89180000, b5110000, d2110000
         # 6: d4c0a000, e2c0a000, f0c0a000
         time_to_peak = (word & 0x0FFFFFFF) * 4  # multiply to convert clock counter to ns
-        logger.debug(f"Decoding {peak_type} from {hex_word.hex() if isinstance(hex_word, bytes) else hex_word}, endian converted to {hex(word)}. ")
+        # logger.debug(f"Decoding {peak_type} from {hex_word.hex() if isinstance(hex_word, bytes) else hex_word}, endian converted to {hex(word)}. ")
         return time_to_peak
     else:
         raise ValueError(f"Invalid peak area data type: {hex_word}")
-
-
-def _decode_eventtype_data_word(event_type: EventType, hex_word: Union[str, bytes]) -> Optional[int]:
-    """
-    Reuse the `EventType.data_chars` convention (nibble slice) without constructing an `Event`.
-
-    Returns:
-      - int if the regex has a `.` data region
-      - None if the event has no data region
-    """
-    start, end = event_type.data_chars
-    if start == 0 and end == 0:
-        return None
-
-    if isinstance(hex_word, bytes):
-        byte_start = start // 2
-        byte_end = end // 2
-        data_bytes = hex_word[byte_start:byte_end]
-        if not data_bytes:
-            return None
-        data_bytes = data_bytes.ljust(4, b"\x00")
-        return struct.unpack("<I", data_bytes)[0]
-
-    data_hex = hex_word[start:end]
-    if not data_hex:
-        return None
-
-    data_hex = f"{data_hex:0<8}"
-    data_bytes = bytes.fromhex(data_hex)
-    return struct.unpack("<I", data_bytes)[0]
 
 
 def _parse_raw_data_channel(channel: "ChannelData", block: bytes) -> list["RawData"]:
@@ -397,16 +400,14 @@ def _parse_peak_area_channel(channel: "ChannelData", block: bytes) -> list["Peak
     # dddd_dddd = peak area header
     # dede_dede = peak area end
     # bbbb = first half of end peak data
-    logger = logging.getLogger("_parse_peak_area_channel")
-    logger.setLevel(logging.INFO)
+    logger = PARSE_PEAK_AREA_LOGGER
 
     out = []
     payload = _extract_payload_between_markers(block, PEAK_AREA_START, PEAK_AREA_END)
     if not payload:
         return []
     try:
-        assert len(
-            payload) % 24 == 0, f"{channel}: Area payload length {len(payload)} is not a multiple of 24."
+        assert len(payload) % 24 == 0, f"{channel}: Area payload length {len(payload)} is not a multiple of 24."
     except AssertionError as e:
         print(e)
         return out
@@ -415,12 +416,12 @@ def _parse_peak_area_channel(channel: "ChannelData", block: bytes) -> list["Peak
     logger.debug(chunks)
     for h in chunks:
         try:
-            data1 = _decode_peak_area(h[0:4], et.peak_area_data_1)
-            data2 = _decode_peak_area(h[4:8], et.peak_area_data_2)
-            data3 = _decode_peak_area(h[8:12], et.peak_area_data_3)
-            data4 = _decode_peak_area(h[12:16], et.peak_area_data_4)
-            data5 = _decode_peak_area(h[16:20], et.peak_area_data_5)
-            data6 = _decode_peak_area(h[20:24], et.peak_area_data_6)
+            data1 = _decode_peak_area(h[0:4], PeakAreaWord.DATA_1)
+            data2 = _decode_peak_area(h[4:8], PeakAreaWord.DATA_2)
+            data3 = _decode_peak_area(h[8:12], PeakAreaWord.DATA_3)
+            data4 = _decode_peak_area(h[12:16], PeakAreaWord.DATA_4)
+            data5 = _decode_peak_area(h[16:20], PeakAreaWord.DATA_5)
+            data6 = _decode_peak_area(h[20:24], PeakAreaWord.DATA_6)
         except AbortPeak as e:
             # print the data of the exception but continue parsing the rest of the peaks in the channel
             logger.warning(f"Aborting peak area parsing for one peak in {channel} due to error: {e}. "
@@ -442,8 +443,7 @@ class Event:
     Some new event types will also start with 0xff_ff_ff_f1 followed by an 8-byte unix timestamp"""
 
     def __init__(self, internal_event_number, data_str: bytes, verbosity=logging.INFO):
-        logger = logging.getLogger(self.__class__.__name__)
-        logger.setLevel(verbosity)
+        logger = EVENT_LOGGER
         # check for timestamp in beginning of event, first four bytes of data_str will be ffffff11
         logger.debug("")
         logger.debug(f"Parsing Event #{internal_event_number}, data length {len(data_str)}.")
@@ -456,8 +456,7 @@ class Event:
         else:
             logger.debug(f"No timestamp found in event start.")
 
-        self.event_number = _decode_eventtype_data_word(hex_word=data_str[4 * 5:4 * 6],
-                                                        event_type=et.event_number_evn)
+        self.event_number = _unpack_u32_le(data_str[EVENT_NUMBER_OFFSET])
         self.internal_event_number: int = internal_event_number
 
         # print timestamp if available
@@ -506,15 +505,11 @@ class Event:
 class SubEvent(ParentHasEventNumber):
     def __init__(self, event: Event, data_str: bytes, verbosity=logging.INFO):
         # logging
-        logger = logging.getLogger(self.__class__.__name__)
-        logger.setLevel(verbosity)
+        logger = SUBEVENT_LOGGER
 
         self.channels: list[ChannelData] = []
         self.parent: Event = event
-        self.sub_event_number = _decode_eventtype_data_word(
-            hex_word=data_str[4 * 3:4 * 4],
-            event_type=et.sub_event_number_evn
-        )
+        self.sub_event_number = _unpack_u32_le(data_str[SUB_EVENT_NUMBER_OFFSET])
 
         logger.debug(f"Parsing SubEvent for "
                      f"Event #{event.internal_event_number}-{self.sub_event_number}, "
@@ -564,8 +559,7 @@ class ChannelData(ParentHasSubEventNumber):
                  peaks_hex_string: bytes,
                  verbosity=logging.INFO
                  ):
-        logger = logging.getLogger(self.__class__.__name__)
-        logger.setLevel(verbosity)
+        logger = CHANNELDATA_LOGGER
 
         self.parent = sub_event
         self.channel_number = channel_num
@@ -584,14 +578,16 @@ class ChannelData(ParentHasSubEventNumber):
         self.area_counts = len(self.peak_area_list)
 
         # Total counts
-
-        logger.debug("")
-        logger.debug(f"[{self.event_num_string}] [RAW_DATA] length: {self.raw_data_length}.")
-        logger.debug(self.raw_data_list)
-        logger.debug(f"[{self.event_num_string}] [PEAK_HEIGHT] length: {self.height_counts}.")
-        logger.debug(self.peak_height_list)
-        logger.debug(f"[{self.event_num_string}] [PEAK_AREA] length: {self.area_counts}.")
-        logger.debug(self.peak_area_list)
+        if logger.level <= logging.DEBUG:
+            logger.debug(
+                f"\n"
+                f"[{self.event_num_string}] [RAW_DATA] length: {self.raw_data_length}.\n"
+                f"{self.raw_data_list}\n"
+                f"[{self.event_num_string}] [PEAK_HEIGHT] length: {self.height_counts}.\n"
+                f"{self.peak_height_list}\n"
+                f"[{self.event_num_string}] [PEAK_AREA] length: {self.area_counts}.\n"
+                f"{self.peak_area_list}\n"
+            )
 
     def __repr__(self):
         return f"<ChannelData #{self.event_num_string}>"

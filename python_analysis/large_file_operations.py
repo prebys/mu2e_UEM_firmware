@@ -36,7 +36,7 @@ from python_analysis.event_utils import (
 # - Set DESIRED_FILE_PATH to a substring or filename to choose a specific .dat file.
 # - Set SAMPLES to the number of uniformly-spaced events to sample/print.
 # - Set TO_USE_INDEX_INCREMENT to pick older files (matches find_data_file semantics).
-DESIRED_FILE_PATH: Optional[str] = "data_20260303_134443_2026.03.04_09.32.40.dat"
+DESIRED_FILE_PATH: Optional[str] = "data_20260303_134443_2026.03.04_16.53.41.dat"
 # DESIRED_FILE_PATH: Optional[str] = "data_20260303_134443.dat"
 SAMPLES: int = 200
 TO_USE_INDEX_INCREMENT: int = 0
@@ -151,7 +151,7 @@ def _collect_nonempty_logical_events(data: bytes) -> list[bytes]:
     skipped_empty = 0
     for raw_event_idx, raw_event_bytes in enumerate(iter_event_bytes(data), start=1):
         for logical_event_bytes in split_logical_events_on_subevent_reset(raw_event_bytes):
-            event = Event(raw_event_idx, logical_event_bytes, verbosity=logging.WARNING)
+            event = Event(raw_event_idx, logical_event_bytes, verbosity=logging.INFO)
             if event.empty_event:
                 skipped_empty += 1
                 continue
@@ -194,8 +194,10 @@ def split_dat_file_by_event(desired_file_path: Optional[str] = None,
     dir_name = os.path.dirname(os.path.realpath(__file__))
     data_dir = os.path.join(dir_name, "..", "socketudp", "data")
     file_name = find_data_file(desired_file_path, to_use_index_increment)
+    print(f"[1/4] Loading source file {file_name}...")
     data, file_creation_date, headers = read_data_file(dir_name, file_name)
 
+    print("[2/4] Collecting non-empty logical events...")
     events = _collect_nonempty_logical_events(data)
     n_events = len(events)
     if n_events == 0:
@@ -208,6 +210,7 @@ def split_dat_file_by_event(desired_file_path: Optional[str] = None,
 
     first_hex = b''.join(first_parts)
     second_hex = b''.join(second_parts)
+    print(f"[3/4] Split at event {split_event} of {n_events}. Building output payloads...")
 
     # determine filenames from the original capture stem plus the first event timestamp in each output
     base_stem = _base_name_through_capture_datetime(file_name)
@@ -223,6 +226,7 @@ def split_dat_file_by_event(desired_file_path: Optional[str] = None,
 
     first_path = _write_dat_file(out_dir, first_name, headers, first_hex)
     second_path = _write_dat_file(out_dir, second_name, headers, second_hex)
+    print("[4/4] Finished writing split files.")
 
     print(f"Wrote first file with {split_event} non-empty logical events: {first_path}")
     print(f"Wrote second file with {n_events - split_event} non-empty logical events: {second_path}")
@@ -244,12 +248,15 @@ def split_dat_file_by_datetime(desired_file_path: Optional[str] = None,
     dir_name = os.path.dirname(os.path.realpath(__file__))
     data_dir = os.path.join(dir_name, "..", "socketudp", "data")
     file_name = find_data_file(desired_file_path, to_use_index_increment)
+    print(f"[1/4] Loading source file {file_name}...")
     data, file_creation_date, headers = read_data_file(dir_name, file_name)
 
+    print("[2/4] Collecting non-empty logical events...")
     events = _collect_nonempty_logical_events(data)
     if not events:
         raise ValueError("No non-empty logical events found in source file.")
 
+    print(f"[3/4] Searching for first event at or after {split_dt.isoformat()}...")
     split_index = None
     for i, event_bytes in enumerate(events):
         ts, _ = parse_timestamp_and_strip(event_bytes)
@@ -259,6 +266,7 @@ def split_dat_file_by_datetime(desired_file_path: Optional[str] = None,
     if split_index is None:
         raise ValueError("No event with timestamp >= split_dt found.")
 
+    print(f"[4/4] Found split point at event index {split_index}. Delegating to event-based split...")
     # use the same event-based splitting logic
     return split_dat_file_by_event(desired_file_path=desired_file_path,
                                    split_event=split_index,
@@ -269,7 +277,7 @@ def split_dat_file_by_datetime(desired_file_path: Optional[str] = None,
 # Replace CLI usage with a simple main() that uses the module-level configuration above.
 def main() -> None:
     """Run sampling using the module-level configuration variables so settings are editable in PyCharm."""
-    mode = 3
+    mode = 1
 
     if mode == 1:
         sample_event_timestamps(desired_file_path=DESIRED_FILE_PATH,
