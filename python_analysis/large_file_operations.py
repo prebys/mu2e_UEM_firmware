@@ -42,7 +42,7 @@ TO_USE_INDEX_INCREMENT: int = 0
 
 # Split datetime
 # Use Chicago timezone here
-SPLIT_DATETIME: Optional[datetime] = datetime(2026, 3, 5, 23, 59,
+SPLIT_DATETIME: Optional[datetime] = datetime(2026, 3, 5, 8, 00,
                                               tzinfo=_safe_tz("America/Chicago"))
 
 # ---------------------------------------------------------------------------

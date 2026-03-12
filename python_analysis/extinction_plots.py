@@ -6,6 +6,7 @@ from typing import Optional
 import numpy as np
 from IPython.core.display_functions import clear_output
 from matplotlib import pyplot as plt, cm
+from scipy.optimize import curve_fit
 
 from matplotlib.colors import LogNorm, SymLogNorm, TwoSlopeNorm
 from matplotlib.ticker import FixedLocator, FixedFormatter
@@ -14,6 +15,80 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from extinction_functions import (lorentzian, symmetric_mod, get_delta_trains_from_hex)
 from python_analysis.hex_check import HexCheck
 from python_analysis.hex_check_classes import convert_voltage
+
+
+def _gaussian(x, amplitude, mean, sigma):
+    return amplitude * np.exp(-0.5 * ((x - mean) / sigma) ** 2)
+
+
+def _bimodal_gaussian_with_offset(x, a1, mu1, sigma1, a2, mu2, sigma2, offset):
+    return (_gaussian(x, a1, mu1, sigma1)
+            + _gaussian(x, a2, mu2, sigma2)
+            + offset)
+
+
+def _fit_bimodal_histogram(bin_centers: np.ndarray, counts: np.ndarray) -> Optional[tuple[np.ndarray, np.ndarray]]:
+    """Fit a two-Gaussian-plus-offset model to histogram counts."""
+    if len(bin_centers) < 6 or np.count_nonzero(counts) < 6:
+        return None
+
+    peak_index = int(np.argmax(counts))
+    peak_x = float(bin_centers[peak_index])
+    peak_y = float(counts[peak_index])
+    count_floor = float(np.mean(counts[0:len(counts)//8]))
+    print(f"Assuming count floor of {count_floor}")
+    x_span = float(bin_centers[-1] - bin_centers[0])
+    sigma_guess = max(x_span / 20.0, 1.0)
+    secondary_shift = max(x_span / 4.0, sigma_guess)
+
+    p0 = np.array([
+        # first gaussian
+        peak_y,
+        peak_x,
+        sigma_guess,
+
+        # second gaussian
+        peak_y * 0.1,
+        peak_x + secondary_shift,
+        sigma_guess,
+
+        # both
+        count_floor,
+    ], dtype=float)
+
+    lower = np.array([
+        0.0,
+        bin_centers[0],
+        1e-6,
+        0.0,
+        bin_centers[0],
+        1e-6,
+        count_floor * 0.9,  # enforce minimum offset of +10 for noise
+    ], dtype=float)
+
+    upper = np.array([
+        peak_y * 5.0 + 1.0,
+        bin_centers[-1],
+        x_span,
+        peak_y * 5.0 + 1.0,
+        bin_centers[-1],
+        x_span,
+        count_floor * 1.1,
+    ], dtype=float)
+
+    try:
+        popt, pcov = curve_fit(
+            _bimodal_gaussian_with_offset,
+            bin_centers,
+            counts,
+            p0=p0,
+            bounds=(lower, upper),
+            maxfev=20000,
+        )
+    except (RuntimeError, ValueError):
+        return None
+
+    return popt, pcov
 
 
 def plot_2d_histogram_delta_train(delta_train,
@@ -362,9 +437,12 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
                               log: bool = False,
                               symlog: bool = False,
                               title: str = None,
-                              bin_count: int = 100):
+                              bin_count: int = 100,
+                              fit_bimodal: bool = False,
+                              return_fit_results: bool = False):
     """Plot all three normalized delta trains together as histograms with normalized amplitudes"""
     fig, ax = plt.subplots(1, 1, figsize=figsize)
+    fit_results = []
 
     min_t = min(train.min() for train in delta_trains)
     max_t = max(train.max() for train in delta_trains)
@@ -376,11 +454,46 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
     max_x = max(train.max() for train in normalized_delta_trains)
     for j, train in enumerate(normalized_delta_trains):
         counts, bins = np.histogram(train, bins=bin_count, range=(min_x, max_x))
-        if normalized:
-            counts = counts / counts.max()  # normalize amplitude
         bin_centers = (bins[:-1] + bins[1:]) / 2
-        ax.hist(bin_centers, bins=bin_count, weights=counts,
+        plot_counts = counts.astype(float)
+        if normalized and counts.max() > 0:
+            plot_counts = plot_counts / counts.max()  # normalize amplitude
+        ax.hist(bin_centers, bins=bin_count, weights=plot_counts,
                 alpha=0.7, label=f'Ch. {j + 1} ({len(train)} counts)')
+
+        fit_result = None
+        if fit_bimodal:
+            fit_result = _fit_bimodal_histogram(bin_centers, plot_counts)
+            if fit_result is not None:
+                popt, _ = fit_result
+                fit_x = np.linspace(bin_centers[0], bin_centers[-1], 1200)
+                total_fit = _bimodal_gaussian_with_offset(fit_x, *popt)
+                comp_1 = _gaussian(fit_x, popt[0], popt[1], popt[2])
+                comp_2 = _gaussian(fit_x, popt[3], popt[4], popt[5])
+                offset = np.full_like(fit_x, popt[6])
+                main_mu = float(popt[1] if popt[0] >= popt[3] else popt[4])
+
+                # plot main fit
+                ax.plot(fit_x, total_fit, linewidth=2.0,
+                        label=f'Ch. {j + 1} fit (main mu={main_mu:.2f} ns)')
+
+                # plot components with dashed lines
+                # ax.plot(fit_x, comp_1 + offset, linestyle='--', linewidth=1.0, alpha=0.9)
+                # ax.plot(fit_x, comp_2 + offset, linestyle='--', linewidth=1.0, alpha=0.9)
+                fit_result = {
+                    "channel": j + 1,
+                    "params": popt,
+                    "main_mu_ns": main_mu,
+                    "main_component": 1 if popt[0] >= popt[3] else 2,
+                }
+            else:
+                fit_result = {
+                    "channel": j + 1,
+                    "params": None,
+                    "main_mu_ns": None,
+                    "main_component": None,
+                }
+        fit_results.append(fit_result)
 
 
     # Add labels, titles, and legends to the figures
@@ -426,6 +539,8 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
         plt.savefig(file_name, format='svg', dpi=300, bbox_inches="tight", pad_inches=0)
     plt.show()
     plt.close(fig)
+    if return_fit_results:
+        return fit_results
 
 
 def test_2d_hist():

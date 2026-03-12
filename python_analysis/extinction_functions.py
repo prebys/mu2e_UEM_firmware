@@ -30,7 +30,7 @@ def symmetric_mod(x, mod) -> int | np.ndarray:
     return (np.mod(x + mod/2.0, mod) - mod/2.0).astype(int)
 
 
-def center_pulses(delta_trains, period) -> tuple[list[np.ndarray], float, int]:
+def center_pulses(delta_trains, period) -> tuple[list[np.ndarray], float]:
     """
     Center the pulses in the delta trains by correcting the period and subtracting the mean.
     :param delta_trains: A list of the three delta trains. Operations should be performed equally on all three channels.
@@ -52,68 +52,68 @@ def center_pulses(delta_trains, period) -> tuple[list[np.ndarray], float, int]:
 
     # (0 - Mean, Beginning Focus)
     # first, center the BEGINNING of the pulses based on the mean
-    print("0) Center Beginning:")
-    delta_train, delta_correction = subtract_mean(sss, period, focus_beginning=True)
-    
-    plot_2d_histogram_delta_train(delta_train, period, bin_width_ns=12, n_slices=40,
-                                  figsize=(8, 4), colors=['inferno'],
-                                  common_title_text="Centered Beginning")
+    # print("0) Center Beginning:")
+    # delta_train, delta_correction = subtract_mean(sss, period, focus_beginning=True)
+    #
+    # plot_2d_histogram_delta_train(delta_train, period, bin_width_ns=12, n_slices=40,
+    #                               figsize=(8, 4), colors=['inferno'],
+    #                               common_title_text="Centered Beginning")
 
     # (1 - Period)
     # calculate new period based on the shift of the mean value,
     print("1) Correct Period:")
-    period = correct_period_bin_method(delta_train, period)
+    period = correct_period_bin_method(sss, period)
     
-    plot_2d_histogram_delta_train(delta_train, period, bin_width_ns=12, n_slices=40,
+    plot_2d_histogram_delta_train(sss, period, bin_width_ns=12, n_slices=40,
                                   figsize=(8, 4), colors=['inferno'],
                                   common_title_text="1) First period correction")
 
     # (2 - Mean)
     # correct by subtracting from the mean of the modulated delta train (it'll be offset from zero by some amnt.)
-    print("2) Correct Mean:")
-    delta_train, delta_correction = subtract_mean(delta_train, period, focus_beginning=True)
-    
-    plot_2d_histogram_delta_train(delta_train, period, bin_width_ns=12, n_slices=40,
-                                  figsize=(8, 4), colors=['inferno'],
-                                  common_title_text="2) Correct mean")
+    # print("2) Correct Mean:")
+    # delta_train, delta_correction = subtract_mean(delta_train, period, focus_beginning=True)
+    #
+    # plot_2d_histogram_delta_train(delta_train, period, bin_width_ns=12, n_slices=40,
+    #                               figsize=(8, 4), colors=['inferno'],
+    #                               common_title_text="2) Correct mean")
 
     # (3 - Mean, Middle Focus)
     # once the pulse is *mostly* centered,
     # now specifically center it by just the mean of the  middle 300 ns of points
-    print("3) Correct Mean (Middle Focus):")
-    delta_train, new_delta_correction = subtract_mean(delta_train, period, focus_middle=True, focus_beginning=True)
-    delta_correction += new_delta_correction
-    
-    plot_2d_histogram_delta_train(delta_train, period, bin_width_ns=12, n_slices=40,
-                                  figsize=(8, 4), colors=['inferno'],
-                                  common_title_text="3) Correct Mean (Middle Focus)")
+    # print("3) Correct Mean (Middle Focus):")
+    # delta_train, new_delta_correction = subtract_mean(delta_train, period, focus_middle=True, focus_beginning=True)
+    # delta_correction += new_delta_correction
+    #
+    # plot_2d_histogram_delta_train(delta_train, period, bin_width_ns=12, n_slices=40,
+    #                               figsize=(8, 4), colors=['inferno'],
+    #                               common_title_text="3) Correct Mean (Middle Focus)")
 
     # (4 - Period, Middle Focus)
     # correct for mean deviation using just the center 300 ns
     print("4) Correct Period (Middle Focus):")
-    period = correct_period_bin_method(delta_train, period, focus_middle=True)
+    period = correct_period_bin_method(sss, period, focus_middle=True)
     
-    plot_2d_histogram_delta_train(delta_train, period, bin_width_ns=12, n_slices=40,
+    plot_2d_histogram_delta_train(sss, period, bin_width_ns=12, n_slices=40,
                                   figsize=(8, 4), colors=['inferno'],
                                   common_title_text="4) Correct period (Middle Focus)")
 
     # (5 - Mean, Middle Focus)
-    print("5) Correct Mean (Middle Focus):")
-    delta_train, new_delta_correction = subtract_mean(delta_train, period, focus_middle=True, focus_beginning=True)
-    delta_correction += new_delta_correction
-    
-    plot_2d_histogram_delta_train(delta_train, period, bin_width_ns=12, n_slices=40,
-                                  figsize=(8, 4), colors=['inferno'],
-                                  common_title_text="5) Correct mean (Middle Focus)")
+    # print("5) Correct Mean (Middle Focus):")
+    # delta_train, new_delta_correction = subtract_mean(delta_train, period, focus_middle=True, focus_beginning=True)
+    # delta_correction += new_delta_correction
+    #
+    # plot_2d_histogram_delta_train(delta_train, period, bin_width_ns=12, n_slices=40,
+    #                               figsize=(8, 4), colors=['inferno'],
+    #                               common_title_text="5) Correct mean (Middle Focus)")
     
     # Report result
-    print(f"Total correction on the mean: {delta_correction} ns")
-    delta_trains = [train + delta_correction for train in delta_trains]
+    # print(f"Total correction on the mean: {delta_correction} ns")
+    # delta_trains = [train + delta_correction for train in delta_trains]
     
     # Fix individual delta means just one time
-    for i, train in enumerate(delta_trains):
-        train, correction = subtract_mean(train, period, focus_middle=True, focus_beginning=False)
-        delta_trains[i] = train
+    # for i, train in enumerate(delta_trains):
+    #     train, correction = subtract_mean(train, period, focus_middle=True, focus_beginning=False)
+    #     delta_trains[i] = train
 
     means = [np.mean(train) for train in delta_trains]
     print(f"New means for each of the three trains:", end="")
@@ -121,7 +121,7 @@ def center_pulses(delta_trains, period) -> tuple[list[np.ndarray], float, int]:
         print(f"{mean * 1e-6:.2f} ms, ", end="")
     print()
 
-    return delta_trains, period, delta_correction
+    return delta_trains, period  # , delta_correction
 
 
 def correct_period(delta_train: np.ndarray,
