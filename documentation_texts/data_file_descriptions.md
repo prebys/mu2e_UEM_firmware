@@ -34,3 +34,27 @@ and starting a new event if it detects one)
 I think useless? Not sure why. Only channel 1 / 2 have data and it's random noise.
 
 ------------
+
+### data_20260303_134443.dat
+
+Run from March 3rd to March 6th, including all overnight run. 
+Splitting data file into parts. 
+
+- `data_20260303_134443_part1.dat`
+  - 366 events, March 3rd, 13:44-18:06
+- `data_20260303_134443_2026.03.04_09.36.40.dat`:
+  - Unchecked data, 337 events
+  - March 4th, 09:32:40, Event #68603-1, 
+  - to March 4th, 16:51:41, Event #122803-337,
+  - Main day run of studies on March 4th
+  - Events 1-16 (68603-70403), 9:30 - 11:30: Dual injection testing (\$9A / \$9B)
+  - Events 17-333 (77703-122203), 11:30 - 16:45
+  - Events 334-337 (122403-122803), 16:48 - 16:51, not sure what these are
+- `data_20260303_134443_2026.03.04_16.53.41.dat` 
+  - Events 1-36 (122903-127203), 16:54 - 17:27, nighttime configuration
+  - Events 37-44 (127303-128203), 17:30 - 17:36
+  - Events 45-110 (128303-136803), 17:37 - 18:39 (note event #110 is basically empty)
+- `data_20260303_134443_2026.03.04_18.40.55.dat`
+  - Events 1-914 (-248503), Mar 4 18:40 - Mar 5 7:39
+- `data_20260303_134443_2026.03.05_10.05.49.dat`
+  - Events - (255503-), 10:05 -

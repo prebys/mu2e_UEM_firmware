@@ -2,13 +2,128 @@ import importlib
 import re
 import sys
 from time import time
+from typing import Optional
 
 import numpy as np
+from matplotlib import pyplot as plt
 from scipy.fft import next_fast_len
 from scipy.optimize import curve_fit
 
 from scipy.stats import norm
 
+
+
+def _gaussian(x, amplitude, mean, sigma):
+    return amplitude * np.exp(-0.5 * ((x - mean) / sigma) ** 2)
+
+
+def _bimodal_gaussian_with_offset(x, a1, mu1, sigma1, a2, mu2, sigma2, offset):
+    return (_gaussian(x, a1, mu1, sigma1)
+            + _gaussian(x, a2, mu2, sigma2)
+            + offset)
+
+
+def calculate_bimodal_fit_residuals(normalized_delta_trains: list[np.ndarray],
+                                    fit_results: list[Optional[dict]],
+                                    bin_count: int = 100,
+                                    normalized: bool = False,
+                                    peak_window_ns: float = 150.0,
+                                    plot: bool = True,
+                                    title: Optional[str] = None) -> list[dict]:
+    """Calculate histogram-minus-fit residuals for each channel's bimodal fit."""
+    if not normalized_delta_trains:
+        return []
+
+    min_x = min(train.min() for train in normalized_delta_trains if len(train) > 0)
+    max_x = max(train.max() for train in normalized_delta_trains if len(train) > 0)
+
+    residual_results: list[dict] = []
+    axes = None
+    if plot:
+        fig, axes = plt.subplots(len(normalized_delta_trains), 1,
+                                 figsize=(10, 3 * len(normalized_delta_trains)),
+                                 sharex=True)
+        if len(normalized_delta_trains) == 1:
+            axes = [axes]
+
+    for i, train in enumerate(normalized_delta_trains):
+        counts, bins = np.histogram(train, bins=bin_count, range=(min_x, max_x))
+        plot_counts = counts.astype(float)
+        if normalized and counts.max() > 0:
+            plot_counts = plot_counts / counts.max()
+        bin_centers = (bins[:-1] + bins[1:]) / 2
+
+        fit_result = fit_results[i] if i < len(fit_results) else None
+        if not fit_result or fit_result.get("params") is None:
+            model_counts = np.full_like(bin_centers, np.nan, dtype=float)
+            residuals = np.full_like(bin_centers, np.nan, dtype=float)
+            main_mu = None
+            left_residual_sum = np.nan
+            right_residual_sum = np.nan
+            residual_balance = np.nan
+            centroid_offset_ns = np.nan
+        else:
+            params = np.asarray(fit_result["params"], dtype=float)
+            model_counts = _bimodal_gaussian_with_offset(bin_centers, *params)
+            residuals = plot_counts - model_counts
+            main_mu = fit_result.get("main_mu_ns")
+            peak_mask = np.abs(bin_centers - main_mu) <= peak_window_ns
+            left_mask = peak_mask & (bin_centers < main_mu)
+            right_mask = peak_mask & (bin_centers > main_mu)
+            left_residual_sum = float(np.nansum(residuals[left_mask]))
+            right_residual_sum = float(np.nansum(residuals[right_mask]))
+            denom = np.abs(left_residual_sum) + np.abs(right_residual_sum)
+            residual_balance = ((right_residual_sum - left_residual_sum) / denom
+                                if denom > 0 else 0.0)
+
+            peak_counts = plot_counts[peak_mask]
+            peak_x = bin_centers[peak_mask]
+            if peak_counts.size > 0 and np.sum(peak_counts) > 0:
+                centroid_offset_ns = float(np.average(peak_x, weights=peak_counts) - main_mu)
+            else:
+                centroid_offset_ns = np.nan
+
+        result = {
+            "channel": i + 1,
+            "bin_centers_ns": bin_centers,
+            "counts": plot_counts,
+            "model_counts": model_counts,
+            "residuals": residuals,
+            "main_mu_ns": main_mu,
+            "rms_residual": float(np.sqrt(np.nanmean(residuals ** 2))) if np.isfinite(residuals).any() else np.nan,
+            "mean_residual": float(np.nanmean(residuals)) if np.isfinite(residuals).any() else np.nan,
+            "peak_window_ns": peak_window_ns,
+            "left_residual_sum": left_residual_sum,
+            "right_residual_sum": right_residual_sum,
+            "residual_balance": residual_balance,
+            "centroid_offset_ns": centroid_offset_ns,
+        }
+        residual_results.append(result)
+
+        if plot:
+            ax = axes[i]
+            width = bins[1] - bins[0]
+            ax.bar(bin_centers, residuals, width=width * 0.95, alpha=0.65, label=f"Ch. {i + 1} residual")
+            ax.axhline(0.0, color='black', linewidth=1.0)
+            if main_mu is not None:
+                ax.axvline(main_mu, color='red', linestyle='--', linewidth=1.0,
+                           label=f"main mu={main_mu:.2f} ns")
+                ax.axvspan(main_mu - peak_window_ns, main_mu + peak_window_ns,
+                           color='gray', alpha=0.08)
+            ax.set_ylabel("Residual")
+            ax.legend(loc="upper right")
+            ax.set_title(f"Residuals for Channel {i + 1}")
+
+    if plot:
+        axes[-1].set_xlabel("Modulo Time (ns)")
+        if title:
+            fig.suptitle(title)
+            plt.tight_layout(rect=(0, 0, 1, 0.97))
+        else:
+            plt.tight_layout()
+        plt.show()
+
+    return residual_results
 
 
 def symmetric_mod(x, mod) -> int | np.ndarray:
@@ -59,14 +174,20 @@ def center_pulses(delta_trains, period) -> tuple[list[np.ndarray], float]:
     #                               figsize=(8, 4), colors=['inferno'],
     #                               common_title_text="Centered Beginning")
 
+    plot_2d_histogram_delta_train(sss, period, bin_width_ns=12, n_slices=40,
+                                  figsize=(8, 4), colors=['inferno'],
+                                  common_title_text="0) Starting point (no correction)",
+                                  t_range=(15e6, 80e6))
+
     # (1 - Period)
     # calculate new period based on the shift of the mean value,
     print("1) Correct Period:")
-    period = correct_period_bin_method(sss, period)
+    period = correct_period_bin_method(sss, period, focus_middle=True)
     
     plot_2d_histogram_delta_train(sss, period, bin_width_ns=12, n_slices=40,
                                   figsize=(8, 4), colors=['inferno'],
-                                  common_title_text="1) First period correction")
+                                  common_title_text="1) First period correction",
+                                  t_range=(15e6, 80e6))
 
     # (2 - Mean)
     # correct by subtracting from the mean of the modulated delta train (it'll be offset from zero by some amnt.)
@@ -95,7 +216,8 @@ def center_pulses(delta_trains, period) -> tuple[list[np.ndarray], float]:
     
     plot_2d_histogram_delta_train(sss, period, bin_width_ns=12, n_slices=40,
                                   figsize=(8, 4), colors=['inferno'],
-                                  common_title_text="4) Correct period (Middle Focus)")
+                                  common_title_text="4) Correct period (Middle Focus)",
+                                  t_range=(15e6, 80e6))
 
     # (5 - Mean, Middle Focus)
     # print("5) Correct Mean (Middle Focus):")
