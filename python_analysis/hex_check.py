@@ -9,7 +9,6 @@ from typing import Optional
 import pandas as pd
 
 from python_analysis.hex_check_config import config
-from python_analysis.event_types import EventType, name_to_event
 from python_analysis.dat_io import read_data_file, find_data_file
 from python_analysis.hex_check_classes import Event
 from python_analysis.event_utils import iter_event_bytes, split_logical_events_on_subevent_reset
@@ -26,8 +25,7 @@ os.chdir(file_path)
 
 class HexCheck:
     def __init__(self, to_use_index_increment: int = 0, desired_file_path: str = None):
-        self.name_to_event: dict[str, EventType] = {}
-        self.event_counts: dict[EventType, int] = Counter()
+        self.event_counts: dict[str, int] = Counter()
         self.events: list[Event] = []  # buffer of all events
         self.raw_data_dataframe: Optional[pd.DataFrame] = None  # buffer of raw data events in a pandas DataFrame
         self.peak_height_dataframe: Optional[pd.DataFrame] = None  # buffer of peak height events in a DataFrame
@@ -58,12 +56,6 @@ class HexCheck:
         
         # full_hex_data is the raw byte payload for the whole file.
     
-    def get_event_types(self, _name_to_event):
-        """Get all EventType objects from the global name_to_event dictionary
-        and store them in the name_to_event dictionary."""
-        self.name_to_event = _name_to_event
-
-
     def main(self):
         logger = logging.getLogger(self.__class__.__name__)
         print(f"Using input file {self.file_name}")
@@ -165,8 +157,6 @@ def build_hex_check(desired_file_path=None) -> HexCheck:
         # traceback.print_exc()
         raise
     else:
-        _hex_check.get_event_types(name_to_event)
-        
         # make hex_check available in hex_check_classes.py
         import python_analysis.hex_check_classes as hcc
         hcc.hex_check_state["hex_check"] = _hex_check  # set global variable to the current instance of HexCheck

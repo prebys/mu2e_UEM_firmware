@@ -5,8 +5,6 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Optional, Union
 
-
-import python_analysis.event_types as et
 from python_analysis.hex_check_config import config
 from python_analysis.hex_check_helpers import (endian_conversion, signed, chunk,
                                                ParentHasEventNumber, ParentHasSubEventNumber,
