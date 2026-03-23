@@ -6,6 +6,7 @@ from typing import Optional
 import numpy as np
 from IPython.core.display_functions import clear_output
 from matplotlib import pyplot as plt, cm
+from matplotlib import dates as mdates
 from scipy.optimize import curve_fit
 
 from matplotlib.colors import LogNorm, SymLogNorm, TwoSlopeNorm
@@ -761,16 +762,17 @@ def plot_2d_histogram_time_vs_event_number(
     units = "ns",
     t_range=(0, np.inf),
     binrange=None,
+    event_timestamps: Optional[list] = None,
 ):
     """
-    Plot a 2D histogram of absolute hit times vs event number.
+    Plot a 2D histogram of per-event hit times.
 
     Parameters
     ----------
     delta_trains : list[np.ndarray]
         List of per-event time arrays (ragged).
     bin_width : float | int
-        Width of histogram bins in time (see "units" variable) (x-axis resolution).
+        Width of histogram bins in hit time.
     common_title_text : str
         Common title text prefix.
     channel : int, optional
@@ -786,6 +788,62 @@ def plot_2d_histogram_time_vs_event_number(
     title : str, optional
         Custom plot title.
     """
+    def _fill_missing_event_timestamps(timestamp_values: list) -> Optional[np.ndarray]:
+        if not timestamp_values:
+            return None
+
+        numeric_timestamps = np.array([
+            mdates.date2num(ts) if ts is not None else np.nan
+            for ts in timestamp_values
+        ], dtype=float)
+
+        valid_mask = np.isfinite(numeric_timestamps)
+        if not np.any(valid_mask):
+            return None
+
+        valid_indices = np.flatnonzero(valid_mask)
+        valid_values = numeric_timestamps[valid_mask]
+
+        if valid_values.size > 1:
+            missing_indices = np.flatnonzero(~valid_mask)
+            numeric_timestamps[missing_indices] = np.interp(
+                missing_indices,
+                valid_indices,
+                valid_values,
+            )
+
+            first_valid = valid_indices[0]
+            last_valid = valid_indices[-1]
+            start_step = np.median(np.diff(valid_values[:min(valid_values.size, 8)]))
+            end_step = np.median(np.diff(valid_values[-min(valid_values.size, 8):]))
+            if not np.isfinite(start_step) or start_step <= 0:
+                start_step = np.median(np.diff(valid_values))
+            if not np.isfinite(end_step) or end_step <= 0:
+                end_step = np.median(np.diff(valid_values))
+            if not np.isfinite(start_step) or start_step <= 0:
+                start_step = 1.0 / 86400.0
+            if not np.isfinite(end_step) or end_step <= 0:
+                end_step = start_step
+
+            for idx in range(first_valid - 1, -1, -1):
+                numeric_timestamps[idx] = numeric_timestamps[idx + 1] - start_step
+            for idx in range(last_valid + 1, len(numeric_timestamps)):
+                numeric_timestamps[idx] = numeric_timestamps[idx - 1] + end_step
+        else:
+            only_value = valid_values[0]
+            single_step = 1.0 / 86400.0
+            for idx in range(len(numeric_timestamps)):
+                if not np.isfinite(numeric_timestamps[idx]):
+                    numeric_timestamps[idx] = only_value + (idx - valid_indices[0]) * single_step
+
+        return numeric_timestamps
+
+    def _timestamp_tzinfo(timestamp_values: list):
+        for ts in timestamp_values:
+            if ts is not None and getattr(ts, "tzinfo", None) is not None:
+                return ts.tzinfo
+        return None
+
     if t_range:
         # mask delta_trains to new time range
         new_delta_trains = []
@@ -832,48 +890,95 @@ def plot_2d_histogram_time_vs_event_number(
               f"({len(bins)} bins from {tmin} to {tmax} with width {bin_width}) ⚠️⚠️")
         return
     
-    # Build histogram: rows = events, cols = bins
+    # Build histogram: rows = events, cols = hit-time bins
     H = np.zeros((len(delta_trains), len(bins) - 1), dtype=int)
     for i, ev in enumerate(delta_trains):
         if len(ev) == 0:
             continue
         counts, _ = np.histogram(ev, bins=bins)
         H[i, :] = counts
-    
-    extent = [bins[0], bins[-1], 0, len(delta_trains)]  # x_min, x_max, y_min, y_max
-    
+
     fig, ax = plt.subplots(figsize=figsize)
     if log_scale:
-        # norm = LogNorm(vmin=1, vmax=np.max(H))
         H = np.log10(H + 1)  # log10(counts + 1) to avoid log(0)
-        norm = None
-    else:
-        norm = None
-    im = ax.imshow(
-        H,
-        extent=extent,
-        aspect="auto",
-        origin="lower",
-        cmap=cmap,
-        norm=norm,
-        interpolation="nearest"
+    norm = None
+
+    use_event_timestamps = (
+        event_timestamps is not None and
+        len(event_timestamps) == len(delta_trains) and
+        len(event_timestamps) > 0
     )
+    if event_timestamps is not None and not use_event_timestamps:
+        print("Event timestamps were provided but are incomplete; falling back to event numbers.")
+
+    if use_event_timestamps:
+        event_timestamp_nums = _fill_missing_event_timestamps(event_timestamps)
+        event_timestamp_tz = _timestamp_tzinfo(event_timestamps)
+        if event_timestamp_nums is None:
+            print("Event timestamps are all missing; falling back to event numbers.")
+            use_event_timestamps = False
+
+    if use_event_timestamps:
+        if np.any(np.diff(event_timestamp_nums) <= 0):
+            print("Event timestamps are not strictly increasing; falling back to event numbers.")
+            use_event_timestamps = False
+
+    if use_event_timestamps:
+        if len(event_timestamp_nums) == 1:
+            half_width_days = 0.5 / 86400.0
+            event_edges = np.array([
+                event_timestamp_nums[0] - half_width_days,
+                event_timestamp_nums[0] + half_width_days,
+            ])
+        else:
+            midpoints = 0.5 * (event_timestamp_nums[1:] + event_timestamp_nums[:-1])
+            first_edge = event_timestamp_nums[0] - 0.5 * (event_timestamp_nums[1] - event_timestamp_nums[0])
+            last_edge = event_timestamp_nums[-1] + 0.5 * (event_timestamp_nums[-1] - event_timestamp_nums[-2])
+            event_edges = np.concatenate(([first_edge], midpoints, [last_edge]))
+
+        im = ax.pcolormesh(
+            bins,
+            event_edges,
+            H,
+            cmap=cmap,
+            norm=norm,
+            shading="auto",
+        )
+    else:
+        extent = [bins[0], bins[-1], 0, len(delta_trains)]  # x_min, x_max, y_min, y_max
+        im = ax.imshow(
+            H,
+            extent=extent,
+            aspect="auto",
+            origin="lower",
+            cmap=cmap,
+            norm=norm,
+            interpolation="nearest"
+        )
     
     divider = make_axes_locatable(ax)
     cax = divider.append_axes("right", size="3%", pad=0.05)
     cbar = fig.colorbar(im, cax=cax)
     cbar.set_label("Counts" + (" (log)" if log_scale else ""))
     
-    ax.set_xlabel("Time (ns)")
-    if units == "ms":
-        ax.set_xlabel("Time (ms)")
-    ax.set_ylabel("Event Number")
+    if use_event_timestamps:
+        locator = mdates.AutoDateLocator(tz=event_timestamp_tz)
+        formatter = mdates.ConciseDateFormatter(locator, tz=event_timestamp_tz)
+        ax.yaxis.set_major_locator(locator)
+        ax.yaxis.set_major_formatter(formatter)
+        ax.set_xlabel(f"Peak Time ({units})")
+        ax.set_ylabel("Event Timestamp")
+    else:
+        ax.set_xlabel("Time (ns)")
+        if units == "ms":
+            ax.set_xlabel("Time (ms)")
+        ax.set_ylabel("Event Number")
     
     if not title:
         if channel:
-            title = f"{common_title_text}\nCH {channel}: Peak Time vs Event Number"
+            title = f"{common_title_text}\nCH {channel}: Event Time vs Peak Time"
         else:
-            title = f"{common_title_text}\nPeak Time vs Event Number"
+            title = f"{common_title_text}\nEvent Time vs Peak Time"
     ax.set_title(title)
     
     # create legend showing info like total counts, etc
@@ -883,7 +988,7 @@ def plot_2d_histogram_time_vs_event_number(
                 f"Time Range: {tmin:.2f} to {tmax:.2f} {units}")
     ax.text(0.95, 0.95, box_text, transform=ax.transAxes, fontsize=10,
             verticalalignment='top', horizontalalignment='right', bbox=dict(facecolor='white', alpha=0.8))
-    
+
     plt.tight_layout()
     if file_name:
         file_type = file_name.split('.')[-1]

@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 import importlib
 import re
 import sys
+from datetime import datetime
 from time import time
 from typing import Optional
 
@@ -546,7 +548,7 @@ def get_delta_trains_from_hex(hex_check, channel,
 
 
 def get_delta_trains_per_event_from_hex(hex_check, channel, fft_time_range_ns, period=None,
-                                        units='ns'):
+                                        units='ns', return_event_timestamps: bool = False):
     assert channel != 0, "Channel 0 is invalid, this function assumes channel numbers 1-4."
     peak_height_dataframe = hex_check.peak_height_dataframe
     grouped = peak_height_dataframe[peak_height_dataframe['channel_number'] == channel] \
@@ -555,6 +557,11 @@ def get_delta_trains_per_event_from_hex(hex_check, channel, fft_time_range_ns, p
     # grouped is a dataframe with length equal to # of events, even if some of those
 
     delta_trains = []
+    event_timestamps: list[datetime | None] = []
+    event_timestamp_map = {
+        event.internal_event_number: getattr(event, "timestamp", None)
+        for event in getattr(hex_check, "events", [])
+    }
     start_ns, end_ns = fft_time_range_ns  # don’t mutate the caller’s tuple
     for event_number, group in grouped:
         arr = np.sort(group.time_ns.values)
@@ -581,15 +588,21 @@ def get_delta_trains_per_event_from_hex(hex_check, channel, fft_time_range_ns, p
             if period:
                 new_arr = symmetric_mod(new_arr, period)
             delta_trains.append(new_arr)
+            if return_event_timestamps:
+                event_timestamps.append(event_timestamp_map.get(event_number))
         else:
             pass
             # print(f"[CH{channel}] No events left after time mask for event {event_number}, skipping.")
 
     if not delta_trains:
         # print(f"[CH{channel}] No events found for channel {channel} in the specified time range.")
+        if return_event_timestamps:
+            return np.array([], dtype=object), (start_ns, end_ns), []
         return np.array([], dtype=object), (start_ns, end_ns)
 
     # print(f"[CH{channel}] Found {len(delta_trains)} events for channel {channel}.")
+    if return_event_timestamps:
+        return np.array(delta_trains, dtype=object), (start_ns, end_ns), event_timestamps
     return np.array(delta_trains, dtype=object), (start_ns, end_ns)
 
 
