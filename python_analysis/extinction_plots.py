@@ -373,6 +373,7 @@ def plot_1d_histogram(data_lists: list[np.ndarray],
                  f"\nTime Range: {original_hist_range[0] / 1e6:.2f} to {original_hist_range[1] / 1e6:.2f} ms")
     ax.set_title(title)
     if legend:
+        print(loc)
         ax.legend(loc=loc)
     plt.tight_layout()
     if file_name:
@@ -759,7 +760,7 @@ def plot_2d_histogram_time_vs_event_number(
     title: Optional[str] = None,
     units = "ns",
     t_range=(0, np.inf),
-    binrange=None
+    binrange=None,
 ):
     """
     Plot a 2D histogram of absolute hit times vs event number.
@@ -880,8 +881,8 @@ def plot_2d_histogram_time_vs_event_number(
     box_text = (f"{len(delta_trains)} events\n"
                 f"{total_counts} total counts\n"
                 f"Time Range: {tmin:.2f} to {tmax:.2f} {units}")
-    ax.text(0.05, 0.95, box_text, transform=ax.transAxes, fontsize=10,
-            verticalalignment='top', horizontalalignment='left', bbox=dict(facecolor='white', alpha=0.8))
+    ax.text(0.95, 0.95, box_text, transform=ax.transAxes, fontsize=10,
+            verticalalignment='top', horizontalalignment='right', bbox=dict(facecolor='white', alpha=0.8))
     
     plt.tight_layout()
     if file_name:

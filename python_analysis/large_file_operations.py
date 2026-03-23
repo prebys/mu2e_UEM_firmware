@@ -42,7 +42,7 @@ TO_USE_INDEX_INCREMENT: int = 0
 
 # Split datetime
 # Use Chicago timezone here
-SPLIT_DATETIME: Optional[datetime] = datetime(2026, 3, 5, 8, 00,
+SPLIT_DATETIME: Optional[datetime] = datetime(2026, 3, 5, 8, 40,
                                               tzinfo=_safe_tz("America/Chicago"))
 
 # ---------------------------------------------------------------------------
@@ -310,7 +310,7 @@ def main() -> None:
     elif mode == 3:
         split_dat_file_by_event(
             desired_file_path=DESIRED_FILE_PATH,
-            split_event=110,
+            split_event=1047,
             to_use_index_increment=TO_USE_INDEX_INCREMENT,
             out_dir=None
         )

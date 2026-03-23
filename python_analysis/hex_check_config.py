@@ -36,7 +36,7 @@ class Config:
     integer_mode: str = 's12'
 
     # set number of events and subevents
-    event_range: int = (0, 1000)
+    event_range: int = (0, 5005)
     n_subevents: int = 9999
     
     # plotting units
