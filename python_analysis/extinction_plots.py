@@ -490,12 +490,25 @@ def plot_fft_peak(mini_fft_freqs, mini_fft_abs, freq_window, amp_window, popt, a
 def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, normalized=False, file_name: str = None,
                               figsize=(6, 6),
                               log: bool = False,
-                              symlog: bool = False,
+                              symlog: int | None = None,
                               title: str = None,
                               bin_count: int = 100,
                               fit_bimodal: bool = False,
-                              return_fit_results: bool = False):
+                              return_fit_results: bool = False,
+                              colors: list[str] | None = None,
+                              subtract_offset: bool = False,
+                              alpha: int | list[float] = 0.7,
+                              hatch=None,
+                              ):
     """Plot all three normalized delta trains together as histograms with normalized amplitudes"""
+    if isinstance(symlog, bool) and symlog:
+        symlog = 500  # default symlog threshold in counts
+
+    if isinstance(alpha, list):
+        alpha_list = alpha
+    else:
+        alpha_list = [alpha] * len(normalized_delta_trains)
+
     fig, ax = plt.subplots(1, 1, figsize=figsize)
     fit_results = []
 
@@ -507,14 +520,24 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
         time_range_str = f"Time Range: {min_t:.2f} ns to {max_t:.2f} ns"
     min_x = min(train.min() for train in normalized_delta_trains)
     max_x = max(train.max() for train in normalized_delta_trains)
+    min_peak = None
+
+    # reorder
+    # normalized_delta_trains = [normalized_delta_trains[0], normalized_delta_trains[2], normalized_delta_trains[1]]
     for j, train in enumerate(normalized_delta_trains):
+        print(f"\n\nPlotting histogram for Channel {j + 1} with {len(train)} counts, ")
+        color = colors[j % len(colors)] if colors else None
+        alpha = alpha_list[j % len(alpha_list)]
         counts, bins = np.histogram(train, bins=bin_count, range=(min_x, max_x))
         bin_centers = (bins[:-1] + bins[1:]) / 2
         plot_counts = counts.astype(float)
         if normalized and counts.max() > 0:
             plot_counts = plot_counts / counts.max()  # normalize amplitude
-        ax.hist(bin_centers, bins=bin_count, weights=plot_counts,
-                alpha=0.7, label=f'Ch. {j + 1} ({len(train)} counts)')
+
+        # count_floor = float(np.median(counts[0:len(counts) // 8])) - 25
+        # # count_floor = 0
+        # zero_shift_plot_counts = plot_counts - count_floor
+        # zero_shift_plot_counts = np.clip(zero_shift_plot_counts, 1e-3, None)  # avoid log(0) issues
 
         fit_result = None
         if fit_bimodal:
@@ -522,19 +545,52 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
             if fit_result is not None:
                 popt, _ = fit_result
                 fit_x = np.linspace(bin_centers[0], bin_centers[-1], 1200)
+
+                offset = popt[6]
+                offset = min(plot_counts)
+                print(f"Calculated offset: {offset:.2f} counts")
                 total_fit = _bimodal_gaussian_with_offset(fit_x, *popt)
-                comp_1 = _gaussian(fit_x, popt[0], popt[1], popt[2])
-                comp_2 = _gaussian(fit_x, popt[3], popt[4], popt[5])
-                offset = np.full_like(fit_x, popt[6])
+
+                if not min_peak:
+                    min_peak = popt[3]
+                    print(f"Setting minimum peak reference to {min_peak:.2f} counts for channel {j + 1}")
+                else:
+                    pass
+
+                if subtract_offset:
+                    if j == 0:
+                        offset = 1825
+
+                    if j == 1:
+                        offset = 125
+
+                    if j == 2:
+                        offset = 0
+
+                    print(f"Subtracting offset of {offset:.2f} from counts and fit to align peaks across channels")
+                    # subtract offset from original counts for plotting
+                    plot_counts -= offset
+                    plot_counts = np.clip(plot_counts, 1e-3, None)  # avoid log(0) issues
+
+                    # subtract offset from fit
+                    total_fit -= offset
+                    total_fit = np.clip(total_fit, 1e-3, None)  # avoid log(0) issues
+                    print(f"New fit minimum value: {total_fit.min():.2f} counts after offset subtraction")
+
+
+                # comp_1 = _gaussian(fit_x, popt[0], popt[1], popt[2])
+                # comp_2 = _gaussian(fit_x, popt[3], popt[4], popt[5])
                 main_mu = float(popt[1] if popt[0] >= popt[3] else popt[4])
 
-                # plot main fit
+                # FIT PLOT
                 ax.plot(fit_x, total_fit, linewidth=2.0,
-                        label=f'Ch. {j + 1} fit (main mu={main_mu:.2f} ns)')
+                        label=f'_Ch. {j + 1} fit (main mu={main_mu:.2f} ns)',
+                        color=color)
 
                 # plot components with dashed lines
                 # ax.plot(fit_x, comp_1 + offset, linestyle='--', linewidth=1.0, alpha=0.9)
                 # ax.plot(fit_x, comp_2 + offset, linestyle='--', linewidth=1.0, alpha=0.9)
+                print(f"Channel {j + 1} fit parameters: {popt}")
                 fit_result = {
                     "channel": j + 1,
                     "params": popt,
@@ -550,6 +606,24 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
                 }
         fit_results.append(fit_result)
 
+        # MAIN PLOT
+        ax.hist(bin_centers, bins=bin_count, weights=plot_counts,
+                alpha=alpha, label=f'Ch. {j + 1} ({len(train)} counts)',
+                color=color)
+
+    if fit_bimodal:
+        for fit_result in fit_results:
+            print(f"Channel {fit_result['channel']} fit results:")
+            if fit_result['params'] is not None:
+                print(f"  Main Gaussian Mean (mu): {fit_result['main_mu_ns']:.2f} ns")
+                print(f"  Fit Parameters: {fit_result['params']}")
+            else:
+                print("  Fit failed or was not performed.")
+        peak_one_values = [fit_result['params'][1] if fit_result['params'] is not None else None for fit_result in fit_results]
+        smallest_peak_one = min([val for val in peak_one_values if val is not None])
+
+        peak_two_values = [fit_result['params'][4] if fit_result['params'] is not None else None for fit_result in fit_results]
+        smallest_peak_two = min([val for val in peak_two_values if val is not None])
 
     # Add labels, titles, and legends to the figures
     if normalized:
@@ -568,7 +642,7 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
         ax.set_yscale('log')
         
     if symlog:
-        ax.set_yscale('symlog', linthresh=500)
+        ax.set_yscale('symlog', linthresh=symlog)
 
     if title:
         # override title with local custom title
