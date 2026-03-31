@@ -268,10 +268,12 @@ def plot_1d_histogram(data_lists: list[np.ndarray],
                       sample_period: float = 0,
                       common_title_text: str = "",
                       include_sample_peaks=False,
+                      separate_subplots: bool = False,
                       title: Optional[str] = None,
                       units: Optional[str] = None,   # 'ns' or 'ms'
                       hist_range: Optional[tuple] = None,
                       log: Optional[bool] = None,
+                      symlog: Optional[bool] = None,
                       loc: Optional[str] = None,
                       alpha: Optional[float] = 0.5,
                       bin_size_ns: Optional[int | float] = 40,  # default bin size in ms
@@ -279,20 +281,24 @@ def plot_1d_histogram(data_lists: list[np.ndarray],
                       legend: bool = True,
                       file_name: str = "histogram_plot.svg",
                       sample_offset: int = 0,  # offset for sample peaks
+                      colors: Optional[list[str]] = None,
                       **kwargs):
     """Plot a 1D histogram of multiple data lists."""
-    fig, ax = plt.subplots(figsize=fig_size)
+    histogram_data = []
+    for i, data in enumerate(data_lists):
+        data = np.asarray(data)
+        if data.size == 0 or not data.any():
+            print(f"Warning: Data list #{i + 1} is empty, skipping histogram plot.")
+            continue
+        histogram_data.append(data)
 
-    # check for empty data lists
-    for i, l in enumerate(data_lists):
-        if not l.any():
-            print(f"⚠️⚠️ Warning: Data list #{i + 1} is empty, skipping histogram plot. ⚠️⚠️")
-            data_lists.pop(i)
+    if not histogram_data:
+        raise ValueError("No non-empty data lists were provided for the histogram plot.")
 
     # calculate range of histogram
     if not hist_range:
-        hist_min = np.min([data.min() for data in data_lists if data.any()])
-        hist_max = np.max([data.max() for data in data_lists if data.any()])
+        hist_min = np.min([data.min() for data in histogram_data if data.any()])
+        hist_max = np.max([data.max() for data in histogram_data if data.any()])
         hist_range = (hist_min, hist_max)
 
     # if "units" is not passed explicitly into func args, check units of plots (ms / ns)
@@ -310,9 +316,9 @@ def plot_1d_histogram(data_lists: list[np.ndarray],
             bin_size = bin_size_ns / 1e6
         hist_range = (hist_range[0] / 1e6, hist_range[1] / 1e6)  # convert to ms
         bins = np.arange(hist_range[0], hist_range[1] + bin_size, bin_size)
-        data_lists = [data / 1e6 for data in data_lists]  # convert to ms
+        histogram_data = [data / 1e6 for data in histogram_data]  # convert to ms
     elif units == "ns":
-        data_lists = [data - hist_range[0] for data in data_lists]  # shift to start at 0
+        histogram_data = [data - hist_range[0] for data in histogram_data]  # shift to start at 0
         hist_range = (hist_range[0] - hist_range[0], hist_range[1] - hist_range[0])  # adjust range to start at 0
         bin_size = bin_size_ns  # ns
         bins = np.arange(np.floor(hist_range[0]), np.ceil(hist_range[1]) + bin_size, bin_size)
@@ -328,58 +334,105 @@ def plot_1d_histogram(data_lists: list[np.ndarray],
         else:
             mult = 1
         sample_peaks = np.arange(hist_range[0] + mult * sample_offset,
-                                 hist_range[1] + mult * (1*sample_period + sample_offset),
+                                 hist_range[1] + mult * sample_offset,
                                  mult * sample_period).astype(float)
-        data_lists.append(sample_peaks.repeat(5))
+        sample_peaks = sample_peaks[(sample_peaks >= hist_range[0]) & (sample_peaks <= hist_range[1])]
+    else:
+        sample_peaks = None
 
-    data_lists = [data[(data >= hist_range[0]) & (data <= hist_range[1])] for data in data_lists]
+    histogram_data = [data[(data >= hist_range[0]) & (data <= hist_range[1])] for data in histogram_data]
+
+    if separate_subplots:
+        subplot_height = max(fig_size[1] / 2, 2.5)
+        fig, axes = plt.subplots(len(histogram_data), 1,
+                                 figsize=(fig_size[0], subplot_height * len(histogram_data)),
+                                 sharex=True)
+        axes = np.atleast_1d(axes)
+    else:
+        fig, ax = plt.subplots(figsize=fig_size)
+        axes = np.array([ax])
+
+    def _draw_sample_peaks(axis):
+        if sample_peaks is None:
+            return
+        for j, x in enumerate(sample_peaks):
+            label = f"Sample Peaks ({sample_period:.1f} ns)" if j == 0 else None
+            axis.axvline(x, color='red', linestyle='dotted', alpha=1, linewidth=2, label=label)
 
     # plot data
-    for i, data in enumerate(data_lists):
+    for i, data in enumerate(histogram_data):
+        axis = axes[i] if separate_subplots else axes[0]
+        plot_data = data
+
+        if symlog and log:
+            raise ValueError("Cannot set both log and symlog to True.")
         
-        if log:
+        if log or symlog:
             # Avoid log(0) by ensuring no bin has zero height
-            data = np.clip(data, 1e-2, None)
+            plot_data = np.clip(plot_data, 1e-2, None)
 
-        if i == 3:
-            for j, x in enumerate(data):
-                x: float
-                if j == 0:
-                    label = f"Sample Peaks ({sample_period:.1f} ns)"
-                else:
-                    label = None
-                ax.axvline(x, color='red', linestyle='dotted', alpha=alpha, linewidth=1, label=label)
+        label = f"CH.{i + 1}: {len(data)} hits"
+        color = colors[i % len(colors)] if colors else None
+        
+        axis.hist(plot_data, bins=bins, histtype='stepfilled', alpha=alpha, label=label,
+                  color=color, **kwargs)
+        if i == (len(histogram_data) - 1):
+            _draw_sample_peaks(axis)
+
+        if separate_subplots:
+            if title:
+                axis.set_title(f"{title} - Channel {i + 1}")
+            elif common_title_text:
+                axis.set_title(f"{common_title_text} - Channel {i + 1}")
+            else:
+                axis.set_title(f"Delta Train Histogram - Channel {i + 1}")
+
+            if symlog:
+                axis.set_yscale('symlog', linthresh=99)
+                axis.set_ylim(bottom=1e-3)
+                axis.set_ylabel("SymLog Counts")
+            elif log:
+                axis.set_yscale('log')
+                axis.set_ylabel("Log Counts")
+            else:
+                axis.set_ylabel("Counts")
+
+            if legend:
+                axis.legend(loc=loc)
         else:
-            label = f"CH.{i + 1}: {len(data)} hits"
-            ax.hist(data, bins=bins, histtype='stepfilled', alpha=alpha, label=label, **kwargs)
-
-    if log:
-        ax.set_yscale('symlog', linthresh=99)
-        ax.set_ylim(bottom=1e-3)
+            ax = axis
 
     if units == 'ns':
-        ax.set_xlabel(f"Time ({units}, normalized to start at 0 ns)")
+        x_label = f"Time ({units}, normalized to start at 0 ns)"
     else:
-        ax.set_xlabel(f"Time ({units})")
+        x_label = f"Time ({units})"
 
-    if log:
-        ax.set_ylabel("SymLog Counts")
-    else:
-        ax.set_ylabel("Counts")
+    for axis in axes:
+        axis.set_xlabel(x_label)
 
-    # need to remove "Time Range" from common_title_text
-    common_title_text = re.sub(r"\n?Time Range: .*\n?", "", common_title_text)
-    if not title:
-        title = (f"1D Histogram of Delta Trains - " + common_title_text +
-                 f"\nTime Range: {original_hist_range[0] / 1e6:.2f} to {original_hist_range[1] / 1e6:.2f} ms")
-    ax.set_title(title)
-    if legend:
-        print(loc)
-        ax.legend(loc=loc)
+    if not separate_subplots:
+        if symlog:
+            ax.set_yscale('symlog', linthresh=99)
+            ax.set_ylim(bottom=1e-3)
+            ax.set_ylabel("SymLog Counts")
+        elif log:
+            ax.set_yscale('log')
+            ax.set_ylabel("Log Counts")
+        else:
+            ax.set_ylabel("Counts")
+
+        # need to remove "Time Range" from common_title_text
+        common_title_text = re.sub(r"\n?Time Range: .*\n?", "", common_title_text)
+        if not title:
+            title = (f"1D Histogram of Delta Trains - " + common_title_text +
+                     f"\nTime Range: {original_hist_range[0] / 1e6:.2f} to {original_hist_range[1] / 1e6:.2f} ms")
+        ax.set_title(title)
+        if legend:
+            ax.legend(loc=loc)
     plt.tight_layout()
     if file_name:
         file_type = file_name.split('.')[-1]
-        if log:
+        if log or symlog:
             file_name = re.sub(f".{file_type}$", f"_log.{file_type}", file_name)
         plt.savefig(file_name, format=file_type, dpi=300, bbox_inches="tight", pad_inches=0)
     plt.show()
