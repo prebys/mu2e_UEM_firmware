@@ -261,6 +261,7 @@ def plot_2d_histogram_delta_train(delta_train,
             if file_name:
                 file_type = file_name.split('.')[-1]
                 plt.savefig(file_name, format=file_type, dpi=300, bbox_inches="tight", pad_inches=0)
+                print(f"Image saved to path: {file_name}")
             plt.show()
 
 
@@ -435,6 +436,7 @@ def plot_1d_histogram(data_lists: list[np.ndarray],
         if log or symlog:
             file_name = re.sub(f".{file_type}$", f"_log.{file_type}", file_name)
         plt.savefig(file_name, format=file_type, dpi=300, bbox_inches="tight", pad_inches=0)
+        print(f"Figure saved to {file_name}")
     plt.show()
 
 
@@ -483,6 +485,7 @@ def plot_fft_peak(mini_fft_freqs, mini_fft_abs, freq_window, amp_window, popt, a
     if file_name:
         file_type = file_name.split('.')[-1]
         plt.savefig(file_name, format=file_type, dpi=300, bbox_inches="tight", pad_inches=0)
+        print(f"Figure saved to {file_name}")
 
     plt.show()
 
@@ -499,6 +502,7 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
                               subtract_offset: bool = False,
                               alpha: int | list[float] = 0.7,
                               hatch=None,
+                              show_peak_average_text: bool = False,
                               ):
     """Plot all three normalized delta trains together as histograms with normalized amplitudes"""
     if isinstance(symlog, bool) and symlog:
@@ -544,7 +548,7 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
             fit_result = _fit_bimodal_histogram(bin_centers, plot_counts)
             if fit_result is not None:
                 popt, _ = fit_result
-                fit_x = np.linspace(bin_centers[0], bin_centers[-1], 1200)
+                fit_x = np.linspace(bins[0], bins[-1], 1200)
 
                 offset = popt[6]
                 offset = min(plot_counts)
@@ -581,6 +585,9 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
                 # comp_1 = _gaussian(fit_x, popt[0], popt[1], popt[2])
                 # comp_2 = _gaussian(fit_x, popt[3], popt[4], popt[5])
                 main_mu = float(popt[1] if popt[0] >= popt[3] else popt[4])
+                peak_means = (float(popt[1]), float(popt[4]))
+                central_mu = min(peak_means, key=abs)
+                side_mu = max(peak_means, key=abs)
 
                 # FIT PLOT
                 ax.plot(fit_x, total_fit, linewidth=2.0,
@@ -596,6 +603,8 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
                     "params": popt,
                     "main_mu_ns": main_mu,
                     "main_component": 1 if popt[0] >= popt[3] else 2,
+                    "central_mu_ns": central_mu,
+                    "side_mu_ns": side_mu,
                 }
             else:
                 fit_result = {
@@ -603,11 +612,13 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
                     "params": None,
                     "main_mu_ns": None,
                     "main_component": None,
+                    "central_mu_ns": None,
+                    "side_mu_ns": None,
                 }
         fit_results.append(fit_result)
 
         # MAIN PLOT
-        ax.hist(bin_centers, bins=bin_count, weights=plot_counts,
+        ax.hist(bins[:-1], bins=bins, weights=plot_counts,
                 alpha=alpha, label=f'Ch. {j + 1} ({len(train)} counts)',
                 color=color)
 
@@ -624,6 +635,24 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
 
         peak_two_values = [fit_result['params'][4] if fit_result['params'] is not None else None for fit_result in fit_results]
         smallest_peak_two = min([val for val in peak_two_values if val is not None])
+
+        if show_peak_average_text:
+            central_peak_times = [
+                fit_result["central_mu_ns"] for fit_result in fit_results
+                if fit_result is not None and fit_result.get("central_mu_ns") is not None
+            ]
+            side_peak_times = [
+                fit_result["side_mu_ns"] for fit_result in fit_results
+                if fit_result is not None and fit_result.get("side_mu_ns") is not None
+            ]
+            if central_peak_times and side_peak_times:
+                peak_box_text = (
+                    f"Central peak avg: {np.mean(central_peak_times):.2f} ns\n"
+                    f"Side peak avg: {np.mean(side_peak_times):.2f} ns"
+                )
+                ax.text(0.03, 0.95, peak_box_text, transform=ax.transAxes,
+                        fontsize=10, ha="left", va="top",
+                        bbox=dict(facecolor="white", alpha=0.75, edgecolor="0.6"))
 
     # Add labels, titles, and legends to the figures
     if normalized:
@@ -650,6 +679,9 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
     else:
         ax.set_title(ax.get_title() + f" - {time_range_str}")
 
+    ax.set_xlim(min_x, max_x)
+    ax.margins(x=0)
+
     # add box showing counts per channel
     counts_per_channel = [len(train) for train in normalized_delta_trains]
     box_text = f"Period: {period:.3f} ns"
@@ -666,6 +698,7 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
     plt.tight_layout()
     if file_name:
         plt.savefig(file_name, format='svg', dpi=300, bbox_inches="tight", pad_inches=0)
+        print(f"Figure saved to {file_name}")
     plt.show()
     plt.close(fig)
     if return_fit_results:
@@ -1121,6 +1154,7 @@ def plot_2d_histogram_time_vs_event_number(
         file_type = file_name.split('.')[-1]
         plt.savefig(file_name, format=file_type, dpi=300,
                     bbox_inches="tight", pad_inches=0)
+        print(f"Figure saved to {file_name}")
     plt.show()
     
     
