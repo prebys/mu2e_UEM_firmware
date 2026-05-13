@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import re
-from typing import Optional
+from typing import Optional, Any
 
 import numpy as np
 from IPython.core.display_functions import clear_output
@@ -106,7 +106,8 @@ def plot_2d_histogram_delta_train(delta_train,
                                   textbox=True,
                                   t_range=(0, np.inf),
                                   title: Optional[str] = None,
-                                  alpha: float = 1.
+                                  alpha: float = 1.,
+                                  extra_text_boxes = None
                                   ):
     """
     Create a 2D histogram plot of delta train histograms over time.
@@ -121,6 +122,9 @@ def plot_2d_histogram_delta_train(delta_train,
     if not delta_train.any():
         print("⚠️⚠️ Warning: delta_train is empty, skipping 2D histogram plot. ⚠️⚠️")
         return
+
+    if not extra_text_boxes:
+        extra_text_boxes = []
 
     # detected_period_ns = 1 / 589.9801 * 1e6  # convert kHz to ns, use real theoretical value
 
@@ -207,7 +211,6 @@ def plot_2d_histogram_delta_train(delta_train,
             # disable x-axis labels, ticks, etc., everything on plot #1
             # ax.set_xticks([])
             # ax.set_xlabel("")
-            
 
         # quick extinction measurement, divide particles within +/- 125ns over particles outside of that window
         in_time_counts = np.sum(np.abs(normalized_delta_train) <= 125)
@@ -220,14 +223,13 @@ def plot_2d_histogram_delta_train(delta_train,
             extinction_ratio = out_of_time_counts / total
 
         # Add box showing (1) number of points, (2) detected period, and (3) extinction ratio
-        box_text = (f"{len(new_delta_train)} points\n"
-                    f"Detected Period: {detected_period_ns:.3f} ns\n"
-                    f"In/Out Particles: {in_time_counts}/{out_of_time_counts}\n"
+        box_text = (f"In-Time Particles: {in_time_counts:,}\n"
+                    f"Out-of-Time Particles: {out_of_time_counts:,}\n"
                     f"Extinction Ratio: {extinction_ratio:.2e}")
         if total == in_time_counts:
             box_text += "\n(Add 1 OOT particle for calc.)"
         if textbox:
-            ax.text(0.05, 0.95, box_text, transform=ax.transAxes, fontsize=10,
+            ax.text(0.025, 0.97, box_text, transform=ax.transAxes, fontsize=10,
                     verticalalignment='top', horizontalalignment='left', bbox=dict(facecolor='white', alpha=0.8))
         else:
             print(box_text)
@@ -242,9 +244,25 @@ def plot_2d_histogram_delta_train(delta_train,
         ax.axvline(-125, color=linecolor, linestyle='--', linewidth=1.5)
         ax.axvline(125, color=linecolor, linestyle='--', linewidth=1.5)
 
+        # add text box for +/- 125 ns line
+        if 'extinction_window' in extra_text_boxes:
+            ax.text(135, 54.5,
+                    "Extinction Window:\n±125 ns\n↙",
+                    color=linecolor, verticalalignment='top', horizontalalignment='left')
+
+        # add any extra text boxes passed in through extra_text_boxes argument
+        if 'ghost_bunch' in extra_text_boxes:
+            ax.text(550, 20,
+                    f"↖\n   Ghost Bunch\n    (Out-of-Time)",
+                    color=linecolor)
+            ax.text(-130, 20,
+                    f"↗\nMain Proton Bunch  \n(In-time)  ",
+                    horizontalalignment='right',
+                    color=linecolor)
+
         if subplot_no != 1:
             ax.set_xlabel("Modulo Time (ns)")
-        ax.set_ylabel("Time (ms)")
+        ax.set_ylabel("Spill Time (ms)")
 
         if subplot_no != 2:
             if title:
@@ -265,26 +283,33 @@ def plot_2d_histogram_delta_train(delta_train,
             plt.show()
 
 
-def plot_1d_histogram(data_lists: list[np.ndarray],
-                      sample_period: float = 0,
-                      common_title_text: str = "",
-                      include_sample_peaks=False,
-                      separate_subplots: bool = False,
-                      title: Optional[str] = None,
-                      units: Optional[str] = None,   # 'ns' or 'ms'
-                      hist_range: Optional[tuple] = None,
-                      log: Optional[bool] = None,
-                      symlog: Optional[bool] = None,
-                      loc: Optional[str] = None,
-                      alpha: Optional[float] = 0.5,
-                      bin_size_ns: Optional[int | float] = 40,  # default bin size in ms
-                      fig_size: tuple[int, int] = (10, 6),  # default figure width in inches
-                      legend: bool = True,
-                      file_name: str = "histogram_plot.svg",
-                      sample_offset: int = 0,  # offset for sample peaks
-                      colors: Optional[list[str]] = None,
-                      **kwargs):
+def plot_1d_histogram(
+        data_lists: list[np.ndarray],
+        sample_period: float = 0,
+        common_title_text: str = "",
+        include_sample_peaks=False,
+        separate_subplots: bool = False,
+        title: Optional[str] = None,
+        units: Optional[str] = None,   # 'ns' or 'ms'
+        hist_range: Optional[tuple] = None,
+        log: Optional[bool] = None,
+        symlog: Optional[int] = None,
+        loc: Optional[str] = None,
+        alpha: Optional[float | list[float]] = 0.5,
+        bin_size_ns: Optional[int | float] = 40,  # default bin size in ms
+        fig_size: tuple[int, int] = (10, 6),  # default figure width in inches
+        legend: bool = True,
+        file_name: str = "histogram_plot.svg",
+        sample_offset: int = 0,  # offset for sample peaks
+        colors: Optional[list[str]] = None,
+        combine_channels: bool = False,
+        draw_edgecolor: bool = False,
+        **kwargs
+):
     """Plot a 1D histogram of multiple data lists."""
+    if symlog is True:
+        symlog = 50
+
     histogram_data = []
     for i, data in enumerate(data_lists):
         data = np.asarray(data)
@@ -292,6 +317,9 @@ def plot_1d_histogram(data_lists: list[np.ndarray],
             print(f"Warning: Data list #{i + 1} is empty, skipping histogram plot.")
             continue
         histogram_data.append(data)
+
+    if combine_channels:
+        histogram_data = [np.concatenate(histogram_data)]
 
     if not histogram_data:
         raise ValueError("No non-empty data lists were provided for the histogram plot.")
@@ -358,7 +386,10 @@ def plot_1d_histogram(data_lists: list[np.ndarray],
             return
         for j, x in enumerate(sample_peaks):
             label = f"Sample Peaks ({sample_period:.1f} ns)" if j == 0 else None
-            axis.axvline(x, color='red', linestyle='dotted', alpha=1, linewidth=2, label=label)
+            axis.axvline(x, color='red', linestyle='dotted', alpha=0.5, linewidth=2, label=label)
+
+    # reorder?
+    histogram_data = [histogram_data[0], histogram_data[2], histogram_data[1]]
 
     # plot data
     for i, data in enumerate(histogram_data):
@@ -372,11 +403,45 @@ def plot_1d_histogram(data_lists: list[np.ndarray],
             # Avoid log(0) by ensuring no bin has zero height
             plot_data = np.clip(plot_data, 1e-2, None)
 
-        label = f"CH.{i + 1}: {len(data)} hits"
+        # LABELS
+        # label = f"Ch. {i + 1}: {len(data)} hits"
+        if not combine_channels:
+            label = f"Ch. {i + 1}"
+        else:
+            label = ""
+
+        # COLOR CHOICE
         color = colors[i % len(colors)] if colors else None
-        
-        axis.hist(plot_data, bins=bins, histtype='stepfilled', alpha=alpha, label=label,
-                  color=color, **kwargs)
+
+        # ALPHA LIST
+        if isinstance(alpha, list):
+            alpha_i = alpha[i % len(alpha)]
+        else:
+            alpha_i = alpha
+
+        # MAIN PLOT
+        axis.hist(
+            plot_data,
+            bins=bins,
+            histtype='stepfilled',
+            alpha=alpha_i,
+            label=label,
+            color=color,
+            **kwargs
+        )
+
+        # edges
+        if draw_edgecolor:
+            axis.hist(
+                plot_data,
+                bins=bins,
+                histtype='step',
+                alpha=0.5,
+                label=None,
+                edgecolor=color,
+                linewidth=0.8,
+            )
+
         if i == (len(histogram_data) - 1):
             _draw_sample_peaks(axis)
 
@@ -389,14 +454,14 @@ def plot_1d_histogram(data_lists: list[np.ndarray],
                 axis.set_title(f"Delta Train Histogram - Channel {i + 1}")
 
             if symlog:
-                axis.set_yscale('symlog', linthresh=99)
+                axis.set_yscale('symlog', linthresh=symlog)
                 axis.set_ylim(bottom=1e-3)
-                axis.set_ylabel("SymLog Counts")
+                axis.set_ylabel("Counts per bin (SymLog scale)")
             elif log:
                 axis.set_yscale('log')
-                axis.set_ylabel("Log Counts")
+                axis.set_ylabel("Counts per bin (log scale)")
             else:
-                axis.set_ylabel("Counts")
+                axis.set_ylabel("Counts per bin")
 
             if legend:
                 axis.legend(loc=loc)
@@ -413,14 +478,14 @@ def plot_1d_histogram(data_lists: list[np.ndarray],
 
     if not separate_subplots:
         if symlog:
-            ax.set_yscale('symlog', linthresh=99)
+            ax.set_yscale('symlog', linthresh=symlog)
             ax.set_ylim(bottom=1e-3)
-            ax.set_ylabel("SymLog Counts")
+            ax.set_ylabel("Counts per bin (SymLog scale)")
         elif log:
             ax.set_yscale('log')
-            ax.set_ylabel("Log Counts")
+            ax.set_ylabel("Counts per bin (log scale)")
         else:
-            ax.set_ylabel("Counts")
+            ax.set_ylabel("Counts per bin")
 
         # need to remove "Time Range" from common_title_text
         common_title_text = re.sub(r"\n?Time Range: .*\n?", "", common_title_text)
@@ -433,9 +498,9 @@ def plot_1d_histogram(data_lists: list[np.ndarray],
     plt.tight_layout()
     if file_name:
         file_type = file_name.split('.')[-1]
-        if log or symlog:
+        if (log or symlog) and "IPAC" not in file_name:
             file_name = re.sub(f".{file_type}$", f"_log.{file_type}", file_name)
-        plt.savefig(file_name, format=file_type, dpi=300, bbox_inches="tight", pad_inches=0)
+        plt.savefig(file_name, format=file_type, dpi=300, bbox_inches="tight", pad_inches=0.01)
         print(f"Figure saved to {file_name}")
     plt.show()
 
@@ -490,20 +555,28 @@ def plot_fft_peak(mini_fft_freqs, mini_fft_abs, freq_window, amp_window, popt, a
     plt.show()
 
 
-def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, normalized=False, file_name: str = None,
-                              figsize=(6, 6),
-                              log: bool = False,
-                              symlog: int | None = None,
-                              title: str = None,
-                              bin_count: int = 100,
-                              fit_bimodal: bool = False,
-                              return_fit_results: bool = False,
-                              colors: list[str] | None = None,
-                              subtract_offset: bool = False,
-                              alpha: int | list[float] = 0.7,
-                              hatch=None,
-                              show_peak_average_text: bool = False,
-                              ):
+def plot_normalized_histogram(
+        delta_trains,
+        normalized_delta_trains,
+        period,
+        normalized=False,
+        file_name: str = None,
+        figsize=(6, 6),
+        log: bool = False,
+        symlog: int | None = None,
+        title: str = None,
+        bin_count: int = 100,
+        fit_bimodal: bool = False,
+        return_fit_results: bool = False,
+        colors: list[str] | None = None,
+        subtract_offset: bool = False,
+        alpha: int | list[float] = 0.7,
+        hatch=None,
+        manual_shift: float = 0,
+        show_peak_average_text: bool = False,
+        histtype: Any = 'stepfilled',
+        draw_edgecolor: bool = False,
+):
     """Plot all three normalized delta trains together as histograms with normalized amplitudes"""
     if isinstance(symlog, bool) and symlog:
         symlog = 500  # default symlog threshold in counts
@@ -526,14 +599,15 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
     max_x = max(train.max() for train in normalized_delta_trains)
     min_peak = None
 
-    # reorder
-    # normalized_delta_trains = [normalized_delta_trains[0], normalized_delta_trains[2], normalized_delta_trains[1]]
+    # reorder?
+    normalized_delta_trains = [normalized_delta_trains[0], normalized_delta_trains[2], normalized_delta_trains[1]]
     for j, train in enumerate(normalized_delta_trains):
         print(f"\n\nPlotting histogram for Channel {j + 1} with {len(train)} counts, ")
         color = colors[j % len(colors)] if colors else None
         alpha = alpha_list[j % len(alpha_list)]
         counts, bins = np.histogram(train, bins=bin_count, range=(min_x, max_x))
         bin_centers = (bins[:-1] + bins[1:]) / 2
+        bin_centers += manual_shift
         plot_counts = counts.astype(float)
         if normalized and counts.max() > 0:
             plot_counts = plot_counts / counts.max()  # normalize amplitude
@@ -618,9 +692,30 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
         fit_results.append(fit_result)
 
         # MAIN PLOT
-        ax.hist(bins[:-1], bins=bins, weights=plot_counts,
-                alpha=alpha, label=f'Ch. {j + 1} ({len(train)} counts)',
-                color=color)
+        ax.hist(
+            bins[:-1],
+            bins=bins,
+            weights=plot_counts,
+            alpha=alpha,
+            # label=f'Ch. {j + 1} ({len(train)} counts)',
+            label=f'Ch. {j + 1}',
+            color=color,
+            histtype=histtype,
+        )
+
+        # OUTLINE
+        if draw_edgecolor:
+            ax.hist(
+                bins[:-1],
+                bins=bins,
+                weights=plot_counts,
+                label=None,
+                color=color,
+                histtype="step",
+                edgecolor=color,
+                linewidth=0.8,
+                alpha=0.5,
+            )
 
     if fit_bimodal:
         for fit_result in fit_results:
@@ -647,8 +742,9 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
             ]
             if central_peak_times and side_peak_times:
                 peak_box_text = (
-                    f"Central peak avg: {np.mean(central_peak_times):.2f} ns\n"
-                    f"Side peak avg: {np.mean(side_peak_times):.2f} ns"
+                    f"Central peak avg: {np.mean(central_peak_times):.0f} ns\n"
+                    f"Side peak avg: {np.mean(side_peak_times):.0f} ns\n"
+                    f"Period: {period:.2f} ns"
                 )
                 ax.text(0.03, 0.95, peak_box_text, transform=ax.transAxes,
                         fontsize=10, ha="left", va="top",
@@ -682,22 +778,12 @@ def plot_normalized_histogram(delta_trains, normalized_delta_trains, period, nor
     ax.set_xlim(min_x, max_x)
     ax.margins(x=0)
 
-    # add box showing counts per channel
-    counts_per_channel = [len(train) for train in normalized_delta_trains]
-    box_text = f"Period: {period:.3f} ns"
-    # ax.text(0.05, 0.55,
-    #          box_text,
-    #          transform=ax.transAxes,
-    #          fontsize=10, verticalalignment='top', bbox=dict(facecolor='white', alpha=0.5))
-
-    # put box_text in empty plot to go inlegend instead
-    plt.plot([], label=box_text, marker='None', color='None')
 
     ax.legend(loc="upper left")
     plt.legend()
     plt.tight_layout()
     if file_name:
-        plt.savefig(file_name, format='svg', dpi=300, bbox_inches="tight", pad_inches=0)
+        plt.savefig(file_name, dpi=300, bbox_inches="tight", pad_inches=0)
         print(f"Figure saved to {file_name}")
     plt.show()
     plt.close(fig)
